@@ -23,4 +23,4 @@ jobs:
           workingDir: ng-nacelle
           token: ${{ secrets.GITHUB_TOKEN }}
           #👇 Chromatic projectToken, see https://storybook.js.org/tutorials/intro-to-storybook/angular/en/deploy/ to obtain it
-          projectToken: d3597cab2e25
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
