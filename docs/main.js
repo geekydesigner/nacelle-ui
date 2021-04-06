@@ -227,7 +227,7 @@ class TaskComponent {
     }
 }
 TaskComponent.ɵfac = function TaskComponent_Factory(t) { return new (t || TaskComponent)(); };
-TaskComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: TaskComponent, selectors: [["app-task"]], inputs: { task: "task" }, outputs: { onPinTask: "onPinTask", onArchiveTask: "onArchiveTask" }, decls: 8, vars: 6, consts: [[1, "checkbox"], ["type", "checkbox", "disabled", "true", "name", "checked", 3, "defaultChecked"], [1, "checkbox-custom", 3, "click"], [1, "title"], ["type", "text", "readonly", "true", "placeholder", "Input title", 3, "value"], [1, "actions"], [3, "click", 4, "ngIf"], [3, "click"], [1, "icon-star"]], template: function TaskComponent_Template(rf, ctx) { if (rf & 1) {
+TaskComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: TaskComponent, selectors: [["app-task"]], inputs: { task: "task" }, outputs: { onPinTask: "onPinTask", onArchiveTask: "onArchiveTask" }, decls: 8, vars: 6, consts: [[1, "checkbox", "kirpal"], ["type", "checkbox", "disabled", "true", "name", "checked", 3, "defaultChecked"], [1, "checkbox-custom", 3, "click"], [1, "title"], ["type", "text", "readonly", "true", "placeholder", "Input title", 3, "value"], [1, "actions"], [3, "click", 4, "ngIf"], [3, "click"], [1, "icon-star"]], template: function TaskComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "label", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "input", 1);
@@ -257,7 +257,7 @@ TaskComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
                 selector: 'app-task',
                 template: `
   <div class="list-item {{ task?.state }}">
-  <label class="checkbox">
+  <label class="checkbox kirpal">
     <input
       type="checkbox"
       [defaultChecked]="task?.state === 'TASK_ARCHIVED'"

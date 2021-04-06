@@ -240,7 +240,7 @@
    font-style: 400;
    color: #333;
    font-size: 16px;
-   background-color: #ee70ff;
+   background-color: #00ff0d;
  }
  h1,
  h2,
@@ -350,7 +350,7 @@
    height: 0.85em;
    transform: translate3d(-50%, -50%, 0);
    background: transparent;
-   box-shadow: #4d4d4d 0 0 0 1px inset;
+   box-shadow: #615eff 0 0 0 3px inset;
    content: '';
    display: block;
  }
@@ -984,7 +984,7 @@
    background: white;
  }
  .page.lists-show nav {
-   background: #fd5b5b;
+   background: #9b5eff;
    padding: 1.5rem 1.25rem;
    text-align: center;
  }
