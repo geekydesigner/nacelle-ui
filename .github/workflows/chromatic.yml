@@ -11,9 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     # Job steps
     steps:
-      - uses: actions/checkout@v1
-      - run: pub get
-        working-directory: ng-nacelle
+      - uses: actions/checkout@v2
+      - run: cd ng-nacelle
       - run: npm install
         #👇 Adds Chromatic as a step in the workflow
       - uses: chromaui/action@v1
