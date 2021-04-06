@@ -6,7 +6,7 @@ on: push
 
 defaults:
   run:
-    working-directory: 'ng-nacelle'
+    working-directory: ./ng-nacelle
 
 # List of jobs
 jobs:
