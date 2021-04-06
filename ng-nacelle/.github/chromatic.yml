@@ -12,6 +12,7 @@ jobs:
     # Job steps
     steps:
       - uses: actions/checkout@v1
+        working-directory: ng-nacelle
       - run: npm install
         #👇 Adds Chromatic as a step in the workflow
       - uses: chromaui/action@v1
