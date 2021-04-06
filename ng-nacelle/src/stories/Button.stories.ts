@@ -11,28 +11,29 @@ export default {
 } as Meta;
 
 const Template: Story<Button> = (args: Button) => ({
+  component: Button,
   props: args,
 });
 
 export const Primary = Template.bind({});
 Primary.args = {
   primary: true,
-  label: 'Default Button',
+  label: 'Button',
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
-  label: 'Default Button',
+  label: 'Button',
 };
 
 export const Large = Template.bind({});
 Large.args = {
   size: 'large',
-  label: 'Default Button',
+  label: 'Button',
 };
 
 export const Small = Template.bind({});
 Small.args = {
   size: 'small',
-  label: 'Default Button',
+  label: 'Button',
 };
