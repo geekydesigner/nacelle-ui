@@ -4,10 +4,6 @@ name: 'Chromatic Deployment'
 # Event for the workflow
 on: push
 
-defaults:
-  run:
-    working-directory: ./ng-nacelle
-
 # List of jobs
 jobs:
   test:
@@ -16,6 +12,8 @@ jobs:
     # Job steps
     steps:
       - uses: actions/checkout@v1
+        with:
+          path: ng-nacelle
       - run: npm install
         #👇 Adds Chromatic as a step in the workflow
       - uses: chromaui/action@v1
