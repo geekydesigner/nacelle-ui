@@ -351,7 +351,7 @@
    height: 0.85em;
    transform: translate3d(-50%, -50%, 0);
    background: transparent;
-   box-shadow: #606060 0 0 0 3px inset;
+   box-shadow: #7e80ff 0 0 0 3px inset;
    content: '';
    display: block;
  }
