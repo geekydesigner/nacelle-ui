@@ -5,7 +5,7 @@ import { Task } from '../models/task.model';
   selector: 'app-task',
   template: `
   <div class="list-item {{ task?.state }}">
-  <label class="checkbox">
+  <label class="checkbox kirpal">
     <input
       type="checkbox"
       [defaultChecked]="task?.state === 'TASK_ARCHIVED'"
