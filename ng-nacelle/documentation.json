@@ -1224,14 +1224,6 @@
                 "name": "Default",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/components/task.stories.ts",
-                "type": "",
-                "defaultValue": "Template.bind({})"
-            },
-            {
-                "name": "Default",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
                 "file": "src/app/components/pure-inbox-screen.stories.ts",
                 "type": "",
                 "defaultValue": "Template.bind({})"
@@ -1241,6 +1233,14 @@
                 "ctype": "miscellaneous",
                 "subtype": "variable",
                 "file": "src/app/components/pure-task-list.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/components/task.stories.ts",
                 "type": "",
                 "defaultValue": "Template.bind({})"
             },
@@ -1383,9 +1383,9 @@
                 "name": "Template",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/components/pure-task-list.stories.ts",
-                "type": "Story<PureTaskListComponent>",
-                "defaultValue": "args => ({\n  component: PureTaskListComponent,\n  props: {\n    ...args,\n    onPinTask: TaskStories.actionsData.onPinTask,\n    onArchiveTask: TaskStories.actionsData.onArchiveTask,\n  },\n  template: `\n    <div style=\"padding: 3rem\">\n      <app-pure-task-list [tasks]=\"tasks\" [loading]=loading (onPinTask)=\"onPinTask($event)\" (onArchiveTask)=\"onArchiveTask($event)\"></app-pure-task-list>\n    </div> `,\n})"
+                "file": "src/app/components/pure-inbox-screen.stories.ts",
+                "type": "Story<PureInboxScreenComponent>",
+                "defaultValue": "args => ({\n  component: PureInboxScreenComponent,\n  props: args,\n})"
             },
             {
                 "name": "Template",
@@ -1423,9 +1423,9 @@
                 "name": "Template",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/components/pure-inbox-screen.stories.ts",
-                "type": "Story<PureInboxScreenComponent>",
-                "defaultValue": "args => ({\n  component: PureInboxScreenComponent,\n  props: args,\n})"
+                "file": "src/app/components/pure-task-list.stories.ts",
+                "type": "Story<PureTaskListComponent>",
+                "defaultValue": "args => ({\n  component: PureTaskListComponent,\n  props: {\n    ...args,\n    onPinTask: TaskStories.actionsData.onPinTask,\n    onArchiveTask: TaskStories.actionsData.onArchiveTask,\n  },\n  template: `\n    <div style=\"padding: 3rem\">\n      <app-pure-task-list [tasks]=\"tasks\" [loading]=loading (onPinTask)=\"onPinTask($event)\" (onArchiveTask)=\"onArchiveTask($event)\"></app-pure-task-list>\n    </div> `,\n})"
             },
             {
                 "name": "WithPinnedTasks",

@@ -127,6 +127,398 @@ class DistinctUntilChangedSubscriber extends _Subscriber__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "/wON":
+/*!**************************************************************************************!*\
+  !*** ./node_modules/@ngxs/logger-plugin/__ivy_ngcc__/fesm2015/ngxs-logger-plugin.js ***!
+  \**************************************************************************************/
+/*! exports provided: NGXS_LOGGER_PLUGIN_OPTIONS, NgxsLoggerPlugin, NgxsLoggerPluginModule, ɵa, ɵb */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NGXS_LOGGER_PLUGIN_OPTIONS", function() { return NGXS_LOGGER_PLUGIN_OPTIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsLoggerPlugin", function() { return NgxsLoggerPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsLoggerPluginModule", function() { return NgxsLoggerPluginModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵa", function() { return USER_OPTIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵb", function() { return loggerOptionsFactory; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ngxs_store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @ngxs/store */ "AcyG");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+
+
+
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+
+const repeat = (/**
+ * @param {?} str
+ * @param {?} times
+ * @return {?}
+ */
+(str, times) => new Array(times + 1).join(str));
+/** @type {?} */
+const pad = (/**
+ * @param {?} num
+ * @param {?} maxLength
+ * @return {?}
+ */
+(num, maxLength) => repeat('0', maxLength - num.toString().length) + num);
+/**
+ * @param {?} time
+ * @return {?}
+ */
+function formatTime(time) {
+    return (pad(time.getHours(), 2) +
+        `:` +
+        pad(time.getMinutes(), 2) +
+        `:` +
+        pad(time.getSeconds(), 2) +
+        `.` +
+        pad(time.getMilliseconds(), 3));
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class ActionLogger {
+    /**
+     * @param {?} action
+     * @param {?} store
+     * @param {?} logWriter
+     */
+    constructor(action, store, logWriter) {
+        this.action = action;
+        this.store = store;
+        this.logWriter = logWriter;
+    }
+    /**
+     * @param {?} state
+     * @return {?}
+     */
+    dispatched(state) {
+        /** @type {?} */
+        const actionName = Object(_ngxs_store__WEBPACK_IMPORTED_MODULE_1__["getActionTypeFromInstance"])(this.action);
+        /** @type {?} */
+        const formattedTime = formatTime(new Date());
+        /** @type {?} */
+        const message = `action ${actionName} @ ${formattedTime}`;
+        this.logWriter.startGroup(message);
+        // print payload only if at least one property is supplied
+        if (this._hasPayload(this.action)) {
+            this.logWriter.logGrey('payload', Object.assign({}, this.action));
+        }
+        this.logWriter.logGrey('prev state', state);
+    }
+    /**
+     * @param {?} nextState
+     * @return {?}
+     */
+    completed(nextState) {
+        this.logWriter.logGreen('next state', nextState);
+        this.logWriter.endGroup();
+    }
+    /**
+     * @param {?} error
+     * @return {?}
+     */
+    errored(error) {
+        this.logWriter.logRedish('next state after error', this.store.snapshot());
+        this.logWriter.logRedish('error', error);
+        this.logWriter.endGroup();
+    }
+    /**
+     * @private
+     * @param {?} event
+     * @return {?}
+     */
+    _hasPayload(event) {
+        /** @type {?} */
+        const nonEmptyProperties = this._getNonEmptyProperties(event);
+        return nonEmptyProperties.length > 0;
+    }
+    /**
+     * @private
+     * @param {?} event
+     * @return {?}
+     */
+    _getNonEmptyProperties(event) {
+        /** @type {?} */
+        const keys = Object.keys(event);
+        /** @type {?} */
+        const values = keys.map((/**
+         * @param {?} key
+         * @return {?}
+         */
+        key => event[key]));
+        return values.filter((/**
+         * @param {?} value
+         * @return {?}
+         */
+        value => value !== undefined));
+    }
+}
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class LogWriter {
+    /**
+     * @param {?} options
+     */
+    constructor(options) {
+        this.options = options;
+        this.options = this.options || (/** @type {?} */ ({}));
+        this.logger = options.logger || console;
+    }
+    /**
+     * @param {?} message
+     * @return {?}
+     */
+    startGroup(message) {
+        /** @type {?} */
+        const startGroupFn = this.options.collapsed
+            ? this.logger.groupCollapsed
+            : this.logger.group;
+        try {
+            startGroupFn.call(this.logger, message);
+        }
+        catch (e) {
+            console.log(message);
+        }
+    }
+    /**
+     * @return {?}
+     */
+    endGroup() {
+        try {
+            this.logger.groupEnd();
+        }
+        catch (e) {
+            this.logger.log('—— log end ——');
+        }
+    }
+    /**
+     * @param {?} title
+     * @param {?} payload
+     * @return {?}
+     */
+    logGrey(title, payload) {
+        /** @type {?} */
+        const greyStyle = 'color: #9E9E9E; font-weight: bold';
+        this.log(title, greyStyle, payload);
+    }
+    /**
+     * @param {?} title
+     * @param {?} payload
+     * @return {?}
+     */
+    logGreen(title, payload) {
+        /** @type {?} */
+        const greenStyle = 'color: #4CAF50; font-weight: bold';
+        this.log(title, greenStyle, payload);
+    }
+    /**
+     * @param {?} title
+     * @param {?} payload
+     * @return {?}
+     */
+    logRedish(title, payload) {
+        /** @type {?} */
+        const redishStyle = 'color: #FD8182; font-weight: bold';
+        this.log(title, redishStyle, payload);
+    }
+    /**
+     * @param {?} title
+     * @param {?} color
+     * @param {?} payload
+     * @return {?}
+     */
+    log(title, color, payload) {
+        if (this.isIE()) {
+            this.logger.log(title, payload);
+        }
+        else {
+            this.logger.log('%c ' + title, color, payload);
+        }
+    }
+    /**
+     * @return {?}
+     */
+    isIE() {
+        /** @type {?} */
+        const ua = typeof window !== 'undefined' && window.navigator.userAgent
+            ? window.navigator.userAgent
+            : '';
+        /** @type {?} */
+        let msIE = false;
+        /** @type {?} */
+        const oldIE = ua.indexOf('MSIE ');
+        /** @type {?} */
+        const newIE = ua.indexOf('Trident/');
+        if (oldIE > -1 || newIE > -1) {
+            msIE = true;
+        }
+        return msIE;
+    }
+}
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @record
+ */
+function NgxsLoggerPluginOptions() { }
+if (false) {}
+/** @type {?} */
+const NGXS_LOGGER_PLUGIN_OPTIONS = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('NGXS_LOGGER_PLUGIN_OPTIONS');
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class NgxsLoggerPlugin {
+    /**
+     * @param {?} _options
+     * @param {?} _injector
+     */
+    constructor(_options, _injector) {
+        this._options = _options;
+        this._injector = _injector;
+    }
+    /**
+     * @param {?} state
+     * @param {?} event
+     * @param {?} next
+     * @return {?}
+     */
+    handle(state, event, next) {
+        if (this._options.disabled || !(/** @type {?} */ (this._options.filter))(event, state)) {
+            return next(state, event);
+        }
+        this._logWriter = this._logWriter || new LogWriter(this._options);
+        // Retrieve lazily to avoid cyclic dependency exception
+        this._store = this._store || this._injector.get(_ngxs_store__WEBPACK_IMPORTED_MODULE_1__["Store"]);
+        /** @type {?} */
+        const actionLogger = new ActionLogger(event, this._store, this._logWriter);
+        actionLogger.dispatched(state);
+        return next(state, event).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])((/**
+         * @param {?} nextState
+         * @return {?}
+         */
+        nextState => {
+            actionLogger.completed(nextState);
+        })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["catchError"])((/**
+         * @param {?} error
+         * @return {?}
+         */
+        error => {
+            actionLogger.errored(error);
+            throw error;
+        })));
+    }
+}
+NgxsLoggerPlugin.ɵfac = function NgxsLoggerPlugin_Factory(t) { return new (t || NgxsLoggerPlugin)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NGXS_LOGGER_PLUGIN_OPTIONS), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"])); };
+NgxsLoggerPlugin.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: NgxsLoggerPlugin, factory: NgxsLoggerPlugin.ɵfac });
+/** @nocollapse */
+NgxsLoggerPlugin.ctorParameters = () => [
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [NGXS_LOGGER_PLUGIN_OPTIONS,] }] },
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsLoggerPlugin, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [NGXS_LOGGER_PLUGIN_OPTIONS]
+            }] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+const USER_OPTIONS = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('LOGGER_USER_OPTIONS');
+/**
+ * @param {?} options
+ * @return {?}
+ */
+function loggerOptionsFactory(options) {
+    /** @type {?} */
+    const defaultLoggerOptions = {
+        logger: console,
+        collapsed: false,
+        disabled: false,
+        filter: (/**
+         * @return {?}
+         */
+        () => true)
+    };
+    return Object.assign({}, defaultLoggerOptions, options);
+}
+class NgxsLoggerPluginModule {
+    /**
+     * @param {?=} options
+     * @return {?}
+     */
+    static forRoot(options) {
+        return {
+            ngModule: NgxsLoggerPluginModule,
+            providers: [
+                {
+                    provide: _ngxs_store__WEBPACK_IMPORTED_MODULE_1__["NGXS_PLUGINS"],
+                    useClass: NgxsLoggerPlugin,
+                    multi: true
+                },
+                {
+                    provide: USER_OPTIONS,
+                    useValue: options
+                },
+                {
+                    provide: NGXS_LOGGER_PLUGIN_OPTIONS,
+                    useFactory: loggerOptionsFactory,
+                    deps: [USER_OPTIONS]
+                }
+            ]
+        };
+    }
+}
+NgxsLoggerPluginModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: NgxsLoggerPluginModule });
+NgxsLoggerPluginModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ factory: function NgxsLoggerPluginModule_Factory(t) { return new (t || NgxsLoggerPluginModule)(); } });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsLoggerPluginModule, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"]
+    }], null, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+
+
+//# sourceMappingURL=ngxs-logger-plugin.js.map
+
+/***/ }),
+
 /***/ "02Lk":
 /*!*******************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/operators/distinct.js ***!
@@ -2263,6 +2655,3742 @@ function partition(predicate, thisArg) {
     ];
 }
 //# sourceMappingURL=partition.js.map
+
+/***/ }),
+
+/***/ "AcyG":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@ngxs/store/__ivy_ngcc__/fesm2015/ngxs-store.js ***!
+  \**********************************************************************/
+/*! exports provided: Action, Actions, InitState, NGXS_PLUGINS, NgxsModule, NgxsSimpleChange, NoopNgxsExecutionStrategy, Select, Selector, SelectorOptions, State, StateStream, StateToken, Store, UpdateState, actionMatcher, createSelector, ensureSelectorMetadata, ensureStoreMetadata, getActionTypeFromInstance, getSelectorMetadata, getStoreMetadata, getValue, ofAction, ofActionCanceled, ofActionCompleted, ofActionDispatched, ofActionErrored, ofActionSuccessful, setValue, ɵa, ɵb, ɵba, ɵbb, ɵbc, ɵbd, ɵc, ɵd, ɵe, ɵf, ɵg, ɵh, ɵi, ɵj, ɵk, ɵl, ɵm, ɵn, ɵo, ɵp, ɵq, ɵr, ɵs, ɵt, ɵw, ɵx, ɵy, ɵz */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Action", function() { return Action; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Actions", function() { return Actions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InitState", function() { return InitState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NGXS_PLUGINS", function() { return NGXS_PLUGINS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsModule", function() { return NgxsModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsSimpleChange", function() { return NgxsSimpleChange; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoopNgxsExecutionStrategy", function() { return NoopNgxsExecutionStrategy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Select", function() { return Select; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Selector", function() { return Selector; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SelectorOptions", function() { return SelectorOptions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "State", function() { return State; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StateStream", function() { return StateStream; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StateToken", function() { return StateToken; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateState", function() { return UpdateState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actionMatcher", function() { return actionMatcher; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createSelector", function() { return createSelector; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureSelectorMetadata", function() { return ensureSelectorMetadata$1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ensureStoreMetadata", function() { return ensureStoreMetadata$1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getActionTypeFromInstance", function() { return getActionTypeFromInstance; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSelectorMetadata", function() { return getSelectorMetadata$1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStoreMetadata", function() { return getStoreMetadata$1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValue", function() { return getValue; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ofAction", function() { return ofAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ofActionCanceled", function() { return ofActionCanceled; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ofActionCompleted", function() { return ofActionCompleted; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ofActionDispatched", function() { return ofActionDispatched; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ofActionErrored", function() { return ofActionErrored; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ofActionSuccessful", function() { return ofActionSuccessful; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setValue", function() { return setValue; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵa", function() { return OrderedSubject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵb", function() { return InternalActions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵba", function() { return SelectFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵbb", function() { return LifecycleStateManager; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵbc", function() { return NgxsFeatureModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵbd", function() { return DispatchOutsideZoneNgxsExecutionStrategy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵc", function() { return ROOT_STATE_TOKEN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵd", function() { return FEATURE_STATE_TOKEN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵe", function() { return NG_TEST_MODE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵf", function() { return NG_DEV_MODE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵg", function() { return SELECTOR_META_KEY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵh", function() { return NgxsConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵi", function() { return mergeDeep; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵj", function() { return NGXS_EXECUTION_STRATEGY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵk", function() { return NgxsRootModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵl", function() { return StateFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵm", function() { return InternalDispatchedActionResults; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵn", function() { return InternalDispatcher; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵo", function() { return StateContextFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵp", function() { return InternalStateOperations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵq", function() { return PluginManager; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵr", function() { return InternalNgxsExecutionStrategy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵs", function() { return ConfigValidator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵt", function() { return HostEnvironment; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵw", function() { return ensureStoreMetadata; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵx", function() { return getStoreMetadata; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵy", function() { return ensureSelectorMetadata; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵz", function() { return getSelectorMetadata; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @ngxs/store/internals */ "z5Zb");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "qCKp");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+
+
+
+
+
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @enum {string} */
+
+
+const VALIDATION_CODE = {
+    STATE_NAME: 'STATE_NAME',
+    STATE_UNIQUE: 'STATE_UNIQUE',
+    STATE_NAME_PROPERTY: 'STATE_NAME_PROPERTY',
+    STATE_DECORATOR: 'STATE_DECORATOR',
+    INCORRECT_PRODUCTION: 'INCORRECT_PRODUCTION',
+    INCORRECT_DEVELOPMENT: 'INCORRECT_DEVELOPMENT',
+    SELECT_FACTORY_NOT_CONNECTED: 'SELECT_FACTORY_NOT_CONNECTED',
+    ACTION_DECORATOR: 'ACTION_DECORATOR',
+    SELECTOR_DECORATOR: 'SELECTOR_DECORATOR',
+    ZONE_WARNING: 'ZONE_WARNING',
+    PATCHING_ARRAY: 'PATCHING_ARRAY',
+    PATCHING_PRIMITIVE: 'PATCHING_PRIMITIVE',
+    UNDECORATED_STATE_IN_IVY: 'UNDECORATED_STATE_IN_IVY',
+};
+/** @type {?} */
+const CONFIG_MESSAGES = {
+    [VALIDATION_CODE.STATE_NAME]: (/**
+     * @param {?} name
+     * @return {?}
+     */
+    (name) => `${name} is not a valid state name. It needs to be a valid object property name.`),
+    [VALIDATION_CODE.STATE_NAME_PROPERTY]: (/**
+     * @return {?}
+     */
+    () => `States must register a 'name' property`),
+    [VALIDATION_CODE.STATE_UNIQUE]: (/**
+     * @param {?} current
+     * @param {?} newName
+     * @param {?} oldName
+     * @return {?}
+     */
+    (current, newName, oldName) => `State name '${current}' from ${newName} already exists in ${oldName}`),
+    [VALIDATION_CODE.STATE_DECORATOR]: (/**
+     * @return {?}
+     */
+    () => 'States must be decorated with @State() decorator'),
+    [VALIDATION_CODE.INCORRECT_PRODUCTION]: (/**
+     * @return {?}
+     */
+    () => 'Angular is running in production mode but NGXS is still running in the development mode!\n' +
+        'Please set developmentMode to false on the NgxsModule options when in production mode.\n' +
+        'NgxsModule.forRoot(states, { developmentMode: !environment.production })'),
+    [VALIDATION_CODE.INCORRECT_DEVELOPMENT]: (/**
+     * @return {?}
+     */
+    () => 'RECOMMENDATION: Set developmentMode to true on the NgxsModule when Angular is running in development mode.\n' +
+        'NgxsModule.forRoot(states, { developmentMode: !environment.production })'),
+    [VALIDATION_CODE.SELECT_FACTORY_NOT_CONNECTED]: (/**
+     * @return {?}
+     */
+    () => 'You have forgotten to import the NGXS module!'),
+    [VALIDATION_CODE.ACTION_DECORATOR]: (/**
+     * @return {?}
+     */
+    () => '@Action() decorator cannot be used with static methods'),
+    [VALIDATION_CODE.SELECTOR_DECORATOR]: (/**
+     * @return {?}
+     */
+    () => 'Selectors only work on methods'),
+    [VALIDATION_CODE.ZONE_WARNING]: (/**
+     * @return {?}
+     */
+    () => 'Your application was bootstrapped with nooped zone and your execution strategy requires an actual NgZone!\n' +
+        'Please set the value of the executionStrategy property to NoopNgxsExecutionStrategy.\n' +
+        'NgxsModule.forRoot(states, { executionStrategy: NoopNgxsExecutionStrategy })'),
+    [VALIDATION_CODE.PATCHING_ARRAY]: (/**
+     * @return {?}
+     */
+    () => 'Patching arrays is not supported.'),
+    [VALIDATION_CODE.PATCHING_PRIMITIVE]: (/**
+     * @return {?}
+     */
+    () => 'Patching primitives is not supported.'),
+    [VALIDATION_CODE.UNDECORATED_STATE_IN_IVY]: (/**
+     * @param {?} name
+     * @return {?}
+     */
+    (name) => `'${name}' class should be decorated with @Injectable() right after the @State() decorator`)
+};
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class DispatchOutsideZoneNgxsExecutionStrategy {
+    /**
+     * @param {?} _ngZone
+     * @param {?} _platformId
+     */
+    constructor(_ngZone, _platformId) {
+        this._ngZone = _ngZone;
+        this._platformId = _platformId;
+        this.verifyZoneIsNotNooped(this._ngZone);
+    }
+    /**
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    enter(func) {
+        if (Object(_angular_common__WEBPACK_IMPORTED_MODULE_2__["isPlatformServer"])(this._platformId)) {
+            return this.runInsideAngular(func);
+        }
+        return this.runOutsideAngular(func);
+    }
+    /**
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    leave(func) {
+        return this.runInsideAngular(func);
+    }
+    /**
+     * @private
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    runInsideAngular(func) {
+        if (_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"].isInAngularZone()) {
+            return func();
+        }
+        return this._ngZone.run(func);
+    }
+    /**
+     * @private
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    runOutsideAngular(func) {
+        if (_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"].isInAngularZone()) {
+            return this._ngZone.runOutsideAngular(func);
+        }
+        return func();
+    }
+    /**
+     * @private
+     * @param {?} ngZone
+     * @return {?}
+     */
+    verifyZoneIsNotNooped(ngZone) {
+        // `NoopNgZone` is not exposed publicly as it doesn't expect
+        // to be used outside of the core Angular code, thus we just have
+        // to check if the zone doesn't extend or instanceof `NgZone`
+        if (ngZone instanceof _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"]) {
+            return;
+        }
+        console.warn(CONFIG_MESSAGES[VALIDATION_CODE.ZONE_WARNING]());
+    }
+}
+DispatchOutsideZoneNgxsExecutionStrategy.ɵfac = function DispatchOutsideZoneNgxsExecutionStrategy_Factory(t) { return new (t || DispatchOutsideZoneNgxsExecutionStrategy)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["PLATFORM_ID"])); };
+DispatchOutsideZoneNgxsExecutionStrategy.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: DispatchOutsideZoneNgxsExecutionStrategy, factory: DispatchOutsideZoneNgxsExecutionStrategy.ɵfac });
+/** @nocollapse */
+DispatchOutsideZoneNgxsExecutionStrategy.ctorParameters = () => [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"] },
+    { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["PLATFORM_ID"],] }] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](DispatchOutsideZoneNgxsExecutionStrategy, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"] }, { type: String, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["PLATFORM_ID"]]
+            }] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+const ROOT_STATE_TOKEN = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('ROOT_STATE_TOKEN');
+/** @type {?} */
+const FEATURE_STATE_TOKEN = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('FEATURE_STATE_TOKEN');
+/** @type {?} */
+const NGXS_PLUGINS = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('NGXS_PLUGINS');
+/** @type {?} */
+const NG_TEST_MODE = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('NG_TEST_MODE');
+/** @type {?} */
+const NG_DEV_MODE = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('NG_DEV_MODE');
+/** @type {?} */
+const META_KEY = 'NGXS_META';
+/** @type {?} */
+const META_OPTIONS_KEY = 'NGXS_OPTIONS_META';
+/** @type {?} */
+const SELECTOR_META_KEY = 'NGXS_SELECTOR_META';
+/**
+ * The NGXS config settings.
+ */
+class NgxsConfig {
+    constructor() {
+        /**
+         * Defining the default state before module initialization
+         * This is convenient if we need to create a define our own set of states.
+         * @deprecated will be removed after v4
+         * (default: {})
+         */
+        this.defaultsState = {};
+        /**
+         * Defining shared selector options
+         */
+        this.selectorOptions = {
+            injectContainerState: true,
+            // TODO: default is true in v3, will change in v4
+            suppressErrors: true // TODO: default is true in v3, will change in v4
+        };
+        this.compatibility = {
+            strictContentSecurityPolicy: false
+        };
+        this.executionStrategy = DispatchOutsideZoneNgxsExecutionStrategy;
+    }
+}
+NgxsConfig.ɵfac = function NgxsConfig_Factory(t) { return new (t || NgxsConfig)(); };
+NgxsConfig.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: NgxsConfig, factory: NgxsConfig.ɵfac });
+/** @nocollapse */
+NgxsConfig.ctorParameters = () => [];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsConfig, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return []; }, null); })();
+if (false) {}
+/**
+ * State context provided to the actions in the state.
+ * @record
+ * @template T
+ */
+function StateContext() { }
+if (false) {}
+/**
+ * Plugin interface
+ * @record
+ */
+function NgxsPlugin() { }
+if (false) {}
+/**
+ * Options that can be provided to the store.
+ * @record
+ * @template T
+ */
+function StoreOptions() { }
+if (false) {}
+/**
+ * Represents a basic change from a previous to a new value for a single state instance.
+ * Passed as a value in a NgxsSimpleChanges object to the ngxsOnChanges hook.
+ * @template T
+ */
+class NgxsSimpleChange {
+    /**
+     * @param {?} previousValue
+     * @param {?} currentValue
+     * @param {?} firstChange
+     */
+    constructor(previousValue, currentValue, firstChange) {
+        this.previousValue = previousValue;
+        this.currentValue = currentValue;
+        this.firstChange = firstChange;
+    }
+}
+if (false) {}
+/**
+ * On init interface
+ * @record
+ */
+function NgxsOnInit() { }
+if (false) {}
+/**
+ * On change interface
+ * @record
+ */
+function NgxsOnChanges() { }
+if (false) {}
+/**
+ * After bootstrap interface
+ * @record
+ */
+function NgxsAfterBootstrap() { }
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/*
+ * Internal execution strategy injection token
+ */
+/** @type {?} */
+const NGXS_EXECUTION_STRATEGY = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('NGXS_EXECUTION_STRATEGY');
+/**
+ * @record
+ */
+function NgxsExecutionStrategy() { }
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Returns the type from an action instance/class.
+ * @ignore
+ * @param {?} action
+ * @return {?}
+ */
+function getActionTypeFromInstance(action) {
+    if (action.constructor && action.constructor.type) {
+        return action.constructor.type;
+    }
+    else {
+        return action.type;
+    }
+}
+/**
+ * Matches a action
+ * @ignore
+ * @param {?} action1
+ * @return {?}
+ */
+function actionMatcher(action1) {
+    /** @type {?} */
+    const type1 = getActionTypeFromInstance(action1);
+    return (/**
+     * @param {?} action2
+     * @return {?}
+     */
+    function (action2) {
+        return type1 === getActionTypeFromInstance(action2);
+    });
+}
+/**
+ * Set a deeply nested value. Example:
+ *
+ *   setValue({ foo: { bar: { eat: false } } },
+ *      'foo.bar.eat', true) //=> { foo: { bar: { eat: true } } }
+ *
+ * While it traverses it also creates new objects from top down.
+ *
+ * @ignore
+ * @type {?}
+ */
+const setValue = (/**
+ * @param {?} obj
+ * @param {?} prop
+ * @param {?} val
+ * @return {?}
+ */
+(obj, prop, val) => {
+    obj = Object.assign({}, obj);
+    /** @type {?} */
+    const split = prop.split('.');
+    /** @type {?} */
+    const lastIndex = split.length - 1;
+    split.reduce((/**
+     * @param {?} acc
+     * @param {?} part
+     * @param {?} index
+     * @return {?}
+     */
+    (acc, part, index) => {
+        if (index === lastIndex) {
+            acc[part] = val;
+        }
+        else {
+            acc[part] = Array.isArray(acc[part]) ? acc[part].slice() : Object.assign({}, acc[part]);
+        }
+        return acc && acc[part];
+    }), obj);
+    return obj;
+});
+/**
+ * Get a deeply nested value. Example:
+ *
+ *    getValue({ foo: bar: [] }, 'foo.bar') //=> []
+ *
+ * @ignore
+ * @type {?}
+ */
+const getValue = (/**
+ * @param {?} obj
+ * @param {?} prop
+ * @return {?}
+ */
+(obj, prop) => prop.split('.').reduce((/**
+ * @param {?} acc
+ * @param {?} part
+ * @return {?}
+ */
+(acc, part) => acc && acc[part]), obj));
+/**
+ * Simple object check.
+ *
+ *    isObject({a:1}) //=> true
+ *    isObject(1) //=> false
+ *
+ * @ignore
+ * @type {?}
+ */
+const isObject = (/**
+ * @param {?} item
+ * @return {?}
+ */
+(item) => {
+    return item && typeof item === 'object' && !Array.isArray(item);
+});
+/**
+ * Deep merge two objects.
+ *
+ *    mergeDeep({a:1, b:{x: 1, y:2}}, {b:{x: 3}, c:4}) //=> {a:1, b:{x:3, y:2}, c:4}
+ *
+ * \@param base base object onto which `sources` will be applied
+ * @type {?}
+ */
+const mergeDeep = (/**
+ * @param {?} base
+ * @param {...?} sources
+ * @return {?}
+ */
+(base, ...sources) => {
+    if (!sources.length)
+        return base;
+    /** @type {?} */
+    const source = sources.shift();
+    if (isObject(base) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!base[key])
+                    Object.assign(base, { [key]: {} });
+                mergeDeep(base[key], source[key]);
+            }
+            else {
+                Object.assign(base, { [key]: source[key] });
+            }
+        }
+    }
+    return mergeDeep(base, ...sources);
+});
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @record
+ * @template T, U
+ */
+function StateClassInternal() { }
+if (false) {}
+/**
+ * @record
+ * @template T
+ */
+function StateOperations() { }
+if (false) {}
+/**
+ * @record
+ */
+function MetaDataModel() { }
+if (false) {}
+/**
+ * @record
+ */
+function RuntimeSelectorContext() { }
+if (false) {}
+/**
+ * @record
+ */
+function SharedSelectorOptions() { }
+if (false) {}
+/**
+ * @record
+ */
+function SelectorMetaDataModel() { }
+if (false) {}
+/**
+ * @record
+ */
+function MappedStore() { }
+if (false) {}
+/**
+ * @record
+ */
+function StatesAndDefaults() { }
+if (false) {}
+/**
+ * @record
+ * @template T
+ */
+function RootStateDiff() { }
+if (false) {}
+/**
+ * Ensures metadata is attached to the class and returns it.
+ *
+ * @ignore
+ * @param {?} target
+ * @return {?}
+ */
+function ensureStoreMetadata(target) {
+    if (!target.hasOwnProperty(META_KEY)) {
+        /** @type {?} */
+        const defaultMetadata = {
+            name: null,
+            actions: {},
+            defaults: {},
+            path: null,
+            /**
+             * @param {?} context
+             * @return {?}
+             */
+            makeRootSelector(context) {
+                return context.getStateGetter(defaultMetadata.name);
+            },
+            children: []
+        };
+        Object.defineProperty(target, META_KEY, { value: defaultMetadata });
+    }
+    return getStoreMetadata(target);
+}
+/**
+ * Get the metadata attached to the state class if it exists.
+ *
+ * @ignore
+ * @param {?} target
+ * @return {?}
+ */
+function getStoreMetadata(target) {
+    return (/** @type {?} */ (target[META_KEY]));
+}
+/**
+ * Ensures metadata is attached to the selector and returns it.
+ *
+ * @ignore
+ * @param {?} target
+ * @return {?}
+ */
+function ensureSelectorMetadata(target) {
+    if (!target.hasOwnProperty(SELECTOR_META_KEY)) {
+        /** @type {?} */
+        const defaultMetadata = {
+            makeRootSelector: null,
+            originalFn: null,
+            containerClass: null,
+            selectorName: null,
+            getSelectorOptions: (/**
+             * @return {?}
+             */
+            () => ({}))
+        };
+        Object.defineProperty(target, SELECTOR_META_KEY, { value: defaultMetadata });
+    }
+    return getSelectorMetadata(target);
+}
+/**
+ * Get the metadata attached to the selector if it exists.
+ *
+ * @ignore
+ * @param {?} target
+ * @return {?}
+ */
+function getSelectorMetadata(target) {
+    return target[SELECTOR_META_KEY];
+}
+/**
+ * Get a deeply nested value. Example:
+ *
+ *    getValue({ foo: bar: [] }, 'foo.bar') //=> []
+ *
+ * Note: This is not as fast as the `fastPropGetter` but is strict Content Security Policy compliant.
+ * See perf hit: https://jsperf.com/fast-value-getter-given-path/1
+ *
+ * @ignore
+ * @param {?} paths
+ * @return {?}
+ */
+function compliantPropGetter(paths) {
+    /** @type {?} */
+    const copyOfPaths = paths.slice();
+    return (/**
+     * @param {?} obj
+     * @return {?}
+     */
+    obj => copyOfPaths.reduce((/**
+     * @param {?} acc
+     * @param {?} part
+     * @return {?}
+     */
+    (acc, part) => acc && acc[part]), obj));
+}
+/**
+ * The generated function is faster than:
+ * - pluck (Observable operator)
+ * - memoize
+ *
+ * @ignore
+ * @param {?} paths
+ * @return {?}
+ */
+function fastPropGetter(paths) {
+    /** @type {?} */
+    const segments = paths;
+    /** @type {?} */
+    let seg = 'store.' + segments[0];
+    /** @type {?} */
+    let i = 0;
+    /** @type {?} */
+    const l = segments.length;
+    /** @type {?} */
+    let expr = seg;
+    while (++i < l) {
+        expr = expr + ' && ' + (seg = seg + '.' + segments[i]);
+    }
+    /** @type {?} */
+    const fn = new Function('store', 'return ' + expr + ';');
+    return (/** @type {?} */ (fn));
+}
+/**
+ * Get a deeply nested value. Example:
+ *
+ *    getValue({ foo: bar: [] }, 'foo.bar') //=> []
+ *
+ * @ignore
+ * @param {?} paths
+ * @param {?} config
+ * @return {?}
+ */
+function propGetter(paths, config) {
+    if (config && config.compatibility && config.compatibility.strictContentSecurityPolicy) {
+        return compliantPropGetter(paths);
+    }
+    else {
+        return fastPropGetter(paths);
+    }
+}
+/**
+ * Given an array of states, it will return a object graph. Example:
+ *    const states = [
+ *      Cart,
+ *      CartSaved,
+ *      CartSavedItems
+ *    ]
+ *
+ * would return:
+ *
+ *  const graph = {
+ *    cart: ['saved'],
+ *    saved: ['items'],
+ *    items: []
+ *  };
+ *
+ * @ignore
+ * @param {?} stateClasses
+ * @return {?}
+ */
+function buildGraph(stateClasses) {
+    /** @type {?} */
+    const findName = (/**
+     * @param {?} stateClass
+     * @return {?}
+     */
+    (stateClass) => {
+        /** @type {?} */
+        const meta = stateClasses.find((/**
+         * @param {?} g
+         * @return {?}
+         */
+        g => g === stateClass));
+        if (!meta) {
+            throw new Error(`Child state not found: ${stateClass}. \r\nYou may have forgotten to add states to module`);
+        }
+        return (/** @type {?} */ ((/** @type {?} */ (meta[META_KEY])).name));
+    });
+    return stateClasses.reduce((/**
+     * @param {?} result
+     * @param {?} stateClass
+     * @return {?}
+     */
+    (result, stateClass) => {
+        const { name, children } = (/** @type {?} */ (stateClass[META_KEY]));
+        result[(/** @type {?} */ (name))] = (children || []).map(findName);
+        return result;
+    }), {});
+}
+/**
+ * Given a states array, returns object graph
+ * returning the name and state metadata. Example:
+ *
+ *  const graph = {
+ *    cart: { metadata }
+ *  };
+ *
+ * @ignore
+ * @param {?} states
+ * @return {?}
+ */
+function nameToState(states) {
+    return states.reduce((/**
+     * @param {?} result
+     * @param {?} stateClass
+     * @return {?}
+     */
+    (result, stateClass) => {
+        /** @type {?} */
+        const meta = (/** @type {?} */ (stateClass[META_KEY]));
+        result[(/** @type {?} */ (meta.name))] = stateClass;
+        return result;
+    }), {});
+}
+/**
+ * Given a object relationship graph will return the full path
+ * for the child items. Example:
+ *
+ *  const graph = {
+ *    cart: ['saved'],
+ *    saved: ['items'],
+ *    items: []
+ *  };
+ *
+ * would return:
+ *
+ *  const r = {
+ *    cart: 'cart',
+ *    saved: 'cart.saved',
+ *    items: 'cart.saved.items'
+ *  };
+ *
+ * @ignore
+ * @param {?} obj
+ * @param {?=} newObj
+ * @return {?}
+ */
+function findFullParentPath(obj, newObj = {}) {
+    /** @type {?} */
+    const visit = (/**
+     * @param {?} child
+     * @param {?} keyToFind
+     * @return {?}
+     */
+    (child, keyToFind) => {
+        for (const key in child) {
+            if (child.hasOwnProperty(key) && child[key].indexOf(keyToFind) >= 0) {
+                /** @type {?} */
+                const parent = visit(child, key);
+                return parent !== null ? `${parent}.${key}` : key;
+            }
+        }
+        return null;
+    });
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            /** @type {?} */
+            const parent = visit(obj, key);
+            newObj[key] = parent ? `${parent}.${key}` : key;
+        }
+    }
+    return newObj;
+}
+/**
+ * Given a object graph, it will return the items topologically sorted Example:
+ *
+ *  const graph = {
+ *    cart: ['saved'],
+ *    saved: ['items'],
+ *    items: []
+ *  };
+ *
+ * would return:
+ *
+ *  const results = [
+ *    'items',
+ *    'saved',
+ *    'cart'
+ *  ];
+ *
+ * @ignore
+ * @param {?} graph
+ * @return {?}
+ */
+function topologicalSort(graph) {
+    /** @type {?} */
+    const sorted = [];
+    /** @type {?} */
+    const visited = {};
+    /** @type {?} */
+    const visit = (/**
+     * @param {?} name
+     * @param {?=} ancestors
+     * @return {?}
+     */
+    (name, ancestors = []) => {
+        if (!Array.isArray(ancestors)) {
+            ancestors = [];
+        }
+        ancestors.push(name);
+        visited[name] = true;
+        graph[name].forEach((/**
+         * @param {?} dep
+         * @return {?}
+         */
+        (dep) => {
+            if (ancestors.indexOf(dep) >= 0) {
+                throw new Error(`Circular dependency '${dep}' is required by '${name}': ${ancestors.join(' -> ')}`);
+            }
+            if (visited[dep]) {
+                return;
+            }
+            visit(dep, ancestors.slice(0));
+        }));
+        if (sorted.indexOf(name) < 0) {
+            sorted.push(name);
+        }
+    });
+    Object.keys(graph).forEach((/**
+     * @param {?} k
+     * @return {?}
+     */
+    k => visit(k)));
+    return sorted.reverse();
+}
+/**
+ * Returns if the parameter is a object or not.
+ *
+ * @ignore
+ * @param {?} obj
+ * @return {?}
+ */
+function isObject$1(obj) {
+    return (typeof obj === 'object' && obj !== null) || typeof obj === 'function';
+}
+/**
+ * @template T
+ * @param {?} mappedStore
+ * @param {?} diff
+ * @return {?}
+ */
+function getStateDiffChanges(mappedStore, diff) {
+    /** @type {?} */
+    const previousValue = getValue(diff.currentAppState, mappedStore.path);
+    /** @type {?} */
+    const currentValue = getValue(diff.newAppState, mappedStore.path);
+    return new NgxsSimpleChange(previousValue, currentValue, !mappedStore.isInitialised);
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @record
+ * @template T, E
+ */
+function ActionCompletion() { }
+if (false) {}
+/**
+ * RxJS operator for selecting out specific actions.
+ *
+ * This will grab actions that have just been dispatched as well as actions that have completed
+ * @param {...?} allowedTypes
+ * @return {?}
+ */
+function ofAction(...allowedTypes) {
+    return ofActionOperator(allowedTypes);
+}
+/**
+ * RxJS operator for selecting out specific actions.
+ *
+ * This will ONLY grab actions that have just been dispatched
+ * @param {...?} allowedTypes
+ * @return {?}
+ */
+function ofActionDispatched(...allowedTypes) {
+    return ofActionOperator(allowedTypes, ["DISPATCHED" /* Dispatched */]);
+}
+/**
+ * RxJS operator for selecting out specific actions.
+ *
+ * This will ONLY grab actions that have just been successfully completed
+ * @param {...?} allowedTypes
+ * @return {?}
+ */
+function ofActionSuccessful(...allowedTypes) {
+    return ofActionOperator(allowedTypes, ["SUCCESSFUL" /* Successful */]);
+}
+/**
+ * RxJS operator for selecting out specific actions.
+ *
+ * This will ONLY grab actions that have just been canceled
+ * @param {...?} allowedTypes
+ * @return {?}
+ */
+function ofActionCanceled(...allowedTypes) {
+    return ofActionOperator(allowedTypes, ["CANCELED" /* Canceled */]);
+}
+/**
+ * RxJS operator for selecting out specific actions.
+ *
+ * This will ONLY grab actions that have just been completed
+ * @param {...?} allowedTypes
+ * @return {?}
+ */
+function ofActionCompleted(...allowedTypes) {
+    /** @type {?} */
+    const allowedStatuses = [
+        "SUCCESSFUL" /* Successful */,
+        "CANCELED" /* Canceled */,
+        "ERRORED" /* Errored */
+    ];
+    return ofActionOperator(allowedTypes, allowedStatuses, mapActionResult);
+}
+/**
+ * RxJS operator for selecting out specific actions.
+ *
+ * This will ONLY grab actions that have just thrown an error
+ * @param {...?} allowedTypes
+ * @return {?}
+ */
+function ofActionErrored(...allowedTypes) {
+    return ofActionOperator(allowedTypes, ["ERRORED" /* Errored */]);
+}
+/**
+ * @param {?} allowedTypes
+ * @param {?=} statuses
+ * @param {?=} mapOperator
+ * @return {?}
+ */
+function ofActionOperator(allowedTypes, statuses, 
+// This actually could've been `OperatorFunction<ActionContext, ActionCompletion | any>`,
+// since it maps either to `ctx.action` OR to `ActionCompletion`. But `ActionCompleteion | any`
+// defaults to `any`, thus there is no sense from union type.
+mapOperator = mapAction) {
+    /** @type {?} */
+    const allowedMap = createAllowedActionTypesMap(allowedTypes);
+    /** @type {?} */
+    const allowedStatusMap = statuses && createAllowedStatusesMap(statuses);
+    return (/**
+     * @param {?} o
+     * @return {?}
+     */
+    function (o) {
+        return o.pipe(filterStatus(allowedMap, allowedStatusMap), mapOperator());
+    });
+}
+/**
+ * @param {?} allowedTypes
+ * @param {?=} allowedStatuses
+ * @return {?}
+ */
+function filterStatus(allowedTypes, allowedStatuses) {
+    return Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["filter"])((/**
+     * @param {?} ctx
+     * @return {?}
+     */
+    (ctx) => {
+        /** @type {?} */
+        const actionType = (/** @type {?} */ (getActionTypeFromInstance(ctx.action)));
+        /** @type {?} */
+        const typeMatch = allowedTypes[actionType];
+        /** @type {?} */
+        const statusMatch = allowedStatuses ? allowedStatuses[ctx.status] : true;
+        return typeMatch && statusMatch;
+    }));
+}
+/**
+ * @return {?}
+ */
+function mapActionResult() {
+    return Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])((/**
+     * @param {?} __0
+     * @return {?}
+     */
+    ({ action, status, error }) => {
+        return (/** @type {?} */ ({
+            action,
+            result: {
+                successful: "SUCCESSFUL" /* Successful */ === status,
+                canceled: "CANCELED" /* Canceled */ === status,
+                error
+            }
+        }));
+    }));
+}
+/**
+ * @template T
+ * @return {?}
+ */
+function mapAction() {
+    return Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])((/**
+     * @param {?} ctx
+     * @return {?}
+     */
+    (ctx) => (/** @type {?} */ (ctx.action))));
+}
+/**
+ * @record
+ */
+function FilterMap() { }
+/**
+ * @param {?} types
+ * @return {?}
+ */
+function createAllowedActionTypesMap(types) {
+    return types.reduce((/**
+     * @param {?} filterMap
+     * @param {?} klass
+     * @return {?}
+     */
+    (filterMap, klass) => {
+        filterMap[(/** @type {?} */ (getActionTypeFromInstance(klass)))] = true;
+        return filterMap;
+    }), (/** @type {?} */ ({})));
+}
+/**
+ * @param {?} statuses
+ * @return {?}
+ */
+function createAllowedStatusesMap(statuses) {
+    return statuses.reduce((/**
+     * @param {?} filterMap
+     * @param {?} status
+     * @return {?}
+     */
+    (filterMap, status) => {
+        filterMap[status] = true;
+        return filterMap;
+    }), (/** @type {?} */ ({})));
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Returns operator that will run
+ * `subscribe` outside of the ngxs execution context
+ * @template T
+ * @param {?} ngxsExecutionStrategy
+ * @return {?}
+ */
+function leaveNgxs(ngxsExecutionStrategy) {
+    return (/**
+     * @param {?} source
+     * @return {?}
+     */
+    (source) => {
+        return new rxjs__WEBPACK_IMPORTED_MODULE_3__["Observable"]((/**
+         * @param {?} sink
+         * @return {?}
+         */
+        (sink) => {
+            return source.subscribe({
+                /**
+                 * @param {?} value
+                 * @return {?}
+                 */
+                next(value) {
+                    ngxsExecutionStrategy.leave((/**
+                     * @return {?}
+                     */
+                    () => sink.next(value)));
+                },
+                /**
+                 * @param {?} error
+                 * @return {?}
+                 */
+                error(error) {
+                    ngxsExecutionStrategy.leave((/**
+                     * @return {?}
+                     */
+                    () => sink.error(error)));
+                },
+                /**
+                 * @return {?}
+                 */
+                complete() {
+                    ngxsExecutionStrategy.leave((/**
+                     * @return {?}
+                     */
+                    () => sink.complete()));
+                }
+            });
+        }));
+    });
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class InternalNgxsExecutionStrategy {
+    /**
+     * @param {?} _executionStrategy
+     */
+    constructor(_executionStrategy) {
+        this._executionStrategy = _executionStrategy;
+    }
+    /**
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    enter(func) {
+        return this._executionStrategy.enter(func);
+    }
+    /**
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    leave(func) {
+        return this._executionStrategy.leave(func);
+    }
+}
+InternalNgxsExecutionStrategy.ɵfac = function InternalNgxsExecutionStrategy_Factory(t) { return new (t || InternalNgxsExecutionStrategy)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NGXS_EXECUTION_STRATEGY)); };
+InternalNgxsExecutionStrategy.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: InternalNgxsExecutionStrategy, factory: InternalNgxsExecutionStrategy.ɵfac });
+/** @nocollapse */
+InternalNgxsExecutionStrategy.ctorParameters = () => [
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [NGXS_EXECUTION_STRATEGY,] }] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](InternalNgxsExecutionStrategy, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [NGXS_EXECUTION_STRATEGY]
+            }] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @enum {string} */
+const ActionStatus = {
+    Dispatched: 'DISPATCHED',
+    Successful: 'SUCCESSFUL',
+    Canceled: 'CANCELED',
+    Errored: 'ERRORED',
+};
+/**
+ * @record
+ * @template T
+ */
+function ActionContext() { }
+if (false) {}
+/**
+ * Custom Subject that ensures that subscribers are notified of values in the order that they arrived.
+ * A standard Subject does not have this guarantee.
+ * For example, given the following code:
+ * ```typescript
+ *   const subject = new Subject<string>();
+ * subject.subscribe(value => {
+ * if (value === 'start') subject.next('end');
+ * });
+ * subject.subscribe(value => { });
+ * subject.next('start');
+ * ```
+ * When `subject` is a standard `Subject<T>` the second subscriber would recieve `end` and then `start`.
+ * When `subject` is a `OrderedSubject<T>` the second subscriber would recieve `start` and then `end`.
+ * @template T
+ */
+class OrderedSubject extends rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"] {
+    constructor() {
+        super(...arguments);
+        this._itemQueue = [];
+        this._busyPushingNext = false;
+    }
+    /**
+     * @param {?=} value
+     * @return {?}
+     */
+    next(value) {
+        if (this._busyPushingNext) {
+            this._itemQueue.unshift((/** @type {?} */ (value)));
+            return;
+        }
+        this._busyPushingNext = true;
+        super.next(value);
+        while (this._itemQueue.length > 0) {
+            /** @type {?} */
+            const nextValue = this._itemQueue.pop();
+            super.next(nextValue);
+        }
+        this._busyPushingNext = false;
+    }
+}
+if (false) {}
+/**
+ * Internal Action stream that is emitted anytime an action is dispatched.
+ */
+class InternalActions extends OrderedSubject {
+}
+InternalActions.ɵfac = function InternalActions_Factory(t) { return ɵInternalActions_BaseFactory(t || InternalActions); };
+InternalActions.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: InternalActions, factory: InternalActions.ɵfac });
+const ɵInternalActions_BaseFactory = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetInheritedFactory"](InternalActions);
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](InternalActions, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], null, null); })();
+/**
+ * Action stream that is emitted anytime an action is dispatched.
+ *
+ * You can listen to this in services to react without stores.
+ */
+class Actions extends rxjs__WEBPACK_IMPORTED_MODULE_3__["Observable"] {
+    // This has to be `Observable<ActionContext>` in the v4. Because `InternalActions`
+    // is a `Subject<ActionContext>`. Leave it as `any` to avoid breaking changes
+    /**
+     * @param {?} internalActions$
+     * @param {?} internalExecutionStrategy
+     */
+    constructor(internalActions$, internalExecutionStrategy) {
+        super((/**
+         * @param {?} observer
+         * @return {?}
+         */
+        observer => {
+            /** @type {?} */
+            const childSubscription = internalActions$
+                .pipe(leaveNgxs(internalExecutionStrategy))
+                .subscribe({
+                next: (/**
+                 * @param {?} ctx
+                 * @return {?}
+                 */
+                ctx => observer.next(ctx)),
+                error: (/**
+                 * @param {?} error
+                 * @return {?}
+                 */
+                error => observer.error(error)),
+                complete: (/**
+                 * @return {?}
+                 */
+                () => observer.complete())
+            });
+            observer.add(childSubscription);
+        }));
+    }
+}
+Actions.ɵfac = function Actions_Factory(t) { return new (t || Actions)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalActions), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalNgxsExecutionStrategy)); };
+Actions.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: Actions, factory: Actions.ɵfac });
+/** @nocollapse */
+Actions.ctorParameters = () => [
+    { type: InternalActions },
+    { type: InternalNgxsExecutionStrategy }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](Actions, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: InternalActions }, { type: InternalNgxsExecutionStrategy }]; }, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Composes a array of functions from left to right. Example:
+ *
+ *      compose([fn, final])(state, action);
+ *
+ * then the funcs have a signature like:
+ *
+ *      function fn (state, action, next) {
+ *          console.log('here', state, action, next);
+ *          return next(state, action);
+ *      }
+ *
+ *      function final (state, action) {
+ *          console.log('here', state, action);
+ *          return state;
+ *      }
+ *
+ * the last function should not call `next`.
+ *
+ * @ignore
+ * @type {?}
+ */
+const compose = (/**
+ * @param {?} funcs
+ * @return {?}
+ */
+(funcs) => (/**
+ * @param {...?} args
+ * @return {?}
+ */
+(...args) => {
+    /** @type {?} */
+    const curr = (/** @type {?} */ (funcs.shift()));
+    return curr(...args, (/**
+     * @param {...?} nextArgs
+     * @return {?}
+     */
+    (...nextArgs) => compose(funcs)(...nextArgs)));
+}));
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * BehaviorSubject of the entire state.
+ * @ignore
+ */
+class StateStream extends rxjs__WEBPACK_IMPORTED_MODULE_3__["BehaviorSubject"] {
+    constructor() {
+        super({});
+    }
+}
+StateStream.ɵfac = function StateStream_Factory(t) { return new (t || StateStream)(); };
+StateStream.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: StateStream, factory: StateStream.ɵfac });
+/** @nocollapse */
+StateStream.ctorParameters = () => [];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](StateStream, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return []; }, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class PluginManager {
+    /**
+     * @param {?} _parentManager
+     * @param {?} _pluginHandlers
+     */
+    constructor(_parentManager, _pluginHandlers) {
+        this._parentManager = _parentManager;
+        this._pluginHandlers = _pluginHandlers;
+        this.plugins = [];
+        this.registerHandlers();
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    get rootPlugins() {
+        return (this._parentManager && this._parentManager.plugins) || this.plugins;
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    registerHandlers() {
+        /** @type {?} */
+        const pluginHandlers = this.getPluginHandlers();
+        this.rootPlugins.push(...pluginHandlers);
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    getPluginHandlers() {
+        /** @type {?} */
+        const handlers = this._pluginHandlers || [];
+        return handlers.map((/**
+         * @param {?} plugin
+         * @return {?}
+         */
+        (plugin) => (/** @type {?} */ ((plugin.handle ? plugin.handle.bind(plugin) : plugin)))));
+    }
+}
+PluginManager.ɵfac = function PluginManager_Factory(t) { return new (t || PluginManager)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](PluginManager, 12), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NGXS_PLUGINS, 8)); };
+PluginManager.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: PluginManager, factory: PluginManager.ɵfac });
+/** @nocollapse */
+PluginManager.ctorParameters = () => [
+    { type: PluginManager, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["SkipSelf"] }] },
+    { type: Array, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [NGXS_PLUGINS,] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PluginManager, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: PluginManager, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["SkipSelf"]
+            }] }, { type: Array, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [NGXS_PLUGINS]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Internal Action result stream that is emitted when an action is completed.
+ * This is used as a method of returning the action result to the dispatcher
+ * for the observable returned by the dispatch(...) call.
+ * The dispatcher then asynchronously pushes the result from this stream onto the main action stream as a result.
+ */
+class InternalDispatchedActionResults extends rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"] {
+}
+InternalDispatchedActionResults.ɵfac = function InternalDispatchedActionResults_Factory(t) { return ɵInternalDispatchedActionResults_BaseFactory(t || InternalDispatchedActionResults); };
+InternalDispatchedActionResults.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: InternalDispatchedActionResults, factory: InternalDispatchedActionResults.ɵfac });
+const ɵInternalDispatchedActionResults_BaseFactory = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetInheritedFactory"](InternalDispatchedActionResults);
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](InternalDispatchedActionResults, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], null, null); })();
+class InternalDispatcher {
+    /**
+     * @param {?} _errorHandler
+     * @param {?} _actions
+     * @param {?} _actionResults
+     * @param {?} _pluginManager
+     * @param {?} _stateStream
+     * @param {?} _ngxsExecutionStrategy
+     */
+    constructor(_errorHandler, _actions, _actionResults, _pluginManager, _stateStream, _ngxsExecutionStrategy) {
+        this._errorHandler = _errorHandler;
+        this._actions = _actions;
+        this._actionResults = _actionResults;
+        this._pluginManager = _pluginManager;
+        this._stateStream = _stateStream;
+        this._ngxsExecutionStrategy = _ngxsExecutionStrategy;
+    }
+    /**
+     * Dispatches event(s).
+     * @param {?} actionOrActions
+     * @return {?}
+     */
+    dispatch(actionOrActions) {
+        /** @type {?} */
+        const result = this._ngxsExecutionStrategy.enter((/**
+         * @return {?}
+         */
+        () => this.dispatchByEvents(actionOrActions)));
+        result.subscribe({
+            error: (/**
+             * @param {?} error
+             * @return {?}
+             */
+            error => this._ngxsExecutionStrategy.leave((/**
+             * @return {?}
+             */
+            () => {
+                try {
+                    this._errorHandler.handleError(error);
+                }
+                catch (_a) { }
+            })))
+        });
+        return result.pipe(leaveNgxs(this._ngxsExecutionStrategy));
+    }
+    /**
+     * @private
+     * @param {?} actionOrActions
+     * @return {?}
+     */
+    dispatchByEvents(actionOrActions) {
+        if (Array.isArray(actionOrActions)) {
+            if (actionOrActions.length === 0)
+                return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])(this._stateStream.getValue());
+            return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["forkJoin"])(actionOrActions.map((/**
+             * @param {?} action
+             * @return {?}
+             */
+            action => this.dispatchSingle(action))));
+        }
+        else {
+            return this.dispatchSingle(actionOrActions);
+        }
+    }
+    /**
+     * @private
+     * @param {?} action
+     * @return {?}
+     */
+    dispatchSingle(action) {
+        /** @type {?} */
+        const type = getActionTypeFromInstance(action);
+        if (!type) {
+            /** @type {?} */
+            const error = new Error(`This action doesn't have a type property: ${action.constructor.name}`);
+            return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["throwError"])(error);
+        }
+        /** @type {?} */
+        const prevState = this._stateStream.getValue();
+        /** @type {?} */
+        const plugins = this._pluginManager.plugins;
+        return ((/** @type {?} */ (compose([
+            ...plugins,
+            (/**
+             * @param {?} nextState
+             * @param {?} nextAction
+             * @return {?}
+             */
+            (nextState, nextAction) => {
+                if (nextState !== prevState) {
+                    this._stateStream.next(nextState);
+                }
+                /** @type {?} */
+                const actionResult$ = this.getActionResultStream(nextAction);
+                actionResult$.subscribe((/**
+                 * @param {?} ctx
+                 * @return {?}
+                 */
+                ctx => this._actions.next(ctx)));
+                this._actions.next({ action: nextAction, status: "DISPATCHED" /* Dispatched */ });
+                return this.createDispatchObservable(actionResult$);
+            })
+        ])(prevState, action)))).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["shareReplay"])());
+    }
+    /**
+     * @private
+     * @param {?} action
+     * @return {?}
+     */
+    getActionResultStream(action) {
+        return this._actionResults.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["filter"])((/**
+         * @param {?} ctx
+         * @return {?}
+         */
+        (ctx) => ctx.action === action && ctx.status !== "DISPATCHED" /* Dispatched */)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["shareReplay"])());
+    }
+    /**
+     * @private
+     * @param {?} actionResult$
+     * @return {?}
+     */
+    createDispatchObservable(actionResult$) {
+        return actionResult$
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["exhaustMap"])((/**
+         * @param {?} ctx
+         * @return {?}
+         */
+        (ctx) => {
+            switch (ctx.status) {
+                case "SUCCESSFUL" /* Successful */:
+                    return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])(this._stateStream.getValue());
+                case "ERRORED" /* Errored */:
+                    return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["throwError"])(ctx.error);
+                default:
+                    return rxjs__WEBPACK_IMPORTED_MODULE_3__["EMPTY"];
+            }
+        })))
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["shareReplay"])());
+    }
+}
+InternalDispatcher.ɵfac = function InternalDispatcher_Factory(t) { return new (t || InternalDispatcher)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ErrorHandler"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalActions), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalDispatchedActionResults), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](PluginManager), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateStream), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalNgxsExecutionStrategy)); };
+InternalDispatcher.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: InternalDispatcher, factory: InternalDispatcher.ɵfac });
+/** @nocollapse */
+InternalDispatcher.ctorParameters = () => [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ErrorHandler"] },
+    { type: InternalActions },
+    { type: InternalDispatchedActionResults },
+    { type: PluginManager },
+    { type: StateStream },
+    { type: InternalNgxsExecutionStrategy }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](InternalDispatcher, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ErrorHandler"] }, { type: InternalActions }, { type: InternalDispatchedActionResults }, { type: PluginManager }, { type: StateStream }, { type: InternalNgxsExecutionStrategy }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Object freeze code
+ * https://github.com/jsdf/deep-freeze
+ * @type {?}
+ */
+const deepFreeze = (/**
+ * @param {?} o
+ * @return {?}
+ */
+(o) => {
+    Object.freeze(o);
+    /** @type {?} */
+    const oIsFunction = typeof o === 'function';
+    /** @type {?} */
+    const hasOwnProp = Object.prototype.hasOwnProperty;
+    Object.getOwnPropertyNames(o).forEach((/**
+     * @param {?} prop
+     * @return {?}
+     */
+    function (prop) {
+        if (hasOwnProp.call(o, prop) &&
+            (oIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true) &&
+            o[prop] !== null &&
+            (typeof o[prop] === 'object' || typeof o[prop] === 'function') &&
+            !Object.isFrozen(o[prop])) {
+            deepFreeze(o[prop]);
+        }
+    }));
+    return o;
+});
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class HostEnvironment {
+    /**
+     * @param {?} isDevMode
+     * @param {?} isTestMode
+     */
+    constructor(isDevMode, isTestMode) {
+        this.isDevMode = isDevMode;
+        this.isTestMode = isTestMode;
+    }
+}
+HostEnvironment.ɵfac = function HostEnvironment_Factory(t) { return new (t || HostEnvironment)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NG_DEV_MODE), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NG_TEST_MODE)); };
+HostEnvironment.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: HostEnvironment, factory: HostEnvironment.ɵfac });
+/** @nocollapse */
+HostEnvironment.ctorParameters = () => [
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [NG_DEV_MODE,] }] },
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [NG_TEST_MODE,] }] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](HostEnvironment, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [NG_DEV_MODE]
+            }] }, { type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [NG_TEST_MODE]
+            }] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class ConfigValidator {
+    /**
+     * @param {?} _host
+     * @param {?} _config
+     */
+    constructor(_host, _config) {
+        this._host = _host;
+        this._config = _config;
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    get isIncorrectProduction() {
+        return !this._host.isDevMode() && this._config.developmentMode;
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    get isIncorrectDevelopment() {
+        return this._host.isDevMode() && !this._config.developmentMode;
+    }
+    /**
+     * @return {?}
+     */
+    verifyDevMode() {
+        if (this._host.isTestMode()) {
+            return;
+        }
+        if (this.isIncorrectProduction) {
+            console.warn(CONFIG_MESSAGES[VALIDATION_CODE.INCORRECT_PRODUCTION]());
+        }
+        else if (this.isIncorrectDevelopment) {
+            console.warn(CONFIG_MESSAGES[VALIDATION_CODE.INCORRECT_DEVELOPMENT]());
+        }
+    }
+}
+ConfigValidator.ɵfac = function ConfigValidator_Factory(t) { return new (t || ConfigValidator)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](HostEnvironment), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NgxsConfig)); };
+ConfigValidator.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: ConfigValidator, factory: ConfigValidator.ɵfac });
+/** @nocollapse */
+ConfigValidator.ctorParameters = () => [
+    { type: HostEnvironment },
+    { type: NgxsConfig }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](ConfigValidator, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: HostEnvironment }, { type: NgxsConfig }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * State Context factory class
+ * @ignore
+ */
+class InternalStateOperations {
+    /**
+     * @param {?} _stateStream
+     * @param {?} _dispatcher
+     * @param {?} _config
+     * @param {?} configValidator
+     */
+    constructor(_stateStream, _dispatcher, _config, configValidator) {
+        this._stateStream = _stateStream;
+        this._dispatcher = _dispatcher;
+        this._config = _config;
+        configValidator.verifyDevMode();
+    }
+    /**
+     * Returns the root state operators.
+     * @return {?}
+     */
+    getRootStateOperations() {
+        /** @type {?} */
+        const rootStateOperations = {
+            getState: (/**
+             * @return {?}
+             */
+            () => this._stateStream.getValue()),
+            setState: (/**
+             * @param {?} newState
+             * @return {?}
+             */
+            (newState) => this._stateStream.next(newState)),
+            dispatch: (/**
+             * @param {?} actionOrActions
+             * @return {?}
+             */
+            (actionOrActions) => this._dispatcher.dispatch(actionOrActions))
+        };
+        if (this._config.developmentMode) {
+            return this.ensureStateAndActionsAreImmutable(rootStateOperations);
+        }
+        return rootStateOperations;
+    }
+    /**
+     * @private
+     * @param {?} root
+     * @return {?}
+     */
+    ensureStateAndActionsAreImmutable(root) {
+        return {
+            getState: (/**
+             * @return {?}
+             */
+            () => root.getState()),
+            setState: (/**
+             * @param {?} value
+             * @return {?}
+             */
+            value => {
+                /** @type {?} */
+                const frozenValue = deepFreeze(value);
+                return root.setState(frozenValue);
+            }),
+            dispatch: (/**
+             * @param {?} actions
+             * @return {?}
+             */
+            actions => {
+                return root.dispatch(actions);
+            })
+        };
+    }
+    /**
+     * @param {?} results
+     * @return {?}
+     */
+    setStateToTheCurrentWithNew(results) {
+        /** @type {?} */
+        const stateOperations = this.getRootStateOperations();
+        // Get our current stream
+        /** @type {?} */
+        const currentState = stateOperations.getState();
+        // Set the state to the current + new
+        stateOperations.setState(Object.assign({}, currentState, results.defaults));
+    }
+}
+InternalStateOperations.ɵfac = function InternalStateOperations_Factory(t) { return new (t || InternalStateOperations)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateStream), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalDispatcher), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NgxsConfig), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](ConfigValidator)); };
+InternalStateOperations.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: InternalStateOperations, factory: InternalStateOperations.ɵfac });
+/** @nocollapse */
+InternalStateOperations.ctorParameters = () => [
+    { type: StateStream },
+    { type: InternalDispatcher },
+    { type: NgxsConfig },
+    { type: ConfigValidator }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](InternalStateOperations, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: StateStream }, { type: InternalDispatcher }, { type: NgxsConfig }, { type: ConfigValidator }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @template T
+ * @param {?} val
+ * @return {?}
+ */
+function simplePatch(val) {
+    return (/**
+     * @param {?} existingState
+     * @return {?}
+     */
+    (existingState) => {
+        if (Array.isArray(val)) {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.PATCHING_ARRAY]());
+        }
+        else if (typeof val !== 'object') {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.PATCHING_PRIMITIVE]());
+        }
+        /** @type {?} */
+        const newState = Object.assign({}, ((/** @type {?} */ (existingState))));
+        for (const key in val) {
+            // deep clone for patch compatibility
+            // noinspection JSUnfilteredForInLoop (IDE)
+            newState[key] = ((/** @type {?} */ (val)))[key];
+        }
+        return (/** @type {?} */ (newState));
+    });
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * State Context factory class
+ * @ignore
+ */
+class StateContextFactory {
+    /**
+     * @param {?} _internalStateOperations
+     */
+    constructor(_internalStateOperations) {
+        this._internalStateOperations = _internalStateOperations;
+    }
+    /**
+     * Create the state context
+     * @template T
+     * @param {?} mappedStore
+     * @return {?}
+     */
+    createStateContext(mappedStore) {
+        /** @type {?} */
+        const root = this._internalStateOperations.getRootStateOperations();
+        /**
+         * @param {?} currentAppState
+         * @return {?}
+         */
+        function getState(currentAppState) {
+            return getValue(currentAppState, mappedStore.path);
+        }
+        /**
+         * @param {?} currentAppState
+         * @param {?} newValue
+         * @return {?}
+         */
+        function setStateValue(currentAppState, newValue) {
+            /** @type {?} */
+            const newAppState = setValue(currentAppState, mappedStore.path, newValue);
+            /** @type {?} */
+            const instance = mappedStore.instance;
+            if (instance.ngxsOnChanges) {
+                /** @type {?} */
+                const change = getStateDiffChanges(mappedStore, {
+                    currentAppState,
+                    newAppState
+                });
+                instance.ngxsOnChanges(change);
+            }
+            root.setState(newAppState);
+            return newAppState;
+            // In doing this refactoring I noticed that there is a 'bug' where the
+            // application state is returned instead of this state slice.
+            // This has worked this way since the beginning see:
+            // https://github.com/ngxs/store/blame/324c667b4b7debd8eb979006c67ca0ae347d88cd/src/state-factory.ts
+            // This needs to be fixed, but is a 'breaking' change.
+            // I will do this fix in a subsequent PR and we can decide how to handle it.
+        }
+        /**
+         * @param {?} currentAppState
+         * @param {?} stateOperator
+         * @return {?}
+         */
+        function setStateFromOperator(currentAppState, stateOperator) {
+            /** @type {?} */
+            const local = getState(currentAppState);
+            /** @type {?} */
+            const newValue = stateOperator(local);
+            return setStateValue(currentAppState, newValue);
+        }
+        /**
+         * @param {?} value
+         * @return {?}
+         */
+        function isStateOperator(value) {
+            return typeof value === 'function';
+        }
+        return {
+            /**
+             * @return {?}
+             */
+            getState() {
+                /** @type {?} */
+                const currentAppState = root.getState();
+                return getState(currentAppState);
+            },
+            /**
+             * @param {?} val
+             * @return {?}
+             */
+            patchState(val) {
+                /** @type {?} */
+                const currentAppState = root.getState();
+                /** @type {?} */
+                const patchOperator = simplePatch(val);
+                return setStateFromOperator(currentAppState, patchOperator);
+            },
+            /**
+             * @param {?} val
+             * @return {?}
+             */
+            setState(val) {
+                /** @type {?} */
+                const currentAppState = root.getState();
+                return isStateOperator(val)
+                    ? setStateFromOperator(currentAppState, val)
+                    : setStateValue(currentAppState, val);
+            },
+            /**
+             * @param {?} actions
+             * @return {?}
+             */
+            dispatch(actions) {
+                return root.dispatch(actions);
+            }
+        };
+    }
+}
+StateContextFactory.ɵfac = function StateContextFactory_Factory(t) { return new (t || StateContextFactory)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalStateOperations)); };
+StateContextFactory.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: StateContextFactory, factory: StateContextFactory.ɵfac });
+/** @nocollapse */
+StateContextFactory.ctorParameters = () => [
+    { type: InternalStateOperations }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](StateContextFactory, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: InternalStateOperations }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @abstract
+ */
+class StoreValidators {
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    static stateNameErrorMessage(name) {
+        return CONFIG_MESSAGES[VALIDATION_CODE.STATE_NAME](name);
+    }
+    /**
+     * @param {?} name
+     * @return {?}
+     */
+    static checkCorrectStateName(name) {
+        if (!name) {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.STATE_NAME_PROPERTY]());
+        }
+        if (!this.stateNameRegex.test(name)) {
+            throw new Error(this.stateNameErrorMessage(name));
+        }
+    }
+    /**
+     * @param {?} state
+     * @param {?} statesByName
+     * @return {?}
+     */
+    static checkStateNameIsUnique(state, statesByName) {
+        /** @type {?} */
+        const meta = this.getValidStateMeta(state);
+        /** @type {?} */
+        const stateName = (/** @type {?} */ ((/** @type {?} */ (meta)).name));
+        /** @type {?} */
+        const existingState = statesByName[stateName];
+        if (existingState && existingState !== state) {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.STATE_UNIQUE](stateName, state.name, existingState.name));
+        }
+        return stateName;
+    }
+    /**
+     * @param {?} state
+     * @return {?}
+     */
+    static getValidStateMeta(state) {
+        /** @type {?} */
+        const meta = getStoreMetadata(state);
+        if (!meta) {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.STATE_DECORATOR]());
+        }
+        return meta;
+    }
+}
+StoreValidators.stateNameRegex = new RegExp('^[a-zA-Z0-9_]+$');
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * State factory class
+ * @ignore
+ */
+class StateFactory {
+    /**
+     * @param {?} _injector
+     * @param {?} _config
+     * @param {?} _parentFactory
+     * @param {?} _actions
+     * @param {?} _actionResults
+     * @param {?} _stateContextFactory
+     * @param {?} _initialState
+     */
+    constructor(_injector, _config, _parentFactory, _actions, _actionResults, _stateContextFactory, _initialState) {
+        this._injector = _injector;
+        this._config = _config;
+        this._parentFactory = _parentFactory;
+        this._actions = _actions;
+        this._actionResults = _actionResults;
+        this._stateContextFactory = _stateContextFactory;
+        this._initialState = _initialState;
+        this._actionsSubscription = null;
+        this._states = [];
+        this._statesByName = {};
+        this._statePaths = {};
+        this.getRuntimeSelectorContext = Object(_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["memoize"])((/**
+         * @return {?}
+         */
+        () => {
+            /** @type {?} */
+            const stateFactory = this;
+            /**
+             * @param {?} key
+             * @return {?}
+             */
+            function resolveGetter(key) {
+                /** @type {?} */
+                const path = stateFactory.statePaths[key];
+                return path ? propGetter(path.split('.'), stateFactory._config) : null;
+            }
+            /** @type {?} */
+            const context = this._parentFactory
+                ? this._parentFactory.getRuntimeSelectorContext()
+                : {
+                    /**
+                     * @param {?} key
+                     * @return {?}
+                     */
+                    getStateGetter(key) {
+                        /** @type {?} */
+                        let getter = resolveGetter(key);
+                        if (getter) {
+                            return getter;
+                        }
+                        return (/**
+                         * @param {...?} args
+                         * @return {?}
+                         */
+                        (...args) => {
+                            // Late loaded getter
+                            if (!getter) {
+                                getter = resolveGetter(key);
+                            }
+                            return getter ? getter(...args) : undefined;
+                        });
+                    },
+                    /**
+                     * @param {?=} localOptions
+                     * @return {?}
+                     */
+                    getSelectorOptions(localOptions) {
+                        /** @type {?} */
+                        const globalSelectorOptions = stateFactory._config.selectorOptions;
+                        return Object.assign({}, globalSelectorOptions, (localOptions || {}));
+                    }
+                };
+            return context;
+        }));
+    }
+    /**
+     * @return {?}
+     */
+    get states() {
+        return this._parentFactory ? this._parentFactory.states : this._states;
+    }
+    /**
+     * @return {?}
+     */
+    get statesByName() {
+        return this._parentFactory ? this._parentFactory.statesByName : this._statesByName;
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    get statePaths() {
+        return this._parentFactory ? this._parentFactory.statePaths : this._statePaths;
+    }
+    /**
+     * @private
+     * @param {?} defaults
+     * @return {?}
+     */
+    static cloneDefaults(defaults) {
+        /** @type {?} */
+        let value = {};
+        if (Array.isArray(defaults)) {
+            value = defaults.slice();
+        }
+        else if (isObject$1(defaults)) {
+            value = Object.assign({}, defaults);
+        }
+        else if (defaults === undefined) {
+            value = {};
+        }
+        else {
+            value = defaults;
+        }
+        return value;
+    }
+    /**
+     * @private
+     * @param {?} stateClasses
+     * @return {?}
+     */
+    static checkStatesAreValid(stateClasses) {
+        stateClasses.forEach(StoreValidators.getValidStateMeta);
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
+        // I'm using non-null assertion here since `_actionsSubscrition` will
+        // be 100% defined. This is because `ngOnDestroy()` cannot be invoked
+        // on the `StateFactory` until its initialized :) An it's initialized
+        // for the first time along with the `NgxsRootModule`.
+        (/** @type {?} */ (this._actionsSubscription)).unsubscribe();
+    }
+    /**
+     * Add a new state to the global defs.
+     * @param {?} stateClasses
+     * @return {?}
+     */
+    add(stateClasses) {
+        StateFactory.checkStatesAreValid(stateClasses);
+        const { newStates } = this.addToStatesMap(stateClasses);
+        if (!newStates.length)
+            return [];
+        /** @type {?} */
+        const stateGraph = buildGraph(newStates);
+        /** @type {?} */
+        const sortedStates = topologicalSort(stateGraph);
+        /** @type {?} */
+        const paths = findFullParentPath(stateGraph);
+        /** @type {?} */
+        const nameGraph = nameToState(newStates);
+        /** @type {?} */
+        const bootstrappedStores = [];
+        for (const name of sortedStates) {
+            /** @type {?} */
+            const stateClass = nameGraph[name];
+            /** @type {?} */
+            const path = paths[name];
+            /** @type {?} */
+            const meta = (/** @type {?} */ (stateClass[META_KEY]));
+            this.addRuntimeInfoToMeta(meta, path);
+            /** @type {?} */
+            const stateMap = {
+                name,
+                path,
+                isInitialised: false,
+                actions: meta.actions,
+                instance: this._injector.get(stateClass),
+                defaults: StateFactory.cloneDefaults(meta.defaults)
+            };
+            // ensure our store hasn't already been added
+            // but don't throw since it could be lazy
+            // loaded from different paths
+            if (!this.hasBeenMountedAndBootstrapped(name, path)) {
+                bootstrappedStores.push(stateMap);
+            }
+            this.states.push(stateMap);
+        }
+        return bootstrappedStores;
+    }
+    /**
+     * Add a set of states to the store and return the defaults
+     * @param {?} stateClasses
+     * @return {?}
+     */
+    addAndReturnDefaults(stateClasses) {
+        /** @type {?} */
+        const classes = stateClasses || [];
+        /** @type {?} */
+        const mappedStores = this.add(classes);
+        /** @type {?} */
+        const defaults = mappedStores.reduce((/**
+         * @param {?} result
+         * @param {?} mappedStore
+         * @return {?}
+         */
+        (result, mappedStore) => setValue(result, mappedStore.path, mappedStore.defaults)), {});
+        return { defaults, states: mappedStores };
+    }
+    /**
+     * Bind the actions to the handlers
+     * @return {?}
+     */
+    connectActionHandlers() {
+        if (this._actionsSubscription !== null)
+            return;
+        this._actionsSubscription = this._actions
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["filter"])((/**
+         * @param {?} ctx
+         * @return {?}
+         */
+        (ctx) => ctx.status === "DISPATCHED" /* Dispatched */)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["mergeMap"])((/**
+         * @param {?} __0
+         * @return {?}
+         */
+        ({ action }) => this.invokeActions(this._actions, (/** @type {?} */ (action))).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])((/**
+         * @return {?}
+         */
+        () => (/** @type {?} */ ({ action, status: "SUCCESSFUL" /* Successful */ })))), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["defaultIfEmpty"])((/** @type {?} */ ({ action, status: "CANCELED" /* Canceled */ }))), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["catchError"])((/**
+         * @param {?} error
+         * @return {?}
+         */
+        error => Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])((/** @type {?} */ ({ action, status: "ERRORED" /* Errored */, error })))))))))
+            .subscribe((/**
+         * @param {?} ctx
+         * @return {?}
+         */
+        ctx => this._actionResults.next(ctx)));
+    }
+    /**
+     * Invoke actions on the states.
+     * @param {?} actions$
+     * @param {?} action
+     * @return {?}
+     */
+    invokeActions(actions$, action) {
+        /** @type {?} */
+        const type = (/** @type {?} */ (getActionTypeFromInstance(action)));
+        /** @type {?} */
+        const results = [];
+        for (const metadata of this.states) {
+            /** @type {?} */
+            const actionMetas = metadata.actions[type];
+            if (actionMetas) {
+                for (const actionMeta of actionMetas) {
+                    /** @type {?} */
+                    const stateContext = this._stateContextFactory.createStateContext(metadata);
+                    try {
+                        /** @type {?} */
+                        let result = metadata.instance[actionMeta.fn](stateContext, action);
+                        if (result instanceof Promise) {
+                            result = Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["from"])(result);
+                        }
+                        if (result instanceof rxjs__WEBPACK_IMPORTED_MODULE_3__["Observable"]) {
+                            // If this observable has been completed w/o emitting
+                            // any value then we wouldn't want to complete the whole chain
+                            // of actions. Since if any observable completes then
+                            // action will be canceled.
+                            // For instance if any action handler would've had such statement:
+                            // `handler(ctx) { return EMPTY; }`
+                            // then the action will be canceled.
+                            // See https://github.com/ngxs/store/issues/1568
+                            result = result.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["defaultIfEmpty"])({}));
+                            if (actionMeta.options.cancelUncompleted) {
+                                // todo: ofActionDispatched should be used with action class
+                                result = result.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["takeUntil"])(actions$.pipe(ofActionDispatched((/** @type {?} */ (action))))));
+                            }
+                        }
+                        else {
+                            result = Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])({}).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["shareReplay"])());
+                        }
+                        results.push(result);
+                    }
+                    catch (e) {
+                        results.push(Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["throwError"])(e));
+                    }
+                }
+            }
+        }
+        if (!results.length) {
+            results.push(Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])({}));
+        }
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["forkJoin"])(results);
+    }
+    /**
+     * @private
+     * @param {?} stateClasses
+     * @return {?}
+     */
+    addToStatesMap(stateClasses) {
+        /** @type {?} */
+        const newStates = [];
+        /** @type {?} */
+        const statesMap = this.statesByName;
+        for (const stateClass of stateClasses) {
+            /** @type {?} */
+            const stateName = StoreValidators.checkStateNameIsUnique(stateClass, statesMap);
+            /** @type {?} */
+            const unmountedState = !statesMap[stateName];
+            if (unmountedState) {
+                newStates.push(stateClass);
+                statesMap[stateName] = stateClass;
+            }
+        }
+        return { newStates };
+    }
+    /**
+     * @private
+     * @param {?} meta
+     * @param {?} path
+     * @return {?}
+     */
+    addRuntimeInfoToMeta(meta, path) {
+        this.statePaths[(/** @type {?} */ (meta.name))] = path;
+        // TODO: v4 - we plan to get rid of the path property because it is non-deterministic
+        // we can do this when we get rid of the incorrectly exposed getStoreMetadata
+        // We will need to come up with an alternative in v4 because this is used by many plugins
+        meta.path = path;
+    }
+    /**
+     * \@description
+     * the method checks if the state has already been added to the tree
+     * and completed the life cycle
+     * @private
+     * @param {?} name
+     * @param {?} path
+     * @return {?}
+     */
+    hasBeenMountedAndBootstrapped(name, path) {
+        /** @type {?} */
+        const valueIsBootstrappedInInitialState = getValue(this._initialState, path) !== undefined;
+        return this.statesByName[name] && valueIsBootstrappedInInitialState;
+    }
+}
+StateFactory.ɵfac = function StateFactory_Factory(t) { return new (t || StateFactory)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NgxsConfig), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateFactory, 12), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalActions), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalDispatchedActionResults), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateContextFactory), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"], 8)); };
+StateFactory.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: StateFactory, factory: StateFactory.ɵfac });
+/** @nocollapse */
+StateFactory.ctorParameters = () => [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"] },
+    { type: NgxsConfig },
+    { type: StateFactory, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["SkipSelf"] }] },
+    { type: InternalActions },
+    { type: InternalDispatchedActionResults },
+    { type: StateContextFactory },
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"],] }] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](StateFactory, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"] }, { type: NgxsConfig }, { type: StateFactory, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["SkipSelf"]
+            }] }, { type: InternalActions }, { type: InternalDispatchedActionResults }, { type: StateContextFactory }, { type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"]]
+            }] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class LifecycleStateManager {
+    /**
+     * @param {?} internalStateOperations
+     * @param {?} stateContextFactory
+     * @param {?} bootstrapper
+     */
+    constructor(internalStateOperations, stateContextFactory, bootstrapper) {
+        this.internalStateOperations = internalStateOperations;
+        this.stateContextFactory = stateContextFactory;
+        this.bootstrapper = bootstrapper;
+    }
+    /**
+     * @template T
+     * @param {?} action
+     * @param {?} results
+     * @return {?}
+     */
+    ngxsBootstrap(action, results) {
+        this.internalStateOperations
+            .getRootStateOperations()
+            .dispatch(action)
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["filter"])((/**
+         * @return {?}
+         */
+        () => !!results)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["tap"])((/**
+         * @return {?}
+         */
+        () => this.invokeInit((/** @type {?} */ (results)).states))), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["mergeMap"])((/**
+         * @return {?}
+         */
+        () => this.bootstrapper.appBootstrapped$)), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["filter"])((/**
+         * @param {?} appBootstrapped
+         * @return {?}
+         */
+        appBootstrapped => !!appBootstrapped)))
+            .subscribe((/**
+         * @return {?}
+         */
+        () => this.invokeBootstrap((/** @type {?} */ (results)).states)));
+    }
+    /**
+     * Invoke the init function on the states.
+     * @param {?} mappedStores
+     * @return {?}
+     */
+    invokeInit(mappedStores) {
+        for (const mappedStore of mappedStores) {
+            /** @type {?} */
+            const instance = mappedStore.instance;
+            if (instance.ngxsOnChanges) {
+                /** @type {?} */
+                const currentAppState = {};
+                /** @type {?} */
+                const newAppState = this.internalStateOperations
+                    .getRootStateOperations()
+                    .getState();
+                /** @type {?} */
+                const firstDiffChange = getStateDiffChanges(mappedStore, {
+                    currentAppState,
+                    newAppState
+                });
+                instance.ngxsOnChanges(firstDiffChange);
+            }
+            if (instance.ngxsOnInit) {
+                instance.ngxsOnInit(this.getStateContext(mappedStore));
+            }
+            mappedStore.isInitialised = true;
+        }
+    }
+    /**
+     * Invoke the bootstrap function on the states.
+     * @param {?} mappedStores
+     * @return {?}
+     */
+    invokeBootstrap(mappedStores) {
+        for (const mappedStore of mappedStores) {
+            /** @type {?} */
+            const instance = mappedStore.instance;
+            if (instance.ngxsAfterBootstrap) {
+                instance.ngxsAfterBootstrap(this.getStateContext(mappedStore));
+            }
+        }
+    }
+    /**
+     * @private
+     * @param {?} mappedStore
+     * @return {?}
+     */
+    getStateContext(mappedStore) {
+        return this.stateContextFactory.createStateContext(mappedStore);
+    }
+}
+LifecycleStateManager.ɵfac = function LifecycleStateManager_Factory(t) { return new (t || LifecycleStateManager)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalStateOperations), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateContextFactory), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NgxsBootstrapper"])); };
+LifecycleStateManager.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: LifecycleStateManager, factory: LifecycleStateManager.ɵfac });
+/** @nocollapse */
+LifecycleStateManager.ctorParameters = () => [
+    { type: InternalStateOperations },
+    { type: StateContextFactory },
+    { type: _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NgxsBootstrapper"] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](LifecycleStateManager, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: InternalStateOperations }, { type: StateContextFactory }, { type: _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NgxsBootstrapper"] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+const SELECTOR_OPTIONS_META_KEY = 'NGXS_SELECTOR_OPTIONS_META';
+/** @type {?} */
+const selectorOptionsMetaAccessor = {
+    getOptions: (/**
+     * @param {?} target
+     * @return {?}
+     */
+    (target) => {
+        return (target && ((/** @type {?} */ (target)))[SELECTOR_OPTIONS_META_KEY]) || {};
+    }),
+    defineOptions: (/**
+     * @param {?} target
+     * @param {?} options
+     * @return {?}
+     */
+    (target, options) => {
+        if (!target)
+            return;
+        ((/** @type {?} */ (target)))[SELECTOR_OPTIONS_META_KEY] = options;
+    })
+};
+/**
+ * @record
+ */
+function CreationMetadata() { }
+if (false) {}
+/**
+ * @record
+ */
+function RuntimeSelectorInfo() { }
+if (false) {}
+/**
+ * Function for creating a selector
+ * @template T
+ * @param {?} selectors The selectors to use to create the arguments of this function
+ * @param {?} originalFn The original function being made into a selector
+ * @param {?=} creationMetadata
+ * @return {?}
+ */
+function createSelector(selectors, originalFn, creationMetadata) {
+    /** @type {?} */
+    const containerClass = creationMetadata && creationMetadata.containerClass;
+    /** @type {?} */
+    const wrappedFn = (/** @type {?} */ ((/**
+     * @param {...?} args
+     * @return {?}
+     */
+    function wrappedSelectorFn(...args) {
+        /** @type {?} */
+        const returnValue = originalFn.apply(containerClass, args);
+        if (returnValue instanceof Function) {
+            /** @type {?} */
+            const innerMemoizedFn = _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["memoize"].apply(null, [returnValue]);
+            return innerMemoizedFn;
+        }
+        return returnValue;
+    })));
+    /** @type {?} */
+    const memoizedFn = Object(_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["memoize"])(wrappedFn);
+    Object.setPrototypeOf(memoizedFn, originalFn);
+    /** @type {?} */
+    const selectorMetaData = setupSelectorMetadata(originalFn, creationMetadata);
+    /** @type {?} */
+    const makeRootSelector = (/**
+     * @param {?} context
+     * @return {?}
+     */
+    (context) => {
+        const { argumentSelectorFunctions, selectorOptions } = getRuntimeSelectorInfo(context, selectorMetaData, selectors);
+        return (/**
+         * @param {?} rootState
+         * @return {?}
+         */
+        function selectFromRoot(rootState) {
+            // Determine arguments from the app state using the selectors
+            /** @type {?} */
+            const results = argumentSelectorFunctions.map((/**
+             * @param {?} argFn
+             * @return {?}
+             */
+            argFn => argFn(rootState)));
+            // if the lambda tries to access a something on the
+            // state that doesn't exist, it will throw a TypeError.
+            // since this is quite usual behaviour, we simply return undefined if so.
+            try {
+                return memoizedFn(...results);
+            }
+            catch (ex) {
+                if (ex instanceof TypeError && selectorOptions.suppressErrors) {
+                    return undefined;
+                }
+                throw ex;
+            }
+        });
+    });
+    selectorMetaData.makeRootSelector = makeRootSelector;
+    return memoizedFn;
+}
+/**
+ * @template T
+ * @param {?} originalFn
+ * @param {?} creationMetadata
+ * @return {?}
+ */
+function setupSelectorMetadata(originalFn, creationMetadata) {
+    /** @type {?} */
+    const selectorMetaData = ensureSelectorMetadata(originalFn);
+    selectorMetaData.originalFn = originalFn;
+    /** @type {?} */
+    let getExplicitSelectorOptions = (/**
+     * @return {?}
+     */
+    () => ({}));
+    if (creationMetadata) {
+        selectorMetaData.containerClass = creationMetadata.containerClass;
+        selectorMetaData.selectorName = creationMetadata.selectorName;
+        getExplicitSelectorOptions =
+            creationMetadata.getSelectorOptions || getExplicitSelectorOptions;
+    }
+    /** @type {?} */
+    const selectorMetaDataClone = Object.assign({}, selectorMetaData);
+    selectorMetaData.getSelectorOptions = (/**
+     * @return {?}
+     */
+    () => getLocalSelectorOptions(selectorMetaDataClone, getExplicitSelectorOptions()));
+    return selectorMetaData;
+}
+/**
+ * @param {?} context
+ * @param {?} selectorMetaData
+ * @param {?=} selectors
+ * @return {?}
+ */
+function getRuntimeSelectorInfo(context, selectorMetaData, selectors = []) {
+    /** @type {?} */
+    const localSelectorOptions = selectorMetaData.getSelectorOptions();
+    /** @type {?} */
+    const selectorOptions = context.getSelectorOptions(localSelectorOptions);
+    /** @type {?} */
+    const selectorsToApply = getSelectorsToApply(selectors, selectorOptions, selectorMetaData.containerClass);
+    /** @type {?} */
+    const argumentSelectorFunctions = selectorsToApply.map((/**
+     * @param {?} selector
+     * @return {?}
+     */
+    selector => {
+        /** @type {?} */
+        const factory = getRootSelectorFactory(selector);
+        return factory(context);
+    }));
+    return {
+        selectorOptions,
+        argumentSelectorFunctions
+    };
+}
+/**
+ * @param {?} selectorMetaData
+ * @param {?} explicitOptions
+ * @return {?}
+ */
+function getLocalSelectorOptions(selectorMetaData, explicitOptions) {
+    return Object.assign({}, (selectorOptionsMetaAccessor.getOptions(selectorMetaData.containerClass) || {}), (selectorOptionsMetaAccessor.getOptions(selectorMetaData.originalFn) || {}), (selectorMetaData.getSelectorOptions() || {}), explicitOptions);
+}
+/**
+ * @param {?=} selectors
+ * @param {?=} selectorOptions
+ * @param {?=} containerClass
+ * @return {?}
+ */
+function getSelectorsToApply(selectors = [], selectorOptions, containerClass) {
+    /** @type {?} */
+    const selectorsToApply = [];
+    /** @type {?} */
+    const canInjectContainerState = selectors.length === 0 || selectorOptions.injectContainerState;
+    if (containerClass && canInjectContainerState) {
+        // If we are on a state class, add it as the first selector parameter
+        /** @type {?} */
+        const metadata = getStoreMetadata(containerClass);
+        if (metadata) {
+            selectorsToApply.push(containerClass);
+        }
+    }
+    if (selectors) {
+        selectorsToApply.push(...selectors);
+    }
+    return selectorsToApply;
+}
+/**
+ * This function gets the factory function to create the selector to get the selected slice from the app state
+ * @ignore
+ * @param {?} selector
+ * @return {?}
+ */
+function getRootSelectorFactory(selector) {
+    /** @type {?} */
+    const metadata = getSelectorMetadata(selector) || getStoreMetadata(selector);
+    return (metadata && metadata.makeRootSelector) || ((/**
+     * @return {?}
+     */
+    () => selector));
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class Store {
+    /**
+     * @param {?} _stateStream
+     * @param {?} _internalStateOperations
+     * @param {?} _config
+     * @param {?} _internalExecutionStrategy
+     * @param {?} _stateFactory
+     * @param {?} initialStateValue
+     */
+    constructor(_stateStream, _internalStateOperations, _config, _internalExecutionStrategy, _stateFactory, initialStateValue) {
+        this._stateStream = _stateStream;
+        this._internalStateOperations = _internalStateOperations;
+        this._config = _config;
+        this._internalExecutionStrategy = _internalExecutionStrategy;
+        this._stateFactory = _stateFactory;
+        this.initStateStream(initialStateValue);
+    }
+    /**
+     * Dispatches event(s).
+     * @param {?} actionOrActions
+     * @return {?}
+     */
+    dispatch(actionOrActions) {
+        return this._internalStateOperations.getRootStateOperations().dispatch(actionOrActions);
+    }
+    /**
+     * @param {?} selector
+     * @return {?}
+     */
+    select(selector) {
+        /** @type {?} */
+        const selectorFn = this.getStoreBoundSelectorFn(selector);
+        return this._stateStream.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])(selectorFn), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["catchError"])((/**
+         * @param {?} err
+         * @return {?}
+         */
+        (err) => {
+            // if error is TypeError we swallow it to prevent usual errors with property access
+            const { suppressErrors } = this._config.selectorOptions;
+            if (err instanceof TypeError && suppressErrors) {
+                return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])(undefined);
+            }
+            // rethrow other errors
+            return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["throwError"])(err);
+        })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["distinctUntilChanged"])(), leaveNgxs(this._internalExecutionStrategy));
+    }
+    /**
+     * @param {?} selector
+     * @return {?}
+     */
+    selectOnce(selector) {
+        return this.select(selector).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["take"])(1));
+    }
+    /**
+     * @param {?} selector
+     * @return {?}
+     */
+    selectSnapshot(selector) {
+        /** @type {?} */
+        const selectorFn = this.getStoreBoundSelectorFn(selector);
+        return selectorFn(this._stateStream.getValue());
+    }
+    /**
+     * Allow the user to subscribe to the root of the state
+     * @param {?=} fn
+     * @return {?}
+     */
+    subscribe(fn) {
+        return this._stateStream.pipe(leaveNgxs(this._internalExecutionStrategy)).subscribe(fn);
+    }
+    /**
+     * Return the raw value of the state.
+     * @return {?}
+     */
+    snapshot() {
+        return this._internalStateOperations.getRootStateOperations().getState();
+    }
+    /**
+     * Reset the state to a specific point in time. This method is useful
+     * for plugin's who need to modify the state directly or unit testing.
+     * @param {?} state
+     * @return {?}
+     */
+    reset(state) {
+        return this._internalStateOperations.getRootStateOperations().setState(state);
+    }
+    /**
+     * @private
+     * @param {?} selector
+     * @return {?}
+     */
+    getStoreBoundSelectorFn(selector) {
+        /** @type {?} */
+        const makeSelectorFn = getRootSelectorFactory(selector);
+        /** @type {?} */
+        const runtimeContext = this._stateFactory.getRuntimeSelectorContext();
+        return makeSelectorFn(runtimeContext);
+    }
+    /**
+     * @private
+     * @param {?} initialStateValue
+     * @return {?}
+     */
+    initStateStream(initialStateValue) {
+        /** @type {?} */
+        const value = this._stateStream.value;
+        /** @type {?} */
+        const storeIsEmpty = !value || Object.keys(value).length === 0;
+        if (storeIsEmpty) {
+            /** @type {?} */
+            const defaultStateNotEmpty = Object.keys(this._config.defaultsState).length > 0;
+            /** @type {?} */
+            const storeValues = defaultStateNotEmpty
+                ? Object.assign({}, this._config.defaultsState, initialStateValue) : initialStateValue;
+            this._stateStream.next(storeValues);
+        }
+    }
+}
+Store.ɵfac = function Store_Factory(t) { return new (t || Store)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateStream), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalStateOperations), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NgxsConfig), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalNgxsExecutionStrategy), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateFactory), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"], 8)); };
+Store.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: Store, factory: Store.ɵfac });
+/** @nocollapse */
+Store.ctorParameters = () => [
+    { type: StateStream },
+    { type: InternalStateOperations },
+    { type: NgxsConfig },
+    { type: InternalNgxsExecutionStrategy },
+    { type: StateFactory },
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"],] }] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](Store, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: StateStream }, { type: InternalStateOperations }, { type: NgxsConfig }, { type: InternalNgxsExecutionStrategy }, { type: StateFactory }, { type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"]]
+            }] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Allows the select decorator to get access to the DI store.
+ * \@internal only use in \@Select decorator
+ * @ignore
+ */
+class SelectFactory {
+    /**
+     * @param {?} store
+     * @param {?} config
+     */
+    constructor(store, config) {
+        SelectFactory.store = store;
+        SelectFactory.config = config;
+    }
+    /**
+     * @return {?}
+     */
+    ngOnDestroy() {
+        SelectFactory.store = null;
+        SelectFactory.config = null;
+    }
+}
+SelectFactory.ɵfac = function SelectFactory_Factory(t) { return new (t || SelectFactory)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](Store), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NgxsConfig)); };
+SelectFactory.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: SelectFactory, factory: SelectFactory.ɵfac });
+SelectFactory.store = null;
+SelectFactory.config = null;
+/** @nocollapse */
+SelectFactory.ctorParameters = () => [
+    { type: Store },
+    { type: NgxsConfig }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](SelectFactory, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: Store }, { type: NgxsConfig }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Init action
+ */
+class InitState {
+    /**
+     * @return {?}
+     */
+    static get type() {
+        // NOTE: Not necessary to declare the type in this way in your code. See https://github.com/ngxs/store/pull/644#issuecomment-436003138
+        return '@@INIT';
+    }
+}
+/**
+ * Update action
+ */
+class UpdateState {
+    /**
+     * @param {?=} addedStates
+     */
+    constructor(addedStates) {
+        this.addedStates = addedStates;
+    }
+    /**
+     * @return {?}
+     */
+    static get type() {
+        // NOTE: Not necessary to declare the type in this way in your code. See https://github.com/ngxs/store/pull/644#issuecomment-436003138
+        return '@@UPDATE_STATE';
+    }
+}
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+const ivyEnabledInDevMode$ = new rxjs__WEBPACK_IMPORTED_MODULE_3__["ReplaySubject"](1);
+/**
+ * Ivy exposes helper functions to the global `window.ng` object.
+ * Those functions are `getComponent, getContext,
+ * getListeners, getViewComponent, getHostElement, getInjector,
+ * getRootComponents, getDirectives, getDebugNode`
+ * Previously, old view engine exposed `window.ng.coreTokens` and
+ * `window.ng.probe` if an application was in development/production.
+ * Ivy doesn't expose these functions in production. Developers will be able
+ * to see warnings in both JIT/AOT modes, but only if an application
+ * is in development.
+ * @return {?}
+ */
+function setIvyEnabledInDevMode() {
+    try {
+        // `try-catch` will also handle server-side rendering, as
+        // `window is not defined` will not be thrown.
+        /** @type {?} */
+        const ng = ((/** @type {?} */ (window))).ng;
+        /** @type {?} */
+        const _viewEngineEnabled = !!ng.probe && !!ng.coreTokens;
+        /** @type {?} */
+        const _ivyEnabledInDevMode = !_viewEngineEnabled && Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["isDevMode"])();
+        ivyEnabledInDevMode$.next(_ivyEnabledInDevMode);
+    }
+    catch (_a) {
+        ivyEnabledInDevMode$.next(false);
+    }
+    finally {
+        ivyEnabledInDevMode$.complete();
+    }
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Root module
+ * @ignore
+ */
+class NgxsRootModule {
+    /**
+     * @param {?} factory
+     * @param {?} internalStateOperations
+     * @param {?} _store
+     * @param {?} _select
+     * @param {?=} states
+     * @param {?=} lifecycleStateManager
+     */
+    constructor(factory, internalStateOperations, _store, _select, states = [], lifecycleStateManager) {
+        // Validate states on having the `@Injectable()` decorator in Ivy
+        setIvyEnabledInDevMode();
+        // Add stores to the state graph and return their defaults
+        /** @type {?} */
+        const results = factory.addAndReturnDefaults(states);
+        internalStateOperations.setStateToTheCurrentWithNew(results);
+        // Connect our actions stream
+        factory.connectActionHandlers();
+        // Dispatch the init action and invoke init and bootstrap functions after
+        lifecycleStateManager.ngxsBootstrap(new InitState(), results);
+    }
+}
+NgxsRootModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: NgxsRootModule });
+NgxsRootModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ factory: function NgxsRootModule_Factory(t) { return new (t || NgxsRootModule)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateFactory), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalStateOperations), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](Store), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](SelectFactory), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](ROOT_STATE_TOKEN, 8), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](LifecycleStateManager)); } });
+/** @nocollapse */
+NgxsRootModule.ctorParameters = () => [
+    { type: StateFactory },
+    { type: InternalStateOperations },
+    { type: Store },
+    { type: SelectFactory },
+    { type: Array, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [ROOT_STATE_TOKEN,] }] },
+    { type: LifecycleStateManager }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsRootModule, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"]
+    }], function () { return [{ type: StateFactory }, { type: InternalStateOperations }, { type: Store }, { type: SelectFactory }, { type: Array, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [ROOT_STATE_TOKEN]
+            }] }, { type: LifecycleStateManager }]; }, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Feature module
+ * @ignore
+ */
+class NgxsFeatureModule {
+    /**
+     * @param {?} _store
+     * @param {?} internalStateOperations
+     * @param {?} factory
+     * @param {?=} states
+     * @param {?=} lifecycleStateManager
+     */
+    constructor(_store, internalStateOperations, factory, states = [], lifecycleStateManager) {
+        // Since FEATURE_STATE_TOKEN is a multi token, we need to
+        // flatten it [[Feature1State, Feature2State], [Feature3State]]
+        /** @type {?} */
+        const flattenedStates = NgxsFeatureModule.flattenStates(states);
+        // add stores to the state graph and return their defaults
+        /** @type {?} */
+        const results = factory.addAndReturnDefaults(flattenedStates);
+        if (results.states.length) {
+            internalStateOperations.setStateToTheCurrentWithNew(results);
+            // dispatch the update action and invoke init and bootstrap functions after
+            lifecycleStateManager.ngxsBootstrap(new UpdateState(results.defaults), results);
+        }
+    }
+    /**
+     * @private
+     * @param {?=} states
+     * @return {?}
+     */
+    static flattenStates(states = []) {
+        return states.reduce((/**
+         * @param {?} total
+         * @param {?} values
+         * @return {?}
+         */
+        (total, values) => total.concat(values)), []);
+    }
+}
+NgxsFeatureModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: NgxsFeatureModule });
+NgxsFeatureModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ factory: function NgxsFeatureModule_Factory(t) { return new (t || NgxsFeatureModule)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](Store), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](InternalStateOperations), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](StateFactory), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](FEATURE_STATE_TOKEN, 8), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](LifecycleStateManager)); } });
+/** @nocollapse */
+NgxsFeatureModule.ctorParameters = () => [
+    { type: Store },
+    { type: InternalStateOperations },
+    { type: StateFactory },
+    { type: Array, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [FEATURE_STATE_TOKEN,] }] },
+    { type: LifecycleStateManager }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsFeatureModule, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"]
+    }], function () { return [{ type: Store }, { type: InternalStateOperations }, { type: StateFactory }, { type: Array, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
+            }, {
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [FEATURE_STATE_TOKEN]
+            }] }, { type: LifecycleStateManager }]; }, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Ngxs Module
+ */
+class NgxsModule {
+    /**
+     * Root module factory
+     * @param {?=} states
+     * @param {?=} options
+     * @return {?}
+     */
+    static forRoot(states = [], options = {}) {
+        return {
+            ngModule: NgxsRootModule,
+            providers: [
+                StateFactory,
+                StateContextFactory,
+                Actions,
+                InternalActions,
+                _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NgxsBootstrapper"],
+                ConfigValidator,
+                HostEnvironment,
+                LifecycleStateManager,
+                InternalDispatcher,
+                InternalDispatchedActionResults,
+                InternalStateOperations,
+                InternalNgxsExecutionStrategy,
+                Store,
+                StateStream,
+                SelectFactory,
+                PluginManager,
+                ...states,
+                ...NgxsModule.ngxsTokenProviders(states, options)
+            ]
+        };
+    }
+    /**
+     * Feature module factory
+     * @param {?=} states
+     * @return {?}
+     */
+    static forFeature(states = []) {
+        return {
+            ngModule: NgxsFeatureModule,
+            providers: [
+                StateFactory,
+                PluginManager,
+                ...states,
+                {
+                    provide: FEATURE_STATE_TOKEN,
+                    multi: true,
+                    useValue: states
+                }
+            ]
+        };
+    }
+    /**
+     * @private
+     * @param {?} states
+     * @param {?} options
+     * @return {?}
+     */
+    static ngxsTokenProviders(states, options) {
+        return [
+            {
+                provide: NG_TEST_MODE,
+                useValue: _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["isAngularInTestMode"]
+            },
+            {
+                provide: NG_DEV_MODE,
+                useValue: _angular_core__WEBPACK_IMPORTED_MODULE_0__["isDevMode"]
+            },
+            {
+                provide: NGXS_EXECUTION_STRATEGY,
+                useClass: options.executionStrategy || DispatchOutsideZoneNgxsExecutionStrategy
+            },
+            {
+                provide: ROOT_STATE_TOKEN,
+                useValue: states
+            },
+            {
+                provide: NgxsModule.ROOT_OPTIONS,
+                useValue: options
+            },
+            {
+                provide: NgxsConfig,
+                useFactory: NgxsModule.ngxsConfigFactory,
+                deps: [NgxsModule.ROOT_OPTIONS]
+            },
+            {
+                provide: _angular_core__WEBPACK_IMPORTED_MODULE_0__["APP_BOOTSTRAP_LISTENER"],
+                useFactory: NgxsModule.appBootstrapListenerFactory,
+                multi: true,
+                deps: [_ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NgxsBootstrapper"]]
+            },
+            {
+                provide: _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["INITIAL_STATE_TOKEN"],
+                useFactory: NgxsModule.getInitialState
+            },
+            {
+                provide: _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NGXS_STATE_CONTEXT_FACTORY"],
+                useExisting: StateContextFactory
+            },
+            {
+                provide: _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["NGXS_STATE_FACTORY"],
+                useExisting: StateFactory
+            }
+        ];
+    }
+    /**
+     * @private
+     * @param {?} options
+     * @return {?}
+     */
+    static ngxsConfigFactory(options) {
+        return mergeDeep(new NgxsConfig(), options);
+    }
+    /**
+     * @private
+     * @param {?} bootstrapper
+     * @return {?}
+     */
+    static appBootstrapListenerFactory(bootstrapper) {
+        return (/**
+         * @return {?}
+         */
+        () => bootstrapper.bootstrap());
+    }
+    /**
+     * @private
+     * @return {?}
+     */
+    static getInitialState() {
+        return _ngxs_store_internals__WEBPACK_IMPORTED_MODULE_1__["InitialState"].pop();
+    }
+}
+NgxsModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: NgxsModule });
+NgxsModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ factory: function NgxsModule_Factory(t) { return new (t || NgxsModule)(); } });
+NgxsModule.ROOT_OPTIONS = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('ROOT_OPTIONS');
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsModule, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"]
+    }], null, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Decorates a method with a action information.
+ * @param {?} actions
+ * @param {?=} options
+ * @return {?}
+ */
+function Action(actions, options) {
+    return (/**
+     * @param {?} target
+     * @param {?} name
+     * @return {?}
+     */
+    (target, name) => {
+        /** @type {?} */
+        const isStaticMethod = target.hasOwnProperty('prototype');
+        if (isStaticMethod) {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.ACTION_DECORATOR]());
+        }
+        /** @type {?} */
+        const meta = ensureStoreMetadata(target.constructor);
+        if (!Array.isArray(actions)) {
+            actions = [actions];
+        }
+        for (const action of actions) {
+            /** @type {?} */
+            const type = action.type;
+            if (!meta.actions[type]) {
+                meta.actions[type] = [];
+            }
+            meta.actions[type].push({
+                fn: name,
+                options: options || {},
+                type
+            });
+        }
+    });
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * All provided or injected tokens must have `\@Injectable` decorator
+ * (previously, injected tokens without `\@Injectable` were allowed
+ * if another decorator was used, e.g. pipes).
+ * @param {?} target
+ * @return {?}
+ */
+function ensureStateClassIsInjectable(target) {
+    // `ɵprov` is a static property added by the NGCC compiler. It always exists in
+    // AOT mode because this property is added before runtime. If an application is running in
+    // JIT mode then this property can be added by the `@Injectable()` decorator. The `@Injectable()`
+    // decorator has to go after the `@State()` decorator, thus we prevent users from unwanted DI errors.
+    ivyEnabledInDevMode$.subscribe((/**
+     * @param {?} _ivyEnabledInDevMode
+     * @return {?}
+     */
+    _ivyEnabledInDevMode => {
+        if (_ivyEnabledInDevMode) {
+            /** @type {?} */
+            /** @nocollapse */ const ngInjectableDef = target.ɵprov;
+            if (!ngInjectableDef) {
+                // Don't warn if Ivy is disabled or `ɵprov` exists on the class
+                console.warn(CONFIG_MESSAGES[VALIDATION_CODE.UNDECORATED_STATE_IN_IVY](target.name));
+            }
+        }
+    }));
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @record
+ * @template T
+ */
+function MutateMetaOptions() { }
+if (false) {}
+/**
+ * Decorates a class with ngxs state information.
+ * @template T
+ * @param {?} options
+ * @return {?}
+ */
+function State(options) {
+    /**
+     * @param {?} inheritedStateClass
+     * @return {?}
+     */
+    function getStateOptions(inheritedStateClass) {
+        /** @type {?} */
+        const inheritanceOptions = inheritedStateClass[META_OPTIONS_KEY] || {};
+        return (/** @type {?} */ (Object.assign({}, inheritanceOptions, options)));
+    }
+    /**
+     * @param {?} params
+     * @return {?}
+     */
+    function mutateMetaData(params) {
+        const { meta, inheritedStateClass, optionsWithInheritance } = params;
+        const { children, defaults, name } = optionsWithInheritance;
+        /** @type {?} */
+        const stateName = typeof name === 'string' ? name : (name && name.getName()) || null;
+        StoreValidators.checkCorrectStateName(stateName);
+        if (inheritedStateClass.hasOwnProperty(META_KEY)) {
+            /** @type {?} */
+            const inheritedMeta = inheritedStateClass[META_KEY] || {};
+            meta.actions = Object.assign({}, meta.actions, inheritedMeta.actions);
+        }
+        meta.children = children;
+        meta.defaults = defaults;
+        meta.name = stateName;
+    }
+    return (/**
+     * @param {?} target
+     * @return {?}
+     */
+    (target) => {
+        ensureStateClassIsInjectable(target);
+        /** @type {?} */
+        const stateClass = target;
+        /** @type {?} */
+        const meta = ensureStoreMetadata(stateClass);
+        /** @type {?} */
+        const inheritedStateClass = Object.getPrototypeOf(stateClass);
+        /** @type {?} */
+        const optionsWithInheritance = getStateOptions(inheritedStateClass);
+        mutateMetaData({ meta, inheritedStateClass, optionsWithInheritance });
+        stateClass[META_OPTIONS_KEY] = optionsWithInheritance;
+    });
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+const DOLLAR_CHAR_CODE = 36;
+/**
+ * @template T
+ * @param {?} selector
+ * @return {?}
+ */
+function createSelectObservable(selector) {
+    if (!SelectFactory.store) {
+        throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.SELECT_FACTORY_NOT_CONNECTED]());
+    }
+    return SelectFactory.store.select(selector);
+}
+/**
+ * @param {?} name
+ * @param {?=} rawSelector
+ * @param {?=} paths
+ * @return {?}
+ */
+function createSelectorFn(name, rawSelector, paths = []) {
+    rawSelector = !rawSelector ? removeDollarAtTheEnd(name) : rawSelector;
+    if (typeof rawSelector === 'string') {
+        /** @type {?} */
+        const propsArray = paths.length
+            ? [rawSelector, ...paths]
+            : rawSelector.split('.');
+        return propGetter(propsArray, (/** @type {?} */ (SelectFactory.config)));
+    }
+    return rawSelector;
+}
+/**
+ * \@example If `foo$` => make it just `foo`
+ * @param {?} name
+ * @return {?}
+ */
+function removeDollarAtTheEnd(name) {
+    /** @type {?} */
+    const lastCharIndex = name.length - 1;
+    /** @type {?} */
+    const dollarAtTheEnd = name.charCodeAt(lastCharIndex) === DOLLAR_CHAR_CODE;
+    return dollarAtTheEnd ? name.slice(0, lastCharIndex) : name;
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Decorator for selecting a slice of state from the store.
+ * @template T
+ * @param {?=} rawSelector
+ * @param {...?} paths
+ * @return {?}
+ */
+function Select(rawSelector, ...paths) {
+    return (/**
+     * @param {?} target
+     * @param {?} key
+     * @return {?}
+     */
+    function (target, key) {
+        /** @type {?} */
+        const name = key.toString();
+        /** @type {?} */
+        const selectorId = `__${name}__selector`;
+        /** @type {?} */
+        const selector = createSelectorFn(name, rawSelector, paths);
+        Object.defineProperties(target, {
+            [selectorId]: {
+                writable: true,
+                enumerable: false,
+                configurable: true
+            },
+            [name]: {
+                enumerable: true,
+                configurable: true,
+                /**
+                 * @return {?}
+                 */
+                get() {
+                    return this[selectorId] || (this[selectorId] = createSelectObservable(selector));
+                }
+            }
+        });
+    });
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Decorator for setting selector options at a method or class level.
+ * @param {?} options
+ * @return {?}
+ */
+function SelectorOptions(options) {
+    return (/** @type {?} */ (((/**
+     * @template T
+     * @param {?} target
+     * @param {?} methodName
+     * @param {?} descriptor
+     * @return {?}
+     */
+    function decorate(target, methodName, descriptor) {
+        if (methodName) {
+            // Method Decorator
+            /** @type {?} */
+            const originalFn = descriptor.value || ((/** @type {?} */ (descriptor))).originalFn;
+            if (originalFn) {
+                selectorOptionsMetaAccessor.defineOptions(originalFn, options);
+            }
+        }
+        else {
+            // Class Decorator
+            selectorOptionsMetaAccessor.defineOptions(target, options);
+        }
+    }))));
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @record
+ */
+function MetaDataModel$1() { }
+if (false) {}
+/**
+ * @record
+ */
+function SelectorMetaDataModel$1() { }
+if (false) {}
+/**
+ * @param {?} target
+ * @return {?}
+ */
+function ensureStoreMetadata$1(target) {
+    return ensureStoreMetadata(target);
+}
+/**
+ * @param {?} target
+ * @return {?}
+ */
+function getStoreMetadata$1(target) {
+    return getStoreMetadata(target);
+}
+/**
+ * @param {?} target
+ * @return {?}
+ */
+function ensureSelectorMetadata$1(target) {
+    return ensureSelectorMetadata(target);
+}
+/**
+ * @param {?} target
+ * @return {?}
+ */
+function getSelectorMetadata$1(target) {
+    return getSelectorMetadata(target);
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Decorator for memoizing a state selector.
+ * @template T
+ * @param {?=} selectors
+ * @return {?}
+ */
+function Selector(selectors) {
+    return (/**
+     * @template U
+     * @param {?} target
+     * @param {?} key
+     * @param {?} descriptor
+     * @return {?}
+     */
+    (target, key, descriptor) => {
+        /** @type {?} */
+        const isNotMethod = !(descriptor && descriptor.value !== null);
+        if (isNotMethod) {
+            throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.SELECTOR_DECORATOR]());
+        }
+        /** @type {?} */
+        const originalFn = descriptor.value;
+        /** @type {?} */
+        const memoizedFn = createSelector(selectors, (/** @type {?} */ (originalFn)), {
+            containerClass: target,
+            selectorName: key.toString(),
+            /**
+             * @return {?}
+             */
+            getSelectorOptions() {
+                return {};
+            }
+        });
+        /** @type {?} */
+        const newDescriptor = {
+            configurable: true,
+            /**
+             * @return {?}
+             */
+            get() {
+                return memoizedFn;
+            }
+        };
+        // Add hidden property to descriptor
+        ((/** @type {?} */ (newDescriptor)))['originalFn'] = originalFn;
+        return newDescriptor;
+    });
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class NoopNgxsExecutionStrategy {
+    /**
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    enter(func) {
+        return func();
+    }
+    /**
+     * @template T
+     * @param {?} func
+     * @return {?}
+     */
+    leave(func) {
+        return func();
+    }
+}
+NoopNgxsExecutionStrategy.ɵfac = function NoopNgxsExecutionStrategy_Factory(t) { return new (t || NoopNgxsExecutionStrategy)(); };
+NoopNgxsExecutionStrategy.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: NoopNgxsExecutionStrategy, factory: NoopNgxsExecutionStrategy.ɵfac });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NoopNgxsExecutionStrategy, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], null, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @template T
+ */
+class StateToken {
+    /**
+     * @param {?} name
+     */
+    constructor(name) {
+        this.name = name;
+        /** @type {?} */
+        const selectorMetadata = ensureSelectorMetadata((/** @type {?} */ (this)));
+        selectorMetadata.makeRootSelector = (/**
+         * @param {?} runtimeContext
+         * @return {?}
+         */
+        (runtimeContext) => {
+            return runtimeContext.getStateGetter(this.name);
+        });
+    }
+    /**
+     * @return {?}
+     */
+    getName() {
+        return this.name;
+    }
+    /**
+     * @return {?}
+     */
+    toString() {
+        return `StateToken[${this.name}]`;
+    }
+}
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+
+
+//# sourceMappingURL=ngxs-store.js.map
 
 /***/ }),
 
@@ -5489,12 +9617,12 @@ function shareReplay(configOrBufferSize, windowTime, scheduler) {
             bufferSize: configOrBufferSize,
             windowTime,
             refCount: false,
-            scheduler,
+            scheduler
         };
     }
     return (source) => source.lift(shareReplayOperator(config));
 }
-function shareReplayOperator({ bufferSize = Number.POSITIVE_INFINITY, windowTime = Number.POSITIVE_INFINITY, refCount: useRefCount, scheduler, }) {
+function shareReplayOperator({ bufferSize = Number.POSITIVE_INFINITY, windowTime = Number.POSITIVE_INFINITY, refCount: useRefCount, scheduler }) {
     let subject;
     let refCount = 0;
     let subscription;
@@ -5508,9 +9636,7 @@ function shareReplayOperator({ bufferSize = Number.POSITIVE_INFINITY, windowTime
             subject = new _ReplaySubject__WEBPACK_IMPORTED_MODULE_0__["ReplaySubject"](bufferSize, windowTime, scheduler);
             innerSub = subject.subscribe(this);
             subscription = source.subscribe({
-                next(value) {
-                    subject.next(value);
-                },
+                next(value) { subject.next(value); },
                 error(err) {
                     hasError = true;
                     subject.error(err);
@@ -5521,9 +9647,6 @@ function shareReplayOperator({ bufferSize = Number.POSITIVE_INFINITY, windowTime
                     subject.complete();
                 },
             });
-            if (isComplete) {
-                subscription = undefined;
-            }
         }
         else {
             innerSub = subject.subscribe(this);
@@ -5531,7 +9654,6 @@ function shareReplayOperator({ bufferSize = Number.POSITIVE_INFINITY, windowTime
         this.add(() => {
             refCount--;
             innerSub.unsubscribe();
-            innerSub = undefined;
             if (subscription && !isComplete && useRefCount && refCount === 0) {
                 subscription.unsubscribe();
                 subscription = undefined;
@@ -7337,7 +11459,7 @@ function combineLatest(...observables) {
 /*!******************************************************************!*\
   !*** ./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js ***!
   \******************************************************************/
-/*! exports provided: ANALYZE_FOR_ENTRY_COMPONENTS, APP_BOOTSTRAP_LISTENER, APP_ID, APP_INITIALIZER, ApplicationInitStatus, ApplicationModule, ApplicationRef, Attribute, COMPILER_OPTIONS, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy, ChangeDetectorRef, Compiler, CompilerFactory, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ContentChild, ContentChildren, DEFAULT_CURRENCY_CODE, DebugElement, DebugEventListener, DebugNode, DefaultIterableDiffer, Directive, ElementRef, EmbeddedViewRef, ErrorHandler, EventEmitter, Host, HostBinding, HostListener, INJECTOR, Inject, InjectFlags, Injectable, InjectionToken, Injector, Input, IterableDiffers, KeyValueDiffers, LOCALE_ID, MissingTranslationStrategy, ModuleWithComponentFactories, NO_ERRORS_SCHEMA, NgModule, NgModuleFactory, NgModuleFactoryLoader, NgModuleRef, NgProbeToken, NgZone, Optional, Output, PACKAGE_ROOT_URL, PLATFORM_ID, PLATFORM_INITIALIZER, Pipe, PlatformRef, Query, QueryList, ReflectiveInjector, ReflectiveKey, Renderer2, RendererFactory2, RendererStyleFlags2, ResolvedReflectiveFactory, Sanitizer, SecurityContext, Self, SimpleChange, SkipSelf, SystemJsNgModuleLoader, SystemJsNgModuleLoaderConfig, TRANSLATIONS, TRANSLATIONS_FORMAT, TemplateRef, Testability, TestabilityRegistry, Type, VERSION, Version, ViewChild, ViewChildren, ViewContainerRef, ViewEncapsulation, ViewRef, WrappedValue, asNativeElements, assertPlatform, createPlatform, createPlatformFactory, defineInjectable, destroyPlatform, enableProdMode, forwardRef, getDebugNode, getModuleFactory, getPlatform, inject, isDevMode, platformCore, resolveForwardRef, setTestabilityGetter, ɵ0, ɵALLOW_MULTIPLE_PLATFORMS, ɵAPP_ID_RANDOM_PROVIDER, ɵCREATE_ATTRIBUTE_DECORATOR__POST_R3__, ɵChangeDetectorStatus, ɵCodegenComponentFactoryResolver, ɵCompiler_compileModuleAndAllComponentsAsync__POST_R3__, ɵCompiler_compileModuleAndAllComponentsSync__POST_R3__, ɵCompiler_compileModuleAsync__POST_R3__, ɵCompiler_compileModuleSync__POST_R3__, ɵComponentFactory, ɵConsole, ɵDEFAULT_LOCALE_ID, ɵEMPTY_ARRAY, ɵEMPTY_MAP, ɵINJECTOR_IMPL__POST_R3__, ɵINJECTOR_SCOPE, ɵLifecycleHooksFeature, ɵLocaleDataIndex, ɵNG_COMP_DEF, ɵNG_DIR_DEF, ɵNG_ELEMENT_ID, ɵNG_INJ_DEF, ɵNG_MOD_DEF, ɵNG_PIPE_DEF, ɵNG_PROV_DEF, ɵNOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR, ɵNO_CHANGE, ɵNgModuleFactory, ɵNoopNgZone, ɵReflectionCapabilities, ɵRender3ComponentFactory, ɵRender3ComponentRef, ɵRender3NgModuleRef, ɵSWITCH_CHANGE_DETECTOR_REF_FACTORY__POST_R3__, ɵSWITCH_COMPILE_COMPONENT__POST_R3__, ɵSWITCH_COMPILE_DIRECTIVE__POST_R3__, ɵSWITCH_COMPILE_INJECTABLE__POST_R3__, ɵSWITCH_COMPILE_NGMODULE__POST_R3__, ɵSWITCH_COMPILE_PIPE__POST_R3__, ɵSWITCH_ELEMENT_REF_FACTORY__POST_R3__, ɵSWITCH_IVY_ENABLED__POST_R3__, ɵSWITCH_RENDERER2_FACTORY__POST_R3__, ɵSWITCH_TEMPLATE_REF_FACTORY__POST_R3__, ɵSWITCH_VIEW_CONTAINER_REF_FACTORY__POST_R3__, ɵ_sanitizeHtml, ɵ_sanitizeUrl, ɵallowSanitizationBypassAndThrow, ɵand, ɵangular_packages_core_core_a, ɵangular_packages_core_core_b, ɵangular_packages_core_core_ba, ɵangular_packages_core_core_bb, ɵangular_packages_core_core_bc, ɵangular_packages_core_core_bd, ɵangular_packages_core_core_be, ɵangular_packages_core_core_bf, ɵangular_packages_core_core_bg, ɵangular_packages_core_core_bh, ɵangular_packages_core_core_bi, ɵangular_packages_core_core_bj, ɵangular_packages_core_core_bl, ɵangular_packages_core_core_bm, ɵangular_packages_core_core_bn, ɵangular_packages_core_core_bo, ɵangular_packages_core_core_bp, ɵangular_packages_core_core_bq, ɵangular_packages_core_core_br, ɵangular_packages_core_core_bs, ɵangular_packages_core_core_bv, ɵangular_packages_core_core_bw, ɵangular_packages_core_core_bx, ɵangular_packages_core_core_bz, ɵangular_packages_core_core_c, ɵangular_packages_core_core_cb, ɵangular_packages_core_core_cc, ɵangular_packages_core_core_d, ɵangular_packages_core_core_e, ɵangular_packages_core_core_f, ɵangular_packages_core_core_g, ɵangular_packages_core_core_h, ɵangular_packages_core_core_i, ɵangular_packages_core_core_j, ɵangular_packages_core_core_k, ɵangular_packages_core_core_l, ɵangular_packages_core_core_m, ɵangular_packages_core_core_n, ɵangular_packages_core_core_o, ɵangular_packages_core_core_p, ɵangular_packages_core_core_q, ɵangular_packages_core_core_r, ɵangular_packages_core_core_s, ɵangular_packages_core_core_t, ɵangular_packages_core_core_u, ɵangular_packages_core_core_v, ɵangular_packages_core_core_w, ɵangular_packages_core_core_x, ɵangular_packages_core_core_y, ɵangular_packages_core_core_z, ɵbypassSanitizationTrustHtml, ɵbypassSanitizationTrustResourceUrl, ɵbypassSanitizationTrustScript, ɵbypassSanitizationTrustStyle, ɵbypassSanitizationTrustUrl, ɵccf, ɵclearOverrides, ɵclearResolutionOfComponentResourcesQueue, ɵcmf, ɵcompileComponent, ɵcompileDirective, ɵcompileNgModule, ɵcompileNgModuleDefs, ɵcompileNgModuleFactory__POST_R3__, ɵcompilePipe, ɵcreateInjector, ɵcrt, ɵdefaultIterableDiffers, ɵdefaultKeyValueDiffers, ɵdetectChanges, ɵdevModeEqual, ɵdid, ɵeld, ɵfindLocaleData, ɵflushModuleScopingQueueAsMuchAsPossible, ɵgetComponentViewDefinitionFactory, ɵgetDebugNodeR2, ɵgetDebugNode__POST_R3__, ɵgetDirectives, ɵgetHostElement, ɵgetInjectableDef, ɵgetLContext, ɵgetLocaleCurrencyCode, ɵgetLocalePluralCase, ɵgetModuleFactory__POST_R3__, ɵgetSanitizationBypassType, ɵglobal, ɵinitServicesIfNeeded, ɵinlineInterpolate, ɵinterpolate, ɵisBoundToModule__POST_R3__, ɵisDefaultChangeDetectionStrategy, ɵisListLikeIterable, ɵisObservable, ɵisPromise, ɵisSubscribable, ɵivyEnabled, ɵmakeDecorator, ɵmarkDirty, ɵmod, ɵmpd, ɵncd, ɵnoSideEffects, ɵnov, ɵoverrideComponentView, ɵoverrideProvider, ɵpad, ɵpatchComponentDefWithScope, ɵpid, ɵpod, ɵppd, ɵprd, ɵpublishDefaultGlobalUtils, ɵpublishGlobalUtil, ɵqud, ɵregisterLocaleData, ɵregisterModuleFactory, ɵregisterNgModuleType, ɵrenderComponent, ɵresetCompiledComponents, ɵresetJitOptions, ɵresolveComponentResources, ɵsetClassMetadata, ɵsetCurrentInjector, ɵsetDocument, ɵsetLocaleId, ɵstore, ɵstringify, ɵted, ɵtransitiveScopesFor, ɵunregisterLocaleData, ɵunv, ɵunwrapSafeValue, ɵvid, ɵwhenRendered, ɵɵCopyDefinitionFeature, ɵɵInheritDefinitionFeature, ɵɵNgOnChangesFeature, ɵɵProvidersFeature, ɵɵadvance, ɵɵattribute, ɵɵattributeInterpolate1, ɵɵattributeInterpolate2, ɵɵattributeInterpolate3, ɵɵattributeInterpolate4, ɵɵattributeInterpolate5, ɵɵattributeInterpolate6, ɵɵattributeInterpolate7, ɵɵattributeInterpolate8, ɵɵattributeInterpolateV, ɵɵclassMap, ɵɵclassMapInterpolate1, ɵɵclassMapInterpolate2, ɵɵclassMapInterpolate3, ɵɵclassMapInterpolate4, ɵɵclassMapInterpolate5, ɵɵclassMapInterpolate6, ɵɵclassMapInterpolate7, ɵɵclassMapInterpolate8, ɵɵclassMapInterpolateV, ɵɵclassProp, ɵɵcontentQuery, ɵɵdefineComponent, ɵɵdefineDirective, ɵɵdefineInjectable, ɵɵdefineInjector, ɵɵdefineNgModule, ɵɵdefinePipe, ɵɵdirectiveInject, ɵɵdisableBindings, ɵɵelement, ɵɵelementContainer, ɵɵelementContainerEnd, ɵɵelementContainerStart, ɵɵelementEnd, ɵɵelementStart, ɵɵenableBindings, ɵɵgetCurrentView, ɵɵgetInheritedFactory, ɵɵhostProperty, ɵɵi18n, ɵɵi18nApply, ɵɵi18nAttributes, ɵɵi18nEnd, ɵɵi18nExp, ɵɵi18nPostprocess, ɵɵi18nStart, ɵɵinject, ɵɵinjectAttribute, ɵɵinjectPipeChangeDetectorRef, ɵɵinvalidFactory, ɵɵinvalidFactoryDep, ɵɵlistener, ɵɵloadQuery, ɵɵnamespaceHTML, ɵɵnamespaceMathML, ɵɵnamespaceSVG, ɵɵnextContext, ɵɵngDeclareComponent, ɵɵngDeclareDirective, ɵɵngDeclarePipe, ɵɵpipe, ɵɵpipeBind1, ɵɵpipeBind2, ɵɵpipeBind3, ɵɵpipeBind4, ɵɵpipeBindV, ɵɵprojection, ɵɵprojectionDef, ɵɵproperty, ɵɵpropertyInterpolate, ɵɵpropertyInterpolate1, ɵɵpropertyInterpolate2, ɵɵpropertyInterpolate3, ɵɵpropertyInterpolate4, ɵɵpropertyInterpolate5, ɵɵpropertyInterpolate6, ɵɵpropertyInterpolate7, ɵɵpropertyInterpolate8, ɵɵpropertyInterpolateV, ɵɵpureFunction0, ɵɵpureFunction1, ɵɵpureFunction2, ɵɵpureFunction3, ɵɵpureFunction4, ɵɵpureFunction5, ɵɵpureFunction6, ɵɵpureFunction7, ɵɵpureFunction8, ɵɵpureFunctionV, ɵɵqueryRefresh, ɵɵreference, ɵɵresolveBody, ɵɵresolveDocument, ɵɵresolveWindow, ɵɵrestoreView, ɵɵsanitizeHtml, ɵɵsanitizeResourceUrl, ɵɵsanitizeScript, ɵɵsanitizeStyle, ɵɵsanitizeUrl, ɵɵsanitizeUrlOrResourceUrl, ɵɵsetComponentScope, ɵɵsetNgModuleScope, ɵɵstyleMap, ɵɵstyleMapInterpolate1, ɵɵstyleMapInterpolate2, ɵɵstyleMapInterpolate3, ɵɵstyleMapInterpolate4, ɵɵstyleMapInterpolate5, ɵɵstyleMapInterpolate6, ɵɵstyleMapInterpolate7, ɵɵstyleMapInterpolate8, ɵɵstyleMapInterpolateV, ɵɵstyleProp, ɵɵstylePropInterpolate1, ɵɵstylePropInterpolate2, ɵɵstylePropInterpolate3, ɵɵstylePropInterpolate4, ɵɵstylePropInterpolate5, ɵɵstylePropInterpolate6, ɵɵstylePropInterpolate7, ɵɵstylePropInterpolate8, ɵɵstylePropInterpolateV, ɵɵsyntheticHostListener, ɵɵsyntheticHostProperty, ɵɵtemplate, ɵɵtemplateRefExtractor, ɵɵtext, ɵɵtextInterpolate, ɵɵtextInterpolate1, ɵɵtextInterpolate2, ɵɵtextInterpolate3, ɵɵtextInterpolate4, ɵɵtextInterpolate5, ɵɵtextInterpolate6, ɵɵtextInterpolate7, ɵɵtextInterpolate8, ɵɵtextInterpolateV, ɵɵtrustConstantHtml, ɵɵtrustConstantResourceUrl, ɵɵviewQuery */
+/*! exports provided: ANALYZE_FOR_ENTRY_COMPONENTS, APP_BOOTSTRAP_LISTENER, APP_ID, APP_INITIALIZER, ApplicationInitStatus, ApplicationModule, ApplicationRef, Attribute, COMPILER_OPTIONS, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectionStrategy, ChangeDetectorRef, Compiler, CompilerFactory, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ContentChild, ContentChildren, DEFAULT_CURRENCY_CODE, DebugElement, DebugEventListener, DebugNode, DefaultIterableDiffer, Directive, ElementRef, EmbeddedViewRef, ErrorHandler, EventEmitter, Host, HostBinding, HostListener, INJECTOR, Inject, InjectFlags, Injectable, InjectionToken, Injector, Input, IterableDiffers, KeyValueDiffers, LOCALE_ID, MissingTranslationStrategy, ModuleWithComponentFactories, NO_ERRORS_SCHEMA, NgModule, NgModuleFactory, NgModuleFactoryLoader, NgModuleRef, NgProbeToken, NgZone, Optional, Output, PACKAGE_ROOT_URL, PLATFORM_ID, PLATFORM_INITIALIZER, Pipe, PlatformRef, Query, QueryList, ReflectiveInjector, ReflectiveKey, Renderer2, RendererFactory2, RendererStyleFlags2, ResolvedReflectiveFactory, Sanitizer, SecurityContext, Self, SimpleChange, SkipSelf, SystemJsNgModuleLoader, SystemJsNgModuleLoaderConfig, TRANSLATIONS, TRANSLATIONS_FORMAT, TemplateRef, Testability, TestabilityRegistry, Type, VERSION, Version, ViewChild, ViewChildren, ViewContainerRef, ViewEncapsulation, ViewRef, WrappedValue, asNativeElements, assertPlatform, createPlatform, createPlatformFactory, defineInjectable, destroyPlatform, enableProdMode, forwardRef, getDebugNode, getModuleFactory, getPlatform, inject, isDevMode, platformCore, resolveForwardRef, setTestabilityGetter, ɵ0, ɵALLOW_MULTIPLE_PLATFORMS, ɵAPP_ID_RANDOM_PROVIDER, ɵCREATE_ATTRIBUTE_DECORATOR__POST_R3__, ɵChangeDetectorStatus, ɵCodegenComponentFactoryResolver, ɵCompiler_compileModuleAndAllComponentsAsync__POST_R3__, ɵCompiler_compileModuleAndAllComponentsSync__POST_R3__, ɵCompiler_compileModuleAsync__POST_R3__, ɵCompiler_compileModuleSync__POST_R3__, ɵComponentFactory, ɵConsole, ɵDEFAULT_LOCALE_ID, ɵEMPTY_ARRAY, ɵEMPTY_MAP, ɵINJECTOR_IMPL__POST_R3__, ɵINJECTOR_SCOPE, ɵLifecycleHooksFeature, ɵLocaleDataIndex, ɵNG_COMP_DEF, ɵNG_DIR_DEF, ɵNG_ELEMENT_ID, ɵNG_INJ_DEF, ɵNG_MOD_DEF, ɵNG_PIPE_DEF, ɵNG_PROV_DEF, ɵNOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR, ɵNO_CHANGE, ɵNgModuleFactory, ɵNoopNgZone, ɵReflectionCapabilities, ɵRender3ComponentFactory, ɵRender3ComponentRef, ɵRender3NgModuleRef, ɵSWITCH_CHANGE_DETECTOR_REF_FACTORY__POST_R3__, ɵSWITCH_COMPILE_COMPONENT__POST_R3__, ɵSWITCH_COMPILE_DIRECTIVE__POST_R3__, ɵSWITCH_COMPILE_INJECTABLE__POST_R3__, ɵSWITCH_COMPILE_NGMODULE__POST_R3__, ɵSWITCH_COMPILE_PIPE__POST_R3__, ɵSWITCH_ELEMENT_REF_FACTORY__POST_R3__, ɵSWITCH_IVY_ENABLED__POST_R3__, ɵSWITCH_RENDERER2_FACTORY__POST_R3__, ɵSWITCH_TEMPLATE_REF_FACTORY__POST_R3__, ɵSWITCH_VIEW_CONTAINER_REF_FACTORY__POST_R3__, ɵ_sanitizeHtml, ɵ_sanitizeUrl, ɵallowSanitizationBypassAndThrow, ɵand, ɵangular_packages_core_core_a, ɵangular_packages_core_core_b, ɵangular_packages_core_core_ba, ɵangular_packages_core_core_bb, ɵangular_packages_core_core_bc, ɵangular_packages_core_core_bd, ɵangular_packages_core_core_be, ɵangular_packages_core_core_bf, ɵangular_packages_core_core_bg, ɵangular_packages_core_core_bi, ɵangular_packages_core_core_bj, ɵangular_packages_core_core_bk, ɵangular_packages_core_core_bl, ɵangular_packages_core_core_bm, ɵangular_packages_core_core_bn, ɵangular_packages_core_core_bo, ɵangular_packages_core_core_bp, ɵangular_packages_core_core_bq, ɵangular_packages_core_core_br, ɵangular_packages_core_core_bs, ɵangular_packages_core_core_bu, ɵangular_packages_core_core_bw, ɵangular_packages_core_core_bx, ɵangular_packages_core_core_by, ɵangular_packages_core_core_bz, ɵangular_packages_core_core_c, ɵangular_packages_core_core_ca, ɵangular_packages_core_core_d, ɵangular_packages_core_core_e, ɵangular_packages_core_core_f, ɵangular_packages_core_core_g, ɵangular_packages_core_core_h, ɵangular_packages_core_core_i, ɵangular_packages_core_core_j, ɵangular_packages_core_core_k, ɵangular_packages_core_core_l, ɵangular_packages_core_core_m, ɵangular_packages_core_core_n, ɵangular_packages_core_core_o, ɵangular_packages_core_core_p, ɵangular_packages_core_core_q, ɵangular_packages_core_core_r, ɵangular_packages_core_core_s, ɵangular_packages_core_core_t, ɵangular_packages_core_core_u, ɵangular_packages_core_core_v, ɵangular_packages_core_core_w, ɵangular_packages_core_core_x, ɵangular_packages_core_core_y, ɵangular_packages_core_core_z, ɵbypassSanitizationTrustHtml, ɵbypassSanitizationTrustResourceUrl, ɵbypassSanitizationTrustScript, ɵbypassSanitizationTrustStyle, ɵbypassSanitizationTrustUrl, ɵccf, ɵclearOverrides, ɵclearResolutionOfComponentResourcesQueue, ɵcmf, ɵcompileComponent, ɵcompileDirective, ɵcompileNgModule, ɵcompileNgModuleDefs, ɵcompileNgModuleFactory__POST_R3__, ɵcompilePipe, ɵcreateInjector, ɵcrt, ɵdefaultIterableDiffers, ɵdefaultKeyValueDiffers, ɵdetectChanges, ɵdevModeEqual, ɵdid, ɵeld, ɵfindLocaleData, ɵflushModuleScopingQueueAsMuchAsPossible, ɵgetComponentViewDefinitionFactory, ɵgetDebugNodeR2, ɵgetDebugNode__POST_R3__, ɵgetDirectives, ɵgetHostElement, ɵgetInjectableDef, ɵgetLContext, ɵgetLocaleCurrencyCode, ɵgetLocalePluralCase, ɵgetModuleFactory__POST_R3__, ɵgetSanitizationBypassType, ɵglobal, ɵinitServicesIfNeeded, ɵinlineInterpolate, ɵinterpolate, ɵisBoundToModule__POST_R3__, ɵisDefaultChangeDetectionStrategy, ɵisListLikeIterable, ɵisObservable, ɵisPromise, ɵivyEnabled, ɵmakeDecorator, ɵmarkDirty, ɵmod, ɵmpd, ɵncd, ɵnoSideEffects, ɵnov, ɵoverrideComponentView, ɵoverrideProvider, ɵpad, ɵpatchComponentDefWithScope, ɵpid, ɵpod, ɵppd, ɵprd, ɵpublishDefaultGlobalUtils, ɵpublishGlobalUtil, ɵqud, ɵregisterLocaleData, ɵregisterModuleFactory, ɵregisterNgModuleType, ɵrenderComponent, ɵresetCompiledComponents, ɵresetJitOptions, ɵresolveComponentResources, ɵsetClassMetadata, ɵsetCurrentInjector, ɵsetDocument, ɵsetLocaleId, ɵstore, ɵstringify, ɵted, ɵtransitiveScopesFor, ɵunregisterLocaleData, ɵunv, ɵunwrapSafeValue, ɵvid, ɵwhenRendered, ɵɵCopyDefinitionFeature, ɵɵInheritDefinitionFeature, ɵɵNgOnChangesFeature, ɵɵProvidersFeature, ɵɵadvance, ɵɵattribute, ɵɵattributeInterpolate1, ɵɵattributeInterpolate2, ɵɵattributeInterpolate3, ɵɵattributeInterpolate4, ɵɵattributeInterpolate5, ɵɵattributeInterpolate6, ɵɵattributeInterpolate7, ɵɵattributeInterpolate8, ɵɵattributeInterpolateV, ɵɵclassMap, ɵɵclassMapInterpolate1, ɵɵclassMapInterpolate2, ɵɵclassMapInterpolate3, ɵɵclassMapInterpolate4, ɵɵclassMapInterpolate5, ɵɵclassMapInterpolate6, ɵɵclassMapInterpolate7, ɵɵclassMapInterpolate8, ɵɵclassMapInterpolateV, ɵɵclassProp, ɵɵcontentQuery, ɵɵdefineComponent, ɵɵdefineDirective, ɵɵdefineInjectable, ɵɵdefineInjector, ɵɵdefineNgModule, ɵɵdefinePipe, ɵɵdirectiveInject, ɵɵdisableBindings, ɵɵelement, ɵɵelementContainer, ɵɵelementContainerEnd, ɵɵelementContainerStart, ɵɵelementEnd, ɵɵelementStart, ɵɵenableBindings, ɵɵgetCurrentView, ɵɵgetFactoryOf, ɵɵgetInheritedFactory, ɵɵhostProperty, ɵɵi18n, ɵɵi18nApply, ɵɵi18nAttributes, ɵɵi18nEnd, ɵɵi18nExp, ɵɵi18nPostprocess, ɵɵi18nStart, ɵɵinject, ɵɵinjectAttribute, ɵɵinjectPipeChangeDetectorRef, ɵɵinvalidFactory, ɵɵinvalidFactoryDep, ɵɵlistener, ɵɵloadQuery, ɵɵnamespaceHTML, ɵɵnamespaceMathML, ɵɵnamespaceSVG, ɵɵnextContext, ɵɵpipe, ɵɵpipeBind1, ɵɵpipeBind2, ɵɵpipeBind3, ɵɵpipeBind4, ɵɵpipeBindV, ɵɵprojection, ɵɵprojectionDef, ɵɵproperty, ɵɵpropertyInterpolate, ɵɵpropertyInterpolate1, ɵɵpropertyInterpolate2, ɵɵpropertyInterpolate3, ɵɵpropertyInterpolate4, ɵɵpropertyInterpolate5, ɵɵpropertyInterpolate6, ɵɵpropertyInterpolate7, ɵɵpropertyInterpolate8, ɵɵpropertyInterpolateV, ɵɵpureFunction0, ɵɵpureFunction1, ɵɵpureFunction2, ɵɵpureFunction3, ɵɵpureFunction4, ɵɵpureFunction5, ɵɵpureFunction6, ɵɵpureFunction7, ɵɵpureFunction8, ɵɵpureFunctionV, ɵɵqueryRefresh, ɵɵreference, ɵɵresolveBody, ɵɵresolveDocument, ɵɵresolveWindow, ɵɵrestoreView, ɵɵsanitizeHtml, ɵɵsanitizeResourceUrl, ɵɵsanitizeScript, ɵɵsanitizeStyle, ɵɵsanitizeUrl, ɵɵsanitizeUrlOrResourceUrl, ɵɵsetComponentScope, ɵɵsetNgModuleScope, ɵɵstaticContentQuery, ɵɵstaticViewQuery, ɵɵstyleMap, ɵɵstyleMapInterpolate1, ɵɵstyleMapInterpolate2, ɵɵstyleMapInterpolate3, ɵɵstyleMapInterpolate4, ɵɵstyleMapInterpolate5, ɵɵstyleMapInterpolate6, ɵɵstyleMapInterpolate7, ɵɵstyleMapInterpolate8, ɵɵstyleMapInterpolateV, ɵɵstyleProp, ɵɵstylePropInterpolate1, ɵɵstylePropInterpolate2, ɵɵstylePropInterpolate3, ɵɵstylePropInterpolate4, ɵɵstylePropInterpolate5, ɵɵstylePropInterpolate6, ɵɵstylePropInterpolate7, ɵɵstylePropInterpolate8, ɵɵstylePropInterpolateV, ɵɵsyntheticHostListener, ɵɵsyntheticHostProperty, ɵɵtemplate, ɵɵtemplateRefExtractor, ɵɵtext, ɵɵtextInterpolate, ɵɵtextInterpolate1, ɵɵtextInterpolate2, ɵɵtextInterpolate3, ɵɵtextInterpolate4, ɵɵtextInterpolate5, ɵɵtextInterpolate6, ɵɵtextInterpolate7, ɵɵtextInterpolate8, ɵɵtextInterpolateV, ɵɵtrustConstantHtml, ɵɵtrustConstantResourceUrl, ɵɵtrustConstantScript, ɵɵviewQuery */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7446,7 +11568,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "platformCore", function() { return platformCore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resolveForwardRef", function() { return resolveForwardRef; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTestabilityGetter", function() { return setTestabilityGetter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵ0", function() { return ɵ0$3; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵ0", function() { return ɵ0$2; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵALLOW_MULTIPLE_PLATFORMS", function() { return ALLOW_MULTIPLE_PLATFORMS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵAPP_ID_RANDOM_PROVIDER", function() { return APP_ID_RANDOM_PROVIDER; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵCREATE_ATTRIBUTE_DECORATOR__POST_R3__", function() { return CREATE_ATTRIBUTE_DECORATOR__POST_R3__; });
@@ -7497,54 +11619,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵand", function() { return anchorDef; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_a", function() { return isForwardRef; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_b", function() { return injectInjectorOnly; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_ba", function() { return zoneSchedulerFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bb", function() { return USD_CURRENCY_CODE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bc", function() { return _def; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bd", function() { return DebugContext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_be", function() { return NgOnChangesFeatureImpl; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bf", function() { return SCHEDULER; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bg", function() { return injectAttributeImpl; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bh", function() { return getLView; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bi", function() { return getBindingRoot; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bj", function() { return nextContextImpl; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bl", function() { return pureFunction1Internal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bm", function() { return pureFunction2Internal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bn", function() { return pureFunction3Internal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bo", function() { return pureFunction4Internal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bp", function() { return pureFunctionVInternal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bq", function() { return getUrlSanitizer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_br", function() { return makePropDecorator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bs", function() { return makeParamDecorator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bv", function() { return getClosureSafeProperty; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bw", function() { return NullInjector; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bx", function() { return getInjectImplementation; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bz", function() { return getNativeByTNode; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_c", function() { return attachInjectFlag; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_cb", function() { return getRootContext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_cc", function() { return i18nPostprocess; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_d", function() { return ReflectiveInjector_; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_e", function() { return ReflectiveDependency; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_f", function() { return resolveReflectiveProviders; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_g", function() { return _appIdRandomProviderFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_h", function() { return injectRenderer2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_i", function() { return injectElementRef; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_j", function() { return createElementRef; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_k", function() { return getModuleFactory__PRE_R3__; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_l", function() { return injectTemplateRef; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_m", function() { return createTemplateRef; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_n", function() { return injectViewContainerRef; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_o", function() { return DebugNode__PRE_R3__; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_p", function() { return DebugElement__PRE_R3__; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_q", function() { return getDebugNodeR2__PRE_R3__; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_r", function() { return injectChangeDetectorRef; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_s", function() { return DefaultIterableDifferFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_t", function() { return DefaultKeyValueDifferFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_u", function() { return defaultIterableDiffersFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_v", function() { return defaultKeyValueDiffersFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_w", function() { return _iterableDiffersFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_x", function() { return _keyValueDiffersFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_y", function() { return _localeFactory; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_z", function() { return APPLICATION_MODULE_PROVIDERS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_ba", function() { return DebugContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bb", function() { return NgOnChangesFeatureImpl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bc", function() { return SCHEDULER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bd", function() { return injectAttributeImpl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_be", function() { return getLView; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bf", function() { return getBindingRoot; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bg", function() { return nextContextImpl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bi", function() { return pureFunction1Internal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bj", function() { return pureFunction2Internal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bk", function() { return pureFunction3Internal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bl", function() { return pureFunction4Internal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bm", function() { return pureFunctionVInternal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bn", function() { return getUrlSanitizer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bo", function() { return makePropDecorator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bp", function() { return makeParamDecorator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bq", function() { return getClosureSafeProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_br", function() { return NullInjector; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bs", function() { return getInjectImplementation; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bu", function() { return getNativeByTNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bw", function() { return getRootContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bx", function() { return i18nPostprocess; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_by", function() { return trustedHTMLFromString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_bz", function() { return trustedScriptURLFromString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_c", function() { return ReflectiveInjector_; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_ca", function() { return trustedScriptFromString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_d", function() { return ReflectiveDependency; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_e", function() { return resolveReflectiveProviders; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_f", function() { return _appIdRandomProviderFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_g", function() { return injectRenderer2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_h", function() { return injectElementRef; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_i", function() { return createElementRef; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_j", function() { return getModuleFactory__PRE_R3__; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_k", function() { return injectTemplateRef; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_l", function() { return createTemplateRef; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_m", function() { return injectViewContainerRef; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_n", function() { return DebugNode__PRE_R3__; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_o", function() { return DebugElement__PRE_R3__; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_p", function() { return getDebugNodeR2__PRE_R3__; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_q", function() { return injectChangeDetectorRef; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_r", function() { return DefaultIterableDifferFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_s", function() { return DefaultKeyValueDifferFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_t", function() { return _iterableDiffersFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_u", function() { return _keyValueDiffersFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_v", function() { return _localeFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_w", function() { return APPLICATION_MODULE_PROVIDERS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_x", function() { return zoneSchedulerFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_y", function() { return USD_CURRENCY_CODE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_core_core_z", function() { return _def; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵbypassSanitizationTrustHtml", function() { return bypassSanitizationTrustHtml; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵbypassSanitizationTrustResourceUrl", function() { return bypassSanitizationTrustResourceUrl; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵbypassSanitizationTrustScript", function() { return bypassSanitizationTrustScript; });
@@ -7590,7 +11712,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵisListLikeIterable", function() { return isListLikeIterable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵisObservable", function() { return isObservable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵisPromise", function() { return isPromise; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵisSubscribable", function() { return isSubscribable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵivyEnabled", function() { return ivyEnabled; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵmakeDecorator", function() { return makeDecorator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵmarkDirty", function() { return markDirty; });
@@ -7673,6 +11794,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵelementStart", function() { return ɵɵelementStart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵenableBindings", function() { return ɵɵenableBindings; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵgetCurrentView", function() { return ɵɵgetCurrentView; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵgetFactoryOf", function() { return ɵɵgetFactoryOf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵgetInheritedFactory", function() { return ɵɵgetInheritedFactory; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵhostProperty", function() { return ɵɵhostProperty; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵi18n", function() { return ɵɵi18n; });
@@ -7693,9 +11815,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵnamespaceMathML", function() { return ɵɵnamespaceMathML; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵnamespaceSVG", function() { return ɵɵnamespaceSVG; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵnextContext", function() { return ɵɵnextContext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵngDeclareComponent", function() { return ɵɵngDeclareComponent; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵngDeclareDirective", function() { return ɵɵngDeclareDirective; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵngDeclarePipe", function() { return ɵɵngDeclarePipe; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵpipe", function() { return ɵɵpipe; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵpipeBind1", function() { return ɵɵpipeBind1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵpipeBind2", function() { return ɵɵpipeBind2; });
@@ -7739,6 +11858,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵsanitizeUrlOrResourceUrl", function() { return ɵɵsanitizeUrlOrResourceUrl; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵsetComponentScope", function() { return ɵɵsetComponentScope; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵsetNgModuleScope", function() { return ɵɵsetNgModuleScope; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵstaticContentQuery", function() { return ɵɵstaticContentQuery; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵstaticViewQuery", function() { return ɵɵstaticViewQuery; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵstyleMap", function() { return ɵɵstyleMap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵstyleMapInterpolate1", function() { return ɵɵstyleMapInterpolate1; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵstyleMapInterpolate2", function() { return ɵɵstyleMapInterpolate2; });
@@ -7776,12 +11897,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵtextInterpolateV", function() { return ɵɵtextInterpolateV; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵtrustConstantHtml", function() { return ɵɵtrustConstantHtml; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵtrustConstantResourceUrl", function() { return ɵɵtrustConstantResourceUrl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵtrustConstantScript", function() { return ɵɵtrustConstantScript; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵɵviewQuery", function() { return ɵɵviewQuery; });
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ "qCKp");
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
 /**
- * @license Angular v11.2.8
- * (c) 2010-2021 Google LLC. https://angular.io/
+ * @license Angular v11.0.7
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -7908,110 +12030,6 @@ function resolveForwardRef(type) {
 function isForwardRef(fn) {
     return typeof fn === 'function' && fn.hasOwnProperty(__forward_ref__) &&
         fn.__forward_ref__ === forwardRef;
-}
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-// Base URL for the error details page.
-// Keep this value in sync with a similar const in
-// `packages/compiler-cli/src/ngtsc/diagnostics/src/error_code.ts`.
-const ERROR_DETAILS_PAGE_BASE_URL = 'https://angular.io/errors';
-class RuntimeError extends Error {
-    constructor(code, message) {
-        super(formatRuntimeError(code, message));
-        this.code = code;
-    }
-}
-// Contains a set of error messages that have details guides at angular.io.
-// Full list of available error guides can be found at https://angular.io/errors
-/* tslint:disable:no-toplevel-property-access */
-const RUNTIME_ERRORS_WITH_GUIDES = new Set([
-    "100" /* EXPRESSION_CHANGED_AFTER_CHECKED */,
-    "200" /* CYCLIC_DI_DEPENDENCY */,
-    "201" /* PROVIDER_NOT_FOUND */,
-    "300" /* MULTIPLE_COMPONENTS_MATCH */,
-    "301" /* EXPORT_NOT_FOUND */,
-    "302" /* PIPE_NOT_FOUND */,
-]);
-/* tslint:enable:no-toplevel-property-access */
-/** Called to format a runtime error */
-function formatRuntimeError(code, message) {
-    const fullCode = code ? `NG0${code}: ` : '';
-    let errorMessage = `${fullCode}${message}`;
-    // Some runtime errors are still thrown without `ngDevMode` (for example
-    // `throwProviderNotFoundError`), so we add `ngDevMode` check here to avoid pulling
-    // `RUNTIME_ERRORS_WITH_GUIDES` symbol into prod bundles.
-    // TODO: revisit all instances where `RuntimeError` is thrown and see if `ngDevMode` can be added
-    // there instead to tree-shake more devmode-only code (and eventually remove `ngDevMode` check
-    // from this code).
-    if (ngDevMode && RUNTIME_ERRORS_WITH_GUIDES.has(code)) {
-        errorMessage = `${errorMessage}. Find more at ${ERROR_DETAILS_PAGE_BASE_URL}/NG0${code}`;
-    }
-    return errorMessage;
-}
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-/**
- * Used for stringify render output in Ivy.
- * Important! This function is very performance-sensitive and we should
- * be extra careful not to introduce megamorphic reads in it.
- * Check `core/test/render3/perf/render_stringify` for benchmarks and alternate implementations.
- */
-function renderStringify(value) {
-    if (typeof value === 'string')
-        return value;
-    if (value == null)
-        return '';
-    // Use `String` so that it invokes the `toString` method of the value. Note that this
-    // appears to be faster than calling `value.toString` (see `render_stringify` benchmark).
-    return String(value);
-}
-/**
- * Used to stringify a value so that it can be displayed in an error message.
- * Important! This function contains a megamorphic read and should only be
- * used for error messages.
- */
-function stringifyForError(value) {
-    if (typeof value === 'function')
-        return value.name || value.toString();
-    if (typeof value === 'object' && value != null && typeof value.type === 'function') {
-        return value.type.name || value.type.toString();
-    }
-    return renderStringify(value);
-}
-
-/** Called when directives inject each other (creating a circular dependency) */
-function throwCyclicDependencyError(token, path) {
-    const depPath = path ? `. Dependency path: ${path.join(' > ')} > ${token}` : '';
-    throw new RuntimeError("200" /* CYCLIC_DI_DEPENDENCY */, `Circular dependency in DI detected for ${token}${depPath}`);
-}
-function throwMixedMultiProviderError() {
-    throw new Error(`Cannot mix multi providers and regular providers`);
-}
-function throwInvalidProviderError(ngModuleType, providers, provider) {
-    let ngModuleDetail = '';
-    if (ngModuleType && providers) {
-        const providerDetail = providers.map(v => v == provider ? '?' + provider + '?' : '...');
-        ngModuleDetail =
-            ` - only instances of Provider and Type are allowed, got: [${providerDetail.join(', ')}]`;
-    }
-    throw new Error(`Invalid provider for the NgModule '${stringify(ngModuleType)}'` + ngModuleDetail);
-}
-/** Throws an error when a token is not found in DI. */
-function throwProviderNotFoundError(token, injectorName) {
-    const injectorDetails = injectorName ? ` in ${injectorName}` : '';
-    throw new RuntimeError("201" /* PROVIDER_NOT_FOUND */, `No provider for ${stringifyForError(token)} found${injectorDetails}`);
 }
 
 /**
@@ -8162,6 +12180,9 @@ const defineInjectable = ɵɵdefineInjectable;
  *
  * Options:
  *
+ * * `factory`: an `InjectorType` is an instantiable type, so a zero argument `factory` function to
+ *   create the type must be provided. If that factory function needs to inject arguments, it can
+ *   use the `inject` function.
  * * `providers`: an optional array of providers to add to the injector. Each provider must
  *   either have a factory or point to a type which has a `ɵprov` static property (the
  *   type must be an `InjectableType`).
@@ -8172,7 +12193,11 @@ const defineInjectable = ɵɵdefineInjectable;
  * @codeGenApi
  */
 function ɵɵdefineInjector(options) {
-    return { providers: options.providers || [], imports: options.imports || [] };
+    return {
+        factory: options.factory,
+        providers: options.providers || [],
+        imports: options.imports || [],
+    };
 }
 /**
  * Read the injectable def (`ɵprov`) for `type` in a way which is immune to accidentally reading
@@ -8256,8 +12281,7 @@ const NG_INJECTOR_DEF = getClosureSafeProperty({ ngInjectorDef: getClosureSafePr
  */
 var InjectFlags;
 (function (InjectFlags) {
-    // TODO(alxhub): make this 'const' (and remove `InternalInjectFlags` enum) when ngc no longer
-    // writes exports of it into ngfactory files.
+    // TODO(alxhub): make this 'const' when ngc no longer writes exports of it into ngfactory files.
     /** Check self and check parent injector if needed */
     InjectFlags[InjectFlags["Default"] = 0] = "Default";
     /**
@@ -8318,7 +12342,7 @@ function injectRootLimpMode(token, notFoundValue, flags) {
         return null;
     if (notFoundValue !== undefined)
         return notFoundValue;
-    throwProviderNotFoundError(stringify(token), 'Injector');
+    throw new Error(`Injector: NOT_FOUND [${stringify(token)}]`);
 }
 /**
  * Assert that `_injectImplementation` is not `fn`.
@@ -8470,7 +12494,7 @@ var ViewEncapsulation;
      * Use Shadow DOM to encapsulate styles.
      *
      * For the DOM this means using modern [Shadow
-     * DOM](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM) and
+     * DOM](https://w3c.github.io/webcomponents/spec/shadow/) and
      * creating a ShadowRoot for Component's Host Element.
      */
     ViewEncapsulation[ViewEncapsulation["ShadowDom"] = 3] = "ShadowDom";
@@ -8599,28 +12623,6 @@ if ((typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode()) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/**
- * This file contains reuseable "empty" symbols that can be used as default return values
- * in different parts of the rendering code. Because the same symbols are returned, this
- * allows for identity checks against these values to be consistently used by the framework
- * code.
- */
-const EMPTY_ARRAY$1 = [];
-// freezing the values prevents any code from accidentally inserting new values in
-if ((typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode()) {
-    // These property accesses can be ignored because ngDevMode will be set to false
-    // when optimizing code and the whole if statement will be dropped.
-    // tslint:disable-next-line:no-toplevel-property-access
-    Object.freeze(EMPTY_ARRAY$1);
-}
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 const NG_COMP_DEF = getClosureSafeProperty({ ɵcmp: getClosureSafeProperty });
 const NG_DIR_DEF = getClosureSafeProperty({ ɵdir: getClosureSafeProperty });
 const NG_PIPE_DEF = getClosureSafeProperty({ ɵpipe: getClosureSafeProperty });
@@ -8665,6 +12667,7 @@ function ɵɵdefineComponent(componentDefinition) {
         // See the `initNgDevMode` docstring for more information.
         (typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode();
         const type = componentDefinition.type;
+        const typePrototype = type.prototype;
         const declaredInputs = {};
         const def = {
             type: type,
@@ -8686,7 +12689,7 @@ function ɵɵdefineComponent(componentDefinition) {
             onPush: componentDefinition.changeDetection === ChangeDetectionStrategy.OnPush,
             directiveDefs: null,
             pipeDefs: null,
-            selectors: componentDefinition.selectors || EMPTY_ARRAY$1,
+            selectors: componentDefinition.selectors || EMPTY_ARRAY,
             viewQuery: componentDefinition.viewQuery || null,
             features: componentDefinition.features || null,
             data: componentDefinition.data || {},
@@ -8694,7 +12697,7 @@ function ɵɵdefineComponent(componentDefinition) {
             // directly in the next line. Also `None` should be 0 not 2.
             encapsulation: componentDefinition.encapsulation || ViewEncapsulation.Emulated,
             id: 'c',
-            styles: componentDefinition.styles || EMPTY_ARRAY$1,
+            styles: componentDefinition.styles || EMPTY_ARRAY,
             _: null,
             setInput: null,
             schemas: componentDefinition.schemas || null,
@@ -8752,10 +12755,10 @@ const autoRegisterModuleById = {};
 function ɵɵdefineNgModule(def) {
     const res = {
         type: def.type,
-        bootstrap: def.bootstrap || EMPTY_ARRAY$1,
-        declarations: def.declarations || EMPTY_ARRAY$1,
-        imports: def.imports || EMPTY_ARRAY$1,
-        exports: def.exports || EMPTY_ARRAY$1,
+        bootstrap: def.bootstrap || EMPTY_ARRAY,
+        declarations: def.declarations || EMPTY_ARRAY,
+        imports: def.imports || EMPTY_ARRAY,
+        exports: def.exports || EMPTY_ARRAY,
         transitiveCompileScopes: null,
         schemas: def.schemas || null,
         id: def.id || null,
@@ -8780,9 +12783,9 @@ function ɵɵdefineNgModule(def) {
 function ɵɵsetNgModuleScope(type, scope) {
     return noSideEffects(() => {
         const ngModuleDef = getNgModuleDef(type, true);
-        ngModuleDef.declarations = scope.declarations || EMPTY_ARRAY$1;
-        ngModuleDef.imports = scope.imports || EMPTY_ARRAY$1;
-        ngModuleDef.exports = scope.exports || EMPTY_ARRAY$1;
+        ngModuleDef.declarations = scope.declarations || EMPTY_ARRAY;
+        ngModuleDef.imports = scope.imports || EMPTY_ARRAY;
+        ngModuleDef.exports = scope.exports || EMPTY_ARRAY;
     });
 }
 /**
@@ -9155,14 +13158,6 @@ function assertBetween(lower, upper, index) {
         throwError(`Index out of range (expecting ${lower} <= ${index} < ${upper})`);
     }
 }
-function assertProjectionSlots(lView, errMessage) {
-    assertDefined(lView[DECLARATION_COMPONENT_VIEW], 'Component views should exist.');
-    assertDefined(lView[DECLARATION_COMPONENT_VIEW][T_HOST].projection, errMessage ||
-        'Components with projection nodes (<ng-content>) must have projection slots defined.');
-}
-function assertParentView(lView, errMessage) {
-    assertDefined(lView, errMessage || 'Component views should always have a parent view (component\'s host view)');
-}
 /**
  * This is a basic sanity check that the `injectorIndex` seems to point to what looks like a
  * NodeInjector data structure.
@@ -9197,6 +13192,84 @@ function getFactoryDef(type, throwNotFound) {
         throw new Error(`Type ${stringify(type)} does not have 'ɵfac' property.`);
     }
     return hasFactoryDef ? type[NG_FACTORY_DEF] : null;
+}
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+class RuntimeError extends Error {
+    constructor(code, message) {
+        super(formatRuntimeError(code, message));
+        this.code = code;
+    }
+}
+/** Called to format a runtime error */
+function formatRuntimeError(code, message) {
+    const fullCode = code ? `NG0${code}: ` : '';
+    return `${fullCode}${message}`;
+}
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+/**
+ * Used for stringify render output in Ivy.
+ * Important! This function is very performance-sensitive and we should
+ * be extra careful not to introduce megamorphic reads in it.
+ * Check `core/test/render3/perf/render_stringify` for benchmarks and alternate implementations.
+ */
+function renderStringify(value) {
+    if (typeof value === 'string')
+        return value;
+    if (value == null)
+        return '';
+    // Use `String` so that it invokes the `toString` method of the value. Note that this
+    // appears to be faster than calling `value.toString` (see `render_stringify` benchmark).
+    return String(value);
+}
+/**
+ * Used to stringify a value so that it can be displayed in an error message.
+ * Important! This function contains a megamorphic read and should only be
+ * used for error messages.
+ */
+function stringifyForError(value) {
+    if (typeof value === 'function')
+        return value.name || value.toString();
+    if (typeof value === 'object' && value != null && typeof value.type === 'function') {
+        return value.type.name || value.type.toString();
+    }
+    return renderStringify(value);
+}
+
+/** Called when directives inject each other (creating a circular dependency) */
+function throwCyclicDependencyError(token, path) {
+    const depPath = path ? `. Dependency path: ${path.join(' > ')} > ${token}` : '';
+    throw new RuntimeError("200" /* CYCLIC_DI_DEPENDENCY */, `Circular dependency in DI detected for ${token}${depPath}`);
+}
+function throwMixedMultiProviderError() {
+    throw new Error(`Cannot mix multi providers and regular providers`);
+}
+function throwInvalidProviderError(ngModuleType, providers, provider) {
+    let ngModuleDetail = '';
+    if (ngModuleType && providers) {
+        const providerDetail = providers.map(v => v == provider ? '?' + provider + '?' : '...');
+        ngModuleDetail =
+            ` - only instances of Provider and Type are allowed, got: [${providerDetail.join(', ')}]`;
+    }
+    throw new Error(`Invalid provider for the NgModule '${stringify(ngModuleType)}'` + ngModuleDetail);
+}
+/** Throws an error when a token is not found in DI. */
+function throwProviderNotFoundError(token, injectorName) {
+    const injectorDetails = injectorName ? ` in ${injectorName}` : '';
+    throw new RuntimeError("201" /* PROVIDER_NOT_FOUND */, `No provider for ${stringifyForError(token)} found${injectorDetails}`);
 }
 
 /**
@@ -10853,12 +14926,6 @@ function setIncludeViewProviders(v) {
  */
 const BLOOM_SIZE = 256;
 const BLOOM_MASK = BLOOM_SIZE - 1;
-/**
- * The number of bits that is represented by a single bloom bucket. JS bit operations are 32 bits,
- * so each bucket represents 32 distinct tokens which accounts for log2(32) = 5 bits of a bloom hash
- * number.
- */
-const BLOOM_BUCKET_BITS = 5;
 /** Counter used to generate unique IDs for directives. */
 let nextNgElementId = 0;
 /**
@@ -10885,15 +14952,25 @@ function bloomAdd(injectorIndex, tView, type) {
     }
     // We only have BLOOM_SIZE (256) slots in our bloom filter (8 buckets * 32 bits each),
     // so all unique IDs must be modulo-ed into a number from 0 - 255 to fit into the filter.
-    const bloomHash = id & BLOOM_MASK;
+    const bloomBit = id & BLOOM_MASK;
     // Create a mask that targets the specific bit associated with the directive.
     // JS bit operations are 32 bits, so this will be a number between 2^0 and 2^31, corresponding
     // to bit positions 0 - 31 in a 32 bit integer.
-    const mask = 1 << bloomHash;
-    // Each bloom bucket in `tData` represents `BLOOM_BUCKET_BITS` number of bits of `bloomHash`.
-    // Any bits in `bloomHash` beyond `BLOOM_BUCKET_BITS` indicate the bucket offset that the mask
-    // should be written to.
-    tView.data[injectorIndex + (bloomHash >> BLOOM_BUCKET_BITS)] |= mask;
+    const mask = 1 << bloomBit;
+    // Use the raw bloomBit number to determine which bloom filter bucket we should check
+    // e.g: bf0 = [0 - 31], bf1 = [32 - 63], bf2 = [64 - 95], bf3 = [96 - 127], etc
+    const b7 = bloomBit & 0x80;
+    const b6 = bloomBit & 0x40;
+    const b5 = bloomBit & 0x20;
+    const tData = tView.data;
+    if (b7) {
+        b6 ? (b5 ? (tData[injectorIndex + 7] |= mask) : (tData[injectorIndex + 6] |= mask)) :
+            (b5 ? (tData[injectorIndex + 5] |= mask) : (tData[injectorIndex + 4] |= mask));
+    }
+    else {
+        b6 ? (b5 ? (tData[injectorIndex + 3] |= mask) : (tData[injectorIndex + 2] |= mask)) :
+            (b5 ? (tData[injectorIndex + 1] |= mask) : (tData[injectorIndex] |= mask));
+    }
 }
 /**
  * Creates (or gets an existing) injector for a given element or container.
@@ -11388,10 +15465,21 @@ function bloomHasToken(bloomHash, injectorIndex, injectorView) {
     // JS bit operations are 32 bits, so this will be a number between 2^0 and 2^31, corresponding
     // to bit positions 0 - 31 in a 32 bit integer.
     const mask = 1 << bloomHash;
-    // Each bloom bucket in `injectorView` represents `BLOOM_BUCKET_BITS` number of bits of
-    // `bloomHash`. Any bits in `bloomHash` beyond `BLOOM_BUCKET_BITS` indicate the bucket offset
-    // that should be used.
-    const value = injectorView[injectorIndex + (bloomHash >> BLOOM_BUCKET_BITS)];
+    const b7 = bloomHash & 0x80;
+    const b6 = bloomHash & 0x40;
+    const b5 = bloomHash & 0x20;
+    // Our bloom filter size is 256 bits, which is eight 32-bit bloom filter buckets:
+    // bf0 = [0 - 31], bf1 = [32 - 63], bf2 = [64 - 95], bf3 = [96 - 127], etc.
+    // Get the bloom filter value from the appropriate bucket based on the directive's bloomBit.
+    let value;
+    if (b7) {
+        value = b6 ? (b5 ? injectorView[injectorIndex + 7] : injectorView[injectorIndex + 6]) :
+            (b5 ? injectorView[injectorIndex + 5] : injectorView[injectorIndex + 4]);
+    }
+    else {
+        value = b6 ? (b5 ? injectorView[injectorIndex + 3] : injectorView[injectorIndex + 2]) :
+            (b5 ? injectorView[injectorIndex + 1] : injectorView[injectorIndex]);
+    }
     // If the bloom filter value has the bit corresponding to the directive's bloomBit flipped on,
     // this injector is a potential match.
     return !!(value & mask);
@@ -11412,15 +15500,33 @@ class NodeInjector {
 /**
  * @codeGenApi
  */
+function ɵɵgetFactoryOf(type) {
+    const typeAny = type;
+    if (isForwardRef(type)) {
+        return (() => {
+            const factory = ɵɵgetFactoryOf(resolveForwardRef(typeAny));
+            return factory ? factory() : null;
+        });
+    }
+    let factory = getFactoryDef(typeAny);
+    if (factory === null) {
+        const injectorDef = getInjectorDef(typeAny);
+        factory = injectorDef && injectorDef.factory;
+    }
+    return factory || null;
+}
+/**
+ * @codeGenApi
+ */
 function ɵɵgetInheritedFactory(type) {
     return noSideEffects(() => {
         const ownConstructor = type.prototype.constructor;
-        const ownFactory = ownConstructor[NG_FACTORY_DEF] || getFactoryOf(ownConstructor);
+        const ownFactory = ownConstructor[NG_FACTORY_DEF] || ɵɵgetFactoryOf(ownConstructor);
         const objectPrototype = Object.prototype;
         let parent = Object.getPrototypeOf(type.prototype).constructor;
         // Go up the prototype until we hit `Object`.
         while (parent && parent !== objectPrototype) {
-            const factory = parent[NG_FACTORY_DEF] || getFactoryOf(parent);
+            const factory = parent[NG_FACTORY_DEF] || ɵɵgetFactoryOf(parent);
             // If we hit something that has a factory and the factory isn't the same as the type,
             // we've found the inherited factory. Note the check that the factory isn't the type's
             // own factory is redundant in most cases, but if the user has custom decorators on the
@@ -11437,15 +15543,6 @@ function ɵɵgetInheritedFactory(type) {
         // latter has to be assumed.
         return t => new t();
     });
-}
-function getFactoryOf(type) {
-    if (isForwardRef(type)) {
-        return () => {
-            const factory = getFactoryOf(resolveForwardRef(type));
-            return factory && factory();
-        };
-    }
-    return getFactoryDef(type);
 }
 
 /**
@@ -11724,10 +15821,6 @@ class InjectionToken {
  * @deprecated Since 9.0.0. With Ivy, this property is no longer necessary.
  */
 const ANALYZE_FOR_ENTRY_COMPONENTS = new InjectionToken('AnalyzeForEntryComponents');
-// Stores the default value of `emitDistinctChangesOnly` when the `emitDistinctChangesOnly` is not
-// explicitly set. This value will be changed to `true` in v12.
-// TODO(misko): switch the default in v12 to `true`. See: packages/compiler/src/core.ts
-const emitDistinctChangesOnlyDefaultValue = false;
 /**
  * Base class for query metadata.
  *
@@ -11740,7 +15833,7 @@ const emitDistinctChangesOnlyDefaultValue = false;
  */
 class Query {
 }
-const ɵ0$1 = (selector, data = {}) => (Object.assign({ selector, first: false, isViewQuery: false, descendants: false, emitDistinctChangesOnly: emitDistinctChangesOnlyDefaultValue }, data));
+const ɵ0$1 = (selector, data = {}) => (Object.assign({ selector, first: false, isViewQuery: false, descendants: false }, data));
 /**
  * ContentChildren decorator and metadata.
  *
@@ -11759,7 +15852,7 @@ const ɵ1 = (selector, data = {}) => (Object.assign({ selector, first: true, isV
  * @publicApi
  */
 const ContentChild = makePropDecorator('ContentChild', ɵ1, Query);
-const ɵ2 = (selector, data = {}) => (Object.assign({ selector, first: false, isViewQuery: true, descendants: true, emitDistinctChangesOnly: emitDistinctChangesOnlyDefaultValue }, data));
+const ɵ2 = (selector, data = {}) => (Object.assign({ selector, first: false, isViewQuery: true, descendants: true }, data));
 /**
  * ViewChildren decorator and metadata.
  *
@@ -11863,30 +15956,6 @@ function addAllToArray(items, arr) {
     for (let i = 0; i < items.length; i++) {
         arr.push(items[i]);
     }
-}
-/**
- * Determines if the contents of two arrays is identical
- *
- * @param a first array
- * @param b second array
- * @param identityAccessor Optional function for extracting stable object identity from a value in
- *     the array.
- */
-function arrayEquals(a, b, identityAccessor) {
-    if (a.length !== b.length)
-        return false;
-    for (let i = 0; i < a.length; i++) {
-        let valueA = a[i];
-        let valueB = b[i];
-        if (identityAccessor) {
-            valueA = identityAccessor(valueA);
-            valueB = identityAccessor(valueB);
-        }
-        if (valueB !== valueA) {
-            return false;
-        }
-    }
-    return true;
 }
 /**
  * Flattens an array.
@@ -12471,237 +16540,42 @@ function getParentCtor(ctor) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-const _THROW_IF_NOT_FOUND = {};
-const THROW_IF_NOT_FOUND = _THROW_IF_NOT_FOUND;
-/*
- * Name of a property (that we patch onto DI decorator), which is used as an annotation of which
- * InjectFlag this decorator represents. This allows to avoid direct references to the DI decorators
- * in the code, thus making them tree-shakable.
- */
-const DI_DECORATOR_FLAG = '__NG_DI_FLAG__';
-const NG_TEMP_TOKEN_PATH = 'ngTempTokenPath';
-const NG_TOKEN_PATH = 'ngTokenPath';
-const NEW_LINE = /\n/gm;
-const NO_NEW_LINE = 'ɵ';
-const SOURCE = '__source';
-const ɵ0$2 = getClosureSafeProperty;
-const USE_VALUE = getClosureSafeProperty({ provide: String, useValue: ɵ0$2 });
-/**
- * Current injector value used by `inject`.
- * - `undefined`: it is an error to call `inject`
- * - `null`: `inject` can be called but there is no injector (limp-mode).
- * - Injector instance: Use the injector for resolution.
- */
-let _currentInjector = undefined;
-function setCurrentInjector(injector) {
-    const former = _currentInjector;
-    _currentInjector = injector;
-    return former;
-}
-function injectInjectorOnly(token, flags = InjectFlags.Default) {
-    if (_currentInjector === undefined) {
-        throw new Error(`inject() must be called from an injection context`);
-    }
-    else if (_currentInjector === null) {
-        return injectRootLimpMode(token, undefined, flags);
-    }
-    else {
-        return _currentInjector.get(token, flags & InjectFlags.Optional ? null : undefined, flags);
-    }
-}
-function ɵɵinject(token, flags = InjectFlags.Default) {
-    return (getInjectImplementation() || injectInjectorOnly)(resolveForwardRef(token), flags);
-}
-/**
- * Throws an error indicating that a factory function could not be generated by the compiler for a
- * particular class.
- *
- * This instruction allows the actual error message to be optimized away when ngDevMode is turned
- * off, saving bytes of generated code while still providing a good experience in dev mode.
- *
- * The name of the class is not mentioned here, but will be in the generated factory function name
- * and thus in the stack trace.
- *
- * @codeGenApi
- */
-function ɵɵinvalidFactoryDep(index) {
-    const msg = ngDevMode ?
-        `This constructor is not compatible with Angular Dependency Injection because its dependency at index ${index} of the parameter list is invalid.
-This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
-
-Please check that 1) the type for the parameter at index ${index} is correct and 2) the correct Angular decorators are defined for this class and its ancestors.` :
-        'invalid';
-    throw new Error(msg);
-}
-/**
- * Injects a token from the currently active injector.
- *
- * Must be used in the context of a factory function such as one defined for an
- * `InjectionToken`. Throws an error if not called from such a context.
- *
- * Within such a factory function, using this function to request injection of a dependency
- * is faster and more type-safe than providing an additional array of dependencies
- * (as has been common with `useFactory` providers).
- *
- * @param token The injection token for the dependency to be injected.
- * @param flags Optional flags that control how injection is executed.
- * The flags correspond to injection strategies that can be specified with
- * parameter decorators `@Host`, `@Self`, `@SkipSef`, and `@Optional`.
- * @returns the injected value if injection is successful, `null` otherwise.
- *
- * @usageNotes
- *
- * ### Example
- *
- * {@example core/di/ts/injector_spec.ts region='ShakableInjectionToken'}
- *
- * @publicApi
- */
-const inject = ɵɵinject;
-function injectArgs(types) {
-    const args = [];
-    for (let i = 0; i < types.length; i++) {
-        const arg = resolveForwardRef(types[i]);
-        if (Array.isArray(arg)) {
-            if (arg.length === 0) {
-                throw new Error('Arguments array must have arguments.');
-            }
-            let type = undefined;
-            let flags = InjectFlags.Default;
-            for (let j = 0; j < arg.length; j++) {
-                const meta = arg[j];
-                const flag = getInjectFlag(meta);
-                if (typeof flag === 'number') {
-                    // Special case when we handle @Inject decorator.
-                    if (flag === -1 /* Inject */) {
-                        type = meta.token;
-                    }
-                    else {
-                        flags |= flag;
-                    }
-                }
-                else {
-                    type = meta;
-                }
-            }
-            args.push(ɵɵinject(type, flags));
-        }
-        else {
-            args.push(ɵɵinject(arg));
-        }
-    }
-    return args;
-}
-/**
- * Attaches a given InjectFlag to a given decorator using monkey-patching.
- * Since DI decorators can be used in providers `deps` array (when provider is configured using
- * `useFactory`) without initialization (e.g. `Host`) and as an instance (e.g. `new Host()`), we
- * attach the flag to make it available both as a static property and as a field on decorator
- * instance.
- *
- * @param decorator Provided DI decorator.
- * @param flag InjectFlag that should be applied.
- */
-function attachInjectFlag(decorator, flag) {
-    decorator[DI_DECORATOR_FLAG] = flag;
-    decorator.prototype[DI_DECORATOR_FLAG] = flag;
-    return decorator;
-}
-/**
- * Reads monkey-patched property that contains InjectFlag attached to a decorator.
- *
- * @param token Token that may contain monkey-patched DI flags property.
- */
-function getInjectFlag(token) {
-    return token[DI_DECORATOR_FLAG];
-}
-function catchInjectorError(e, token, injectorErrorName, source) {
-    const tokenPath = e[NG_TEMP_TOKEN_PATH];
-    if (token[SOURCE]) {
-        tokenPath.unshift(token[SOURCE]);
-    }
-    e.message = formatError('\n' + e.message, tokenPath, injectorErrorName, source);
-    e[NG_TOKEN_PATH] = tokenPath;
-    e[NG_TEMP_TOKEN_PATH] = null;
-    throw e;
-}
-function formatError(text, obj, injectorErrorName, source = null) {
-    text = text && text.charAt(0) === '\n' && text.charAt(1) == NO_NEW_LINE ? text.substr(2) : text;
-    let context = stringify(obj);
-    if (Array.isArray(obj)) {
-        context = obj.map(stringify).join(' -> ');
-    }
-    else if (typeof obj === 'object') {
-        let parts = [];
-        for (let key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                let value = obj[key];
-                parts.push(key + ':' + (typeof value === 'string' ? JSON.stringify(value) : stringify(value)));
-            }
-        }
-        context = `{${parts.join(', ')}}`;
-    }
-    return `${injectorErrorName}${source ? '(' + source + ')' : ''}[${context}]: ${text.replace(NEW_LINE, '\n  ')}`;
-}
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-const ɵ0$3 = (token) => ({ token });
+const ɵ0$2 = (token) => ({ token });
 /**
  * Inject decorator and metadata.
  *
  * @Annotation
  * @publicApi
  */
-const Inject = attachInjectFlag(
-// Disable tslint because `DecoratorFlags` is a const enum which gets inlined.
-// tslint:disable-next-line: no-toplevel-property-access
-makeParamDecorator('Inject', ɵ0$3), -1 /* Inject */);
+const Inject = makeParamDecorator('Inject', ɵ0$2);
 /**
  * Optional decorator and metadata.
  *
  * @Annotation
  * @publicApi
  */
-const Optional = 
-// Disable tslint because `InternalInjectFlags` is a const enum which gets inlined.
-// tslint:disable-next-line: no-toplevel-property-access
-attachInjectFlag(makeParamDecorator('Optional'), 8 /* Optional */);
+const Optional = makeParamDecorator('Optional');
 /**
  * Self decorator and metadata.
  *
  * @Annotation
  * @publicApi
  */
-const Self = 
-// Disable tslint because `InternalInjectFlags` is a const enum which gets inlined.
-// tslint:disable-next-line: no-toplevel-property-access
-attachInjectFlag(makeParamDecorator('Self'), 2 /* Self */);
+const Self = makeParamDecorator('Self');
 /**
  * `SkipSelf` decorator and metadata.
  *
  * @Annotation
  * @publicApi
  */
-const SkipSelf = 
-// Disable tslint because `InternalInjectFlags` is a const enum which gets inlined.
-// tslint:disable-next-line: no-toplevel-property-access
-attachInjectFlag(makeParamDecorator('SkipSelf'), 4 /* SkipSelf */);
+const SkipSelf = makeParamDecorator('SkipSelf');
 /**
  * Host decorator and metadata.
  *
  * @Annotation
  * @publicApi
  */
-const Host = 
-// Disable tslint because `InternalInjectFlags` is a const enum which gets inlined.
-// tslint:disable-next-line: no-toplevel-property-access
-attachInjectFlag(makeParamDecorator('Host'), 1 /* Host */);
+const Host = makeParamDecorator('Host');
 
 /**
  * @license
@@ -12904,6 +16778,162 @@ function componentDefResolved(type) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+const _THROW_IF_NOT_FOUND = {};
+const THROW_IF_NOT_FOUND = _THROW_IF_NOT_FOUND;
+const NG_TEMP_TOKEN_PATH = 'ngTempTokenPath';
+const NG_TOKEN_PATH = 'ngTokenPath';
+const NEW_LINE = /\n/gm;
+const NO_NEW_LINE = 'ɵ';
+const SOURCE = '__source';
+const ɵ0$3 = getClosureSafeProperty;
+const USE_VALUE = getClosureSafeProperty({ provide: String, useValue: ɵ0$3 });
+/**
+ * Current injector value used by `inject`.
+ * - `undefined`: it is an error to call `inject`
+ * - `null`: `inject` can be called but there is no injector (limp-mode).
+ * - Injector instance: Use the injector for resolution.
+ */
+let _currentInjector = undefined;
+function setCurrentInjector(injector) {
+    const former = _currentInjector;
+    _currentInjector = injector;
+    return former;
+}
+function injectInjectorOnly(token, flags = InjectFlags.Default) {
+    if (_currentInjector === undefined) {
+        throw new Error(`inject() must be called from an injection context`);
+    }
+    else if (_currentInjector === null) {
+        return injectRootLimpMode(token, undefined, flags);
+    }
+    else {
+        return _currentInjector.get(token, flags & InjectFlags.Optional ? null : undefined, flags);
+    }
+}
+function ɵɵinject(token, flags = InjectFlags.Default) {
+    return (getInjectImplementation() || injectInjectorOnly)(resolveForwardRef(token), flags);
+}
+/**
+ * Throws an error indicating that a factory function could not be generated by the compiler for a
+ * particular class.
+ *
+ * This instruction allows the actual error message to be optimized away when ngDevMode is turned
+ * off, saving bytes of generated code while still providing a good experience in dev mode.
+ *
+ * The name of the class is not mentioned here, but will be in the generated factory function name
+ * and thus in the stack trace.
+ *
+ * @codeGenApi
+ */
+function ɵɵinvalidFactoryDep(index) {
+    const msg = ngDevMode ?
+        `This constructor is not compatible with Angular Dependency Injection because its dependency at index ${index} of the parameter list is invalid.
+This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+Please check that 1) the type for the parameter at index ${index} is correct and 2) the correct Angular decorators are defined for this class and its ancestors.` :
+        'invalid';
+    throw new Error(msg);
+}
+/**
+ * Injects a token from the currently active injector.
+ *
+ * Must be used in the context of a factory function such as one defined for an
+ * `InjectionToken`. Throws an error if not called from such a context.
+ *
+ * Within such a factory function, using this function to request injection of a dependency
+ * is faster and more type-safe than providing an additional array of dependencies
+ * (as has been common with `useFactory` providers).
+ *
+ * @param token The injection token for the dependency to be injected.
+ * @param flags Optional flags that control how injection is executed.
+ * The flags correspond to injection strategies that can be specified with
+ * parameter decorators `@Host`, `@Self`, `@SkipSef`, and `@Optional`.
+ * @returns True if injection is successful, null otherwise.
+ *
+ * @usageNotes
+ *
+ * ### Example
+ *
+ * {@example core/di/ts/injector_spec.ts region='ShakableInjectionToken'}
+ *
+ * @publicApi
+ */
+const inject = ɵɵinject;
+function injectArgs(types) {
+    const args = [];
+    for (let i = 0; i < types.length; i++) {
+        const arg = resolveForwardRef(types[i]);
+        if (Array.isArray(arg)) {
+            if (arg.length === 0) {
+                throw new Error('Arguments array must have arguments.');
+            }
+            let type = undefined;
+            let flags = InjectFlags.Default;
+            for (let j = 0; j < arg.length; j++) {
+                const meta = arg[j];
+                if (meta instanceof Optional || meta.ngMetadataName === 'Optional' || meta === Optional) {
+                    flags |= InjectFlags.Optional;
+                }
+                else if (meta instanceof SkipSelf || meta.ngMetadataName === 'SkipSelf' || meta === SkipSelf) {
+                    flags |= InjectFlags.SkipSelf;
+                }
+                else if (meta instanceof Self || meta.ngMetadataName === 'Self' || meta === Self) {
+                    flags |= InjectFlags.Self;
+                }
+                else if (meta instanceof Host || meta.ngMetadataName === 'Host' || meta === Host) {
+                    flags |= InjectFlags.Host;
+                }
+                else if (meta instanceof Inject || meta === Inject) {
+                    type = meta.token;
+                }
+                else {
+                    type = meta;
+                }
+            }
+            args.push(ɵɵinject(type, flags));
+        }
+        else {
+            args.push(ɵɵinject(arg));
+        }
+    }
+    return args;
+}
+function catchInjectorError(e, token, injectorErrorName, source) {
+    const tokenPath = e[NG_TEMP_TOKEN_PATH];
+    if (token[SOURCE]) {
+        tokenPath.unshift(token[SOURCE]);
+    }
+    e.message = formatError('\n' + e.message, tokenPath, injectorErrorName, source);
+    e[NG_TOKEN_PATH] = tokenPath;
+    e[NG_TEMP_TOKEN_PATH] = null;
+    throw e;
+}
+function formatError(text, obj, injectorErrorName, source = null) {
+    text = text && text.charAt(0) === '\n' && text.charAt(1) == NO_NEW_LINE ? text.substr(2) : text;
+    let context = stringify(obj);
+    if (Array.isArray(obj)) {
+        context = obj.map(stringify).join(' -> ');
+    }
+    else if (typeof obj === 'object') {
+        let parts = [];
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                let value = obj[key];
+                parts.push(key + ':' + (typeof value === 'string' ? JSON.stringify(value) : stringify(value)));
+            }
+        }
+        context = `{${parts.join(', ')}}`;
+    }
+    return `${injectorErrorName}${source ? '(' + source + ')' : ''}[${context}]: ${text.replace(NEW_LINE, '\n  ')}`;
+}
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 /**
  * The Trusted Types policy, or null if Trusted Types are not
  * enabled/supported, or undefined if the policy has not been created yet.
@@ -12994,7 +17024,7 @@ function newTrustedFunctionForDev(...args) {
     // below, where the Chromium bug is also referenced:
     // https://github.com/w3c/webappsec-trusted-types/wiki/Trusted-Types-for-function-constructor
     const fnArgs = args.slice(0, -1).join(',');
-    const fnBody = args[args.length - 1];
+    const fnBody = args.pop().toString();
     const body = `(function anonymous(${fnArgs}
 ) { ${fnBody}
 })`;
@@ -13002,13 +17032,6 @@ function newTrustedFunctionForDev(...args) {
     // being stripped out of JS binaries even if not used. The global['eval']
     // indirection fixes that.
     const fn = _global['eval'](trustedScriptFromString(body));
-    if (fn.bind === undefined) {
-        // Workaround for a browser bug that only exists in Chrome 83, where passing
-        // a TrustedScript to eval just returns the TrustedScript back without
-        // evaluating it. In that case, fall back to the most straightforward
-        // implementation:
-        return new Function(...args);
-    }
     // To completely mimic the behavior of calling "new Function", two more
     // things need to happen:
     // 1. Stringifying the resulting function should return its source code
@@ -13018,81 +17041,6 @@ function newTrustedFunctionForDev(...args) {
     // When Trusted Types support in Function constructors is widely available,
     // the implementation of this function can be simplified to:
     // return new Function(...args.map(a => trustedScriptFromString(a)));
-}
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-/**
- * The Trusted Types policy, or null if Trusted Types are not
- * enabled/supported, or undefined if the policy has not been created yet.
- */
-let policy$1;
-/**
- * Returns the Trusted Types policy, or null if Trusted Types are not
- * enabled/supported. The first call to this function will create the policy.
- */
-function getPolicy$1() {
-    if (policy$1 === undefined) {
-        policy$1 = null;
-        if (_global.trustedTypes) {
-            try {
-                policy$1 = _global.trustedTypes
-                    .createPolicy('angular#unsafe-bypass', {
-                    createHTML: (s) => s,
-                    createScript: (s) => s,
-                    createScriptURL: (s) => s,
-                });
-            }
-            catch (_a) {
-                // trustedTypes.createPolicy throws if called with a name that is
-                // already registered, even in report-only mode. Until the API changes,
-                // catch the error not to break the applications functionally. In such
-                // cases, the code will fall back to using strings.
-            }
-        }
-    }
-    return policy$1;
-}
-/**
- * Unsafely promote a string to a TrustedHTML, falling back to strings when
- * Trusted Types are not available.
- * @security This is a security-sensitive function; any use of this function
- * must go through security review. In particular, it must be assured that it
- * is only passed strings that come directly from custom sanitizers or the
- * bypassSecurityTrust* functions.
- */
-function trustedHTMLFromStringBypass(html) {
-    var _a;
-    return ((_a = getPolicy$1()) === null || _a === void 0 ? void 0 : _a.createHTML(html)) || html;
-}
-/**
- * Unsafely promote a string to a TrustedScript, falling back to strings when
- * Trusted Types are not available.
- * @security This is a security-sensitive function; any use of this function
- * must go through security review. In particular, it must be assured that it
- * is only passed strings that come directly from custom sanitizers or the
- * bypassSecurityTrust* functions.
- */
-function trustedScriptFromStringBypass(script) {
-    var _a;
-    return ((_a = getPolicy$1()) === null || _a === void 0 ? void 0 : _a.createScript(script)) || script;
-}
-/**
- * Unsafely promote a string to a TrustedScriptURL, falling back to strings
- * when Trusted Types are not available.
- * @security This is a security-sensitive function; any use of this function
- * must go through security review. In particular, it must be assured that it
- * is only passed strings that come directly from custom sanitizers or the
- * bypassSecurityTrust* functions.
- */
-function trustedScriptURLFromStringBypass(url) {
-    var _a;
-    return ((_a = getPolicy$1()) === null || _a === void 0 ? void 0 : _a.createScriptURL(url)) || url;
 }
 
 /**
@@ -13628,7 +17576,7 @@ function _sanitizeHtml(defaultDoc, unsafeHtmlInput) {
         if ((typeof ngDevMode === 'undefined' || ngDevMode) && sanitizer.sanitizedSomething) {
             console.warn('WARNING: sanitizing HTML stripped some content, see https://g.co/ng/security#xss');
         }
-        return trustedHTMLFromString(safeHtml);
+        return safeHtml;
     }
     finally {
         // In case anything goes wrong, clear out inertElement to reset the entire DOM structure.
@@ -13700,10 +17648,10 @@ var SecurityContext;
 function ɵɵsanitizeHtml(unsafeHtml) {
     const sanitizer = getSanitizer();
     if (sanitizer) {
-        return trustedHTMLFromStringBypass(sanitizer.sanitize(SecurityContext.HTML, unsafeHtml) || '');
+        return sanitizer.sanitize(SecurityContext.HTML, unsafeHtml) || '';
     }
     if (allowSanitizationBypassAndThrow(unsafeHtml, "HTML" /* Html */)) {
-        return trustedHTMLFromStringBypass(unwrapSafeValue(unsafeHtml));
+        return unwrapSafeValue(unsafeHtml);
     }
     return _sanitizeHtml(getDocument(), renderStringify(unsafeHtml));
 }
@@ -13768,10 +17716,10 @@ function ɵɵsanitizeUrl(unsafeUrl) {
 function ɵɵsanitizeResourceUrl(unsafeResourceUrl) {
     const sanitizer = getSanitizer();
     if (sanitizer) {
-        return trustedScriptURLFromStringBypass(sanitizer.sanitize(SecurityContext.RESOURCE_URL, unsafeResourceUrl) || '');
+        return sanitizer.sanitize(SecurityContext.RESOURCE_URL, unsafeResourceUrl) || '';
     }
     if (allowSanitizationBypassAndThrow(unsafeResourceUrl, "ResourceURL" /* ResourceUrl */)) {
-        return trustedScriptURLFromStringBypass(unwrapSafeValue(unsafeResourceUrl));
+        return unwrapSafeValue(unsafeResourceUrl);
     }
     throw new Error('unsafe value used in a resource URL context (see https://g.co/ng/security#xss)');
 }
@@ -13790,18 +17738,16 @@ function ɵɵsanitizeResourceUrl(unsafeResourceUrl) {
 function ɵɵsanitizeScript(unsafeScript) {
     const sanitizer = getSanitizer();
     if (sanitizer) {
-        return trustedScriptFromStringBypass(sanitizer.sanitize(SecurityContext.SCRIPT, unsafeScript) || '');
+        return sanitizer.sanitize(SecurityContext.SCRIPT, unsafeScript) || '';
     }
     if (allowSanitizationBypassAndThrow(unsafeScript, "Script" /* Script */)) {
-        return trustedScriptFromStringBypass(unwrapSafeValue(unsafeScript));
+        return unwrapSafeValue(unsafeScript);
     }
     throw new Error('unsafe value used in a script context');
 }
 /**
- * A template tag function for promoting the associated constant literal to a
- * TrustedHTML. Interpolation is explicitly not allowed.
- *
- * @param html constant template literal containing trusted HTML.
+ * Promotes the given constant string to a TrustedHTML.
+ * @param html constant string containing trusted HTML.
  * @returns TrustedHTML wrapping `html`.
  *
  * @security This is a security-sensitive function and should only be used to
@@ -13811,22 +17757,25 @@ function ɵɵsanitizeScript(unsafeScript) {
  * @codeGenApi
  */
 function ɵɵtrustConstantHtml(html) {
-    // The following runtime check ensures that the function was called as a
-    // template tag (e.g. ɵɵtrustConstantHtml`content`), without any interpolation
-    // (e.g. not ɵɵtrustConstantHtml`content ${variable}`). A TemplateStringsArray
-    // is an array with a `raw` property that is also an array. The associated
-    // template literal has no interpolation if and only if the length of the
-    // TemplateStringsArray is 1.
-    if (ngDevMode && (!Array.isArray(html) || !Array.isArray(html.raw) || html.length !== 1)) {
-        throw new Error(`Unexpected interpolation in trusted HTML constant: ${html.join('?')}`);
-    }
-    return trustedHTMLFromString(html[0]);
+    return trustedHTMLFromString(html);
 }
 /**
- * A template tag function for promoting the associated constant literal to a
- * TrustedScriptURL. Interpolation is explicitly not allowed.
+ * Promotes the given constant string to a TrustedScript.
+ * @param script constant string containing a trusted script.
+ * @returns TrustedScript wrapping `script`.
  *
- * @param url constant template literal containing a trusted script URL.
+ * @security This is a security-sensitive function and should only be used to
+ * convert constant values of attributes and properties found in
+ * application-provided Angular templates to TrustedScript.
+ *
+ * @codeGenApi
+ */
+function ɵɵtrustConstantScript(script) {
+    return trustedScriptFromString(script);
+}
+/**
+ * Promotes the given constant string to a TrustedScriptURL.
+ * @param url constant string containing a trusted script URL.
  * @returns TrustedScriptURL wrapping `url`.
  *
  * @security This is a security-sensitive function and should only be used to
@@ -13836,16 +17785,7 @@ function ɵɵtrustConstantHtml(html) {
  * @codeGenApi
  */
 function ɵɵtrustConstantResourceUrl(url) {
-    // The following runtime check ensures that the function was called as a
-    // template tag (e.g. ɵɵtrustConstantResourceUrl`content`), without any
-    // interpolation (e.g. not ɵɵtrustConstantResourceUrl`content ${variable}`). A
-    // TemplateStringsArray is an array with a `raw` property that is also an
-    // array. The associated template literal has no interpolation if and only if
-    // the length of the TemplateStringsArray is 1.
-    if (ngDevMode && (!Array.isArray(url) || !Array.isArray(url.raw) || url.length !== 1)) {
-        throw new Error(`Unexpected interpolation in trusted URL constant: ${url.join('?')}`);
-    }
-    return trustedScriptURLFromString(url[0]);
+    return trustedScriptURLFromString(url);
 }
 /**
  * Detects which sanitizer to use for URL property, based on tag name and prop name.
@@ -14048,26 +17988,14 @@ const NO_ERRORS_SCHEMA = {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+const END_COMMENT = /-->/g;
+const END_COMMENT_ESCAPED = '-\u200B-\u200B>';
 /**
- * Disallowed strings in the comment.
- *
- * see: https://html.spec.whatwg.org/multipage/syntax.html#comments
- */
-const COMMENT_DISALLOWED = /^>|^->|<!--|-->|--!>|<!-$/g;
-/**
- * Delimiter in the disallowed strings which needs to be wrapped with zero with character.
- */
-const COMMENT_DELIMITER = /(<|>)/;
-const COMMENT_DELIMITER_ESCAPED = '\u200B$1\u200B';
-/**
- * Escape the content of comment strings so that it can be safely inserted into a comment node.
+ * Escape the content of the strings so that it can be safely inserted into a comment node.
  *
  * The issue is that HTML does not specify any way to escape comment end text inside the comment.
- * Consider: `<!-- The way you close a comment is with ">", and "->" at the beginning or by "-->" or
- * "--!>" at the end. -->`. Above the `"-->"` is meant to be text not an end to the comment. This
- * can be created programmatically through DOM APIs. (`<!--` are also disallowed.)
- *
- * see: https://html.spec.whatwg.org/multipage/syntax.html#comments
+ * `<!-- The way you close a comment is with "-->". -->`. Above the `"-->"` is meant to be text not
+ * an end to the comment. This can be created programmatically through DOM APIs.
  *
  * ```
  * div.innerHTML = div.innerHTML
@@ -14078,16 +18006,15 @@ const COMMENT_DELIMITER_ESCAPED = '\u200B$1\u200B';
  * opening up the application for XSS attack. (In SSR we programmatically create comment nodes which
  * may contain such text and expect them to be safe.)
  *
- * This function escapes the comment text by looking for comment delimiters (`<` and `>`) and
- * surrounding them with `_>_` where the `_` is a zero width space `\u200B`. The result is that if a
- * comment contains any of the comment start/end delimiters (such as `<!--`, `-->` or `--!>`) the
- * text it will render normally but it will not cause the HTML parser to close/open the comment.
+ * This function escapes the comment text by looking for the closing char sequence `-->` and replace
+ * it with `-_-_>` where the `_` is a zero width space `\u200B`. The result is that if a comment
+ * contains `-->` text it will render normally but it will not cause the HTML parser to close the
+ * comment.
  *
- * @param value text to make safe for comment node by escaping the comment open/close character
- *     sequence.
+ * @param value text to make safe for comment node by escaping the comment close character sequence
  */
 function escapeCommentText(value) {
-    return value.replace(COMMENT_DISALLOWED, (text) => text.replace(COMMENT_DELIMITER, COMMENT_DELIMITER_ESCAPED));
+    return value.replace(END_COMMENT, END_COMMENT_ESCAPED);
 }
 
 /**
@@ -14410,7 +18337,7 @@ function getDirectivesAtNodeIndex(nodeIndex, lView, includeComponents) {
     const tNode = lView[TVIEW].data[nodeIndex];
     let directiveStartIndex = tNode.directiveStart;
     if (directiveStartIndex == 0)
-        return EMPTY_ARRAY$1;
+        return EMPTY_ARRAY;
     const directiveEndIndex = tNode.directiveEnd;
     if (!includeComponents && tNode.flags & 2 /* isComponentHost */)
         directiveStartIndex++;
@@ -15373,29 +19300,17 @@ function getFirstNativeNode(lView, tNode) {
             return rNode || unwrapRNode(lView[tNode.index]);
         }
         else {
-            const projectionNodes = getProjectionNodes(lView, tNode);
-            if (projectionNodes !== null) {
-                if (Array.isArray(projectionNodes)) {
-                    return projectionNodes[0];
-                }
-                const parentView = getLViewParent(lView[DECLARATION_COMPONENT_VIEW]);
-                ngDevMode && assertParentView(parentView);
-                return getFirstNativeNode(parentView, projectionNodes);
+            const componentView = lView[DECLARATION_COMPONENT_VIEW];
+            const componentHost = componentView[T_HOST];
+            const parentView = getLViewParent(componentView);
+            const firstProjectedTNode = componentHost.projection[tNode.projection];
+            if (firstProjectedTNode != null) {
+                return getFirstNativeNode(parentView, firstProjectedTNode);
             }
             else {
                 return getFirstNativeNode(lView, tNode.next);
             }
         }
-    }
-    return null;
-}
-function getProjectionNodes(lView, tNode) {
-    if (tNode !== null) {
-        const componentView = lView[DECLARATION_COMPONENT_VIEW];
-        const componentHost = componentView[T_HOST];
-        const slotIdx = tNode.projection;
-        ngDevMode && assertProjectionSlots(lView);
-        return componentHost.projection[slotIdx];
     }
     return null;
 }
@@ -16360,6 +20275,7 @@ function getLViewToClone(type, name) {
             }
             return embeddedArray;
     }
+    throw new Error('unreachable code');
 }
 function nameSuffix(text) {
     if (text == null)
@@ -16498,21 +20414,8 @@ class TNode {
     debugNodeInjectorPath(lView) {
         const path = [];
         let injectorIndex = getInjectorIndex(this, lView);
-        if (injectorIndex === -1) {
-            // Looks like the current `TNode` does not have `NodeInjector` associated with it => look for
-            // parent NodeInjector.
-            const parentLocation = getParentInjectorLocation(this, lView);
-            if (parentLocation !== NO_PARENT_INJECTOR) {
-                // We found a parent, so start searching from the parent location.
-                injectorIndex = getParentInjectorIndex(parentLocation);
-                lView = getParentInjectorView(parentLocation, lView);
-            }
-            else {
-                // No parents have been found, so there are no `NodeInjector`s to consult.
-            }
-        }
+        ngDevMode && assertNodeInjector(lView, injectorIndex);
         while (injectorIndex !== -1) {
-            ngDevMode && assertNodeInjector(lView, injectorIndex);
             const tNode = lView[TVIEW].data[injectorIndex + 8 /* TNODE */];
             path.push(buildDebugNode(tNode, lView));
             const parentLocation = lView[injectorIndex + 8 /* PARENT */];
@@ -16846,15 +20749,11 @@ function buildDebugNode(tNode, lView) {
     return {
         html: toHtml(native),
         type: toTNodeTypeAsString(tNode.type),
-        tNode,
         native: native,
         children: toDebugNodes(tNode.child, lView),
         factories,
         instances,
-        injector: buildNodeInjectorDebug(tNode, tView, lView),
-        get injectorResolutionPath() {
-            return tNode.debugNodeInjectorPath(lView);
-        },
+        injector: buildNodeInjectorDebug(tNode, tView, lView)
     };
 }
 function buildNodeInjectorDebug(tNode, tView, lView) {
@@ -16898,9 +20797,6 @@ function binary(array, idx) {
  * @param idx
  */
 function toBloom(array, idx) {
-    if (idx < 0) {
-        return 'NO_NODE_INJECTOR';
-    }
     return `${binary(array, idx + 7)}_${binary(array, idx + 6)}_${binary(array, idx + 5)}_${binary(array, idx + 4)}_${binary(array, idx + 3)}_${binary(array, idx + 2)}_${binary(array, idx + 1)}_${binary(array, idx + 0)}`;
 }
 class LContainerDebug {
@@ -18868,7 +22764,7 @@ const NOT_YET = {};
  * a circular dependency among the providers.
  */
 const CIRCULAR = {};
-const EMPTY_ARRAY$2 = [];
+const EMPTY_ARRAY$1 = [];
 /**
  * A lazily initialized NullInjector.
  */
@@ -19103,15 +22999,14 @@ class R3Injector {
             if (importTypesWithProviders !== undefined) {
                 for (let i = 0; i < importTypesWithProviders.length; i++) {
                     const { ngModule, providers } = importTypesWithProviders[i];
-                    deepForEach(providers, provider => this.processProvider(provider, ngModule, providers || EMPTY_ARRAY$2));
+                    deepForEach(providers, provider => this.processProvider(provider, ngModule, providers || EMPTY_ARRAY$1));
                 }
             }
         }
         // Track the InjectorType and add a provider for it. It's important that this is done after the
         // def's imports.
         this.injectorDefTypes.add(defType);
-        const factory = getFactoryDef(defType) || (() => new defType());
-        this.records.set(defType, makeRecord(factory, NOT_YET));
+        this.records.set(defType, makeRecord(def.factory, NOT_YET));
         // Next, include providers listed on the definition itself.
         const defProviders = def.providers;
         if (defProviders != null && !isDuplicate) {
@@ -19188,6 +23083,12 @@ function injectableDefOrInjectorDefFactory(token) {
     const factory = injectableDef !== null ? injectableDef.factory : getFactoryDef(token);
     if (factory !== null) {
         return factory;
+    }
+    // If the token is an NgModule, it's also injectable but the factory is on its injector def
+    // (`ɵinj`)
+    const injectorDef = getInjectorDef(token);
+    if (injectorDef !== null) {
+        return injectorDef.factory;
     }
     // InjectionTokens should have an injectable def (ɵprov) and thus should be handled above.
     // If it's missing that, it's an error.
@@ -20139,7 +24040,7 @@ function createRootComponentView(rNode, def, rootView, rendererFactory, hostRend
     ngDevMode && assertIndexInRange(rootView, index);
     rootView[index] = rNode;
     // '#host' is added here as we don't know the real host DOM name (we don't want to read it) and at
-    // the same time we want to communicate the debug `TNode` that this is a special `TNode`
+    // the same time we want to communicate the the debug `TNode` that this is a special `TNode`
     // representing a host element.
     const tNode = getOrCreateTNode(tView, index, 2 /* Element */, '#host', null);
     const mergedAttrs = tNode.mergedAttrs = def.hostAttrs;
@@ -20357,7 +24258,7 @@ function maybeUnwrapEmpty(value) {
     if (value === EMPTY_OBJ) {
         return {};
     }
-    else if (value === EMPTY_ARRAY$1) {
+    else if (value === EMPTY_ARRAY) {
         return [];
     }
     else {
@@ -21345,8 +25246,23 @@ const angularCoreDiEnv = {
     'ɵɵdefineInjectable': ɵɵdefineInjectable,
     'ɵɵdefineInjector': ɵɵdefineInjector,
     'ɵɵinject': ɵɵinject,
+    'ɵɵgetFactoryOf': getFactoryOf,
     'ɵɵinvalidFactoryDep': ɵɵinvalidFactoryDep,
 };
+function getFactoryOf(type) {
+    const typeAny = type;
+    if (isForwardRef(type)) {
+        return (() => {
+            const factory = getFactoryOf(resolveForwardRef(typeAny));
+            return factory ? factory() : null;
+        });
+    }
+    const def = getInjectableDef(typeAny) || getInjectorDef(typeAny);
+    if (!def || def.factory === undefined) {
+        return null;
+    }
+    return def.factory;
+}
 
 /**
  * @license
@@ -21451,7 +25367,7 @@ function getInjectableMetadata(type, srcMeta) {
  */
 const ɵ0$9 = getClosureSafeProperty;
 const USE_VALUE$2 = getClosureSafeProperty({ provide: String, useValue: ɵ0$9 });
-const EMPTY_ARRAY$3 = [];
+const EMPTY_ARRAY$2 = [];
 function convertInjectableProviderToFactory(type, provider) {
     if (!provider) {
         const reflectionCapabilities = new ReflectionCapabilities();
@@ -21469,7 +25385,7 @@ function convertInjectableProviderToFactory(type, provider) {
     }
     else if (provider.useFactory) {
         const factoryProvider = provider;
-        return () => factoryProvider.useFactory(...injectArgs(factoryProvider.deps || EMPTY_ARRAY$3));
+        return () => factoryProvider.useFactory(...injectArgs(factoryProvider.deps || EMPTY_ARRAY$2));
     }
     else if (provider.useClass) {
         const classProvider = provider;
@@ -22776,12 +26692,6 @@ function isPromise(obj) {
     return !!obj && typeof obj.then === 'function';
 }
 /**
- * Determine if the argument is a Subscribable
- */
-function isSubscribable(obj) {
-    return !!obj && typeof obj.subscribe === 'function';
-}
-/**
  * Determine if the argument is an Observable
  *
  * Strictly this tests that the `obj` is `Subscribable`, since `Observable`
@@ -22790,7 +26700,9 @@ function isSubscribable(obj) {
  * `subscribe()` method, and RxJS has mechanisms to wrap `Subscribable` objects
  * into `Observable` as needed.
  */
-const isObservable = isSubscribable;
+function isObservable(obj) {
+    return !!obj && typeof obj.subscribe === 'function';
+}
 
 /**
  * @license
@@ -23639,6 +27551,31 @@ function ɵɵpropertyInterpolateV(propName, values, sanitizer) {
         }
     }
     return ɵɵpropertyInterpolateV;
+}
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+/**
+ * This file contains reuseable "empty" symbols that can be used as default return values
+ * in different parts of the rendering code. Because the same symbols are returned, this
+ * allows for identity checks against these values to be consistently used by the framework
+ * code.
+ */
+const EMPTY_OBJ$1 = {};
+const EMPTY_ARRAY$3 = [];
+// freezing the values prevents any code from accidentally inserting new values in
+if ((typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode()) {
+    // These property accesses can be ignored because ngDevMode will be set to false
+    // when optimizing code and the whole if statement will be dropped.
+    // tslint:disable-next-line:no-toplevel-property-access
+    Object.freeze(EMPTY_OBJ$1);
+    // tslint:disable-next-line:no-toplevel-property-access
+    Object.freeze(EMPTY_ARRAY$3);
 }
 
 /**
@@ -24823,7 +28760,7 @@ function collectStylingFromTAttrs(stylingKey, attrs, isClassBased) {
  */
 function toStylingKeyValueArray(keyValueArraySet, stringParser, value) {
     if (value == null /*|| value === undefined */ || value === '')
-        return EMPTY_ARRAY;
+        return EMPTY_ARRAY$3;
     const styleKeyValueArray = [];
     const unwrappedValue = unwrapSafeValue(value);
     if (Array.isArray(unwrappedValue)) {
@@ -24880,7 +28817,7 @@ function styleKeyValueArraySet(keyValueArray, key, value) {
 function updateStylingMap(tView, tNode, lView, renderer, oldKeyValueArray, newKeyValueArray, isClassBased, bindingIndex) {
     if (oldKeyValueArray === NO_CHANGE) {
         // On first execution the oldKeyValueArray is NO_CHANGE => treat it as empty KeyValueArray.
-        oldKeyValueArray = EMPTY_ARRAY;
+        oldKeyValueArray = EMPTY_ARRAY$3;
     }
     let oldIndex = 0;
     let newIndex = 0;
@@ -25018,7 +28955,7 @@ function findStylingValue(tData, tNode, lView, prop, index, isClassBased) {
             // we have `undefined` (or empty array in case of styling-map instruction) instead. This
             // allows the resolution to apply the value (which may later be overwritten when the
             // binding actually executes.)
-            valueAtLViewIndex = isStylingMap ? EMPTY_ARRAY : undefined;
+            valueAtLViewIndex = isStylingMap ? EMPTY_ARRAY$3 : undefined;
         }
         let currentValue = isStylingMap ? keyValueArrayGet(valueAtLViewIndex, prop) :
             key === prop ? valueAtLViewIndex : undefined;
@@ -27457,7 +31394,7 @@ function loadIcuContainerVisitor() {
             _removes = tIcu.remove[currentCase];
         }
         else {
-            _removes = EMPTY_ARRAY$1;
+            _removes = EMPTY_ARRAY;
         }
     }
     function icuContainerIteratorNext() {
@@ -29024,15 +32961,6 @@ class ElementRef {
  * @nocollapse
  */
 ElementRef.__NG_ELEMENT_ID__ = SWITCH_ELEMENT_REF_FACTORY;
-/**
- * Unwraps `ElementRef` and return the `nativeElement`.
- *
- * @param value value to unwrap
- * @returns `nativeElement` if `ElementRef` otherwise returns value as is.
- */
-function unwrapElementRef(value) {
-    return value instanceof ElementRef ? value.nativeElement : value;
-}
 
 /**
  * @license
@@ -29136,7 +33064,7 @@ class Version {
 /**
  * @publicApi
  */
-const VERSION = new Version('11.2.8');
+const VERSION = new Version('11.0.7');
 
 /**
  * @license
@@ -29389,25 +33317,24 @@ class DefaultIterableDiffer {
             // Remove the record from the collection since we know it does not match the item.
             this._remove(record);
         }
-        // See if we have evicted the item, which used to be at some anterior position of _itHead list.
-        record = this._unlinkedRecords === null ? null : this._unlinkedRecords.get(itemTrackBy, null);
+        // Attempt to see if we have seen the item before.
+        record = this._linkedRecords === null ? null : this._linkedRecords.get(itemTrackBy, index);
         if (record !== null) {
-            // It is an item which we have evicted earlier: reinsert it back into the list.
-            // But first we need to check if identity changed, so we can update in view if necessary.
+            // We have seen this before, we need to move it forward in the collection.
+            // But first we need to check if identity changed, so we can update in view if necessary
             if (!Object.is(record.item, item))
                 this._addIdentityChange(record, item);
-            this._reinsertAfter(record, previousRecord, index);
+            this._moveAfter(record, previousRecord, index);
         }
         else {
-            // Attempt to see if the item is at some posterior position of _itHead list.
-            record = this._linkedRecords === null ? null : this._linkedRecords.get(itemTrackBy, index);
+            // Never seen it, check evicted list.
+            record = this._unlinkedRecords === null ? null : this._unlinkedRecords.get(itemTrackBy, null);
             if (record !== null) {
-                // We have the item in _itHead at/after `index` position. We need to move it forward in the
-                // collection.
-                // But first we need to check if identity changed, so we can update in view if necessary.
+                // It is an item which we have evicted earlier: reinsert it back into the list.
+                // But first we need to check if identity changed, so we can update in view if necessary
                 if (!Object.is(record.item, item))
                     this._addIdentityChange(record, item);
-                this._moveAfter(record, previousRecord, index);
+                this._reinsertAfter(record, previousRecord, index);
             }
             else {
                 // It is a new item: add it.
@@ -30061,9 +33988,6 @@ class KeyValueChangeRecord_ {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-function defaultIterableDiffersFactory() {
-    return new IterableDiffers([new DefaultIterableDifferFactory()]);
-}
 /**
  * A repository of different iterable diffing strategies used by NgFor, NgClass, and others.
  *
@@ -30104,10 +34028,13 @@ class IterableDiffers {
         return {
             provide: IterableDiffers,
             useFactory: (parent) => {
-                // if parent is null, it means that we are in the root injector and we have just overridden
-                // the default injection mechanism for IterableDiffers, in such a case just assume
-                // `defaultIterableDiffersFactory`.
-                return IterableDiffers.create(factories, parent || defaultIterableDiffersFactory());
+                if (!parent) {
+                    // Typically would occur when calling IterableDiffers.extend inside of dependencies passed
+                    // to
+                    // bootstrap(), which would override default pipes instead of extending them.
+                    throw new Error('Cannot extend IterableDiffers without a parent injector');
+                }
+                return IterableDiffers.create(factories, parent);
             },
             // Dependency technically isn't optional, but we can provide a better error message this way.
             deps: [[IterableDiffers, new SkipSelf(), new Optional()]]
@@ -30124,7 +34051,11 @@ class IterableDiffers {
     }
 }
 /** @nocollapse */
-IterableDiffers.ɵprov = ɵɵdefineInjectable({ token: IterableDiffers, providedIn: 'root', factory: defaultIterableDiffersFactory });
+IterableDiffers.ɵprov = ɵɵdefineInjectable({
+    token: IterableDiffers,
+    providedIn: 'root',
+    factory: () => new IterableDiffers([new DefaultIterableDifferFactory()])
+});
 function getTypeNameForDebugging(type) {
     return type['name'] || typeof type;
 }
@@ -30136,9 +34067,6 @@ function getTypeNameForDebugging(type) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-function defaultKeyValueDiffersFactory() {
-    return new KeyValueDiffers([new DefaultKeyValueDifferFactory()]);
-}
 /**
  * A repository of different Map diffing strategies used by NgClass, NgStyle, and others.
  *
@@ -30179,10 +34107,12 @@ class KeyValueDiffers {
         return {
             provide: KeyValueDiffers,
             useFactory: (parent) => {
-                // if parent is null, it means that we are in the root injector and we have just overridden
-                // the default injection mechanism for KeyValueDiffers, in such a case just assume
-                // `defaultKeyValueDiffersFactory`.
-                return KeyValueDiffers.create(factories, parent || defaultKeyValueDiffersFactory());
+                if (!parent) {
+                    // Typically would occur when calling KeyValueDiffers.extend inside of dependencies passed
+                    // to bootstrap(), which would override default pipes instead of extending them.
+                    throw new Error('Cannot extend KeyValueDiffers without a parent injector');
+                }
+                return KeyValueDiffers.create(factories, parent);
             },
             // Dependency technically isn't optional, but we can provide a better error message this way.
             deps: [[KeyValueDiffers, new SkipSelf(), new Optional()]]
@@ -30197,7 +34127,11 @@ class KeyValueDiffers {
     }
 }
 /** @nocollapse */
-KeyValueDiffers.ɵprov = ɵɵdefineInjectable({ token: KeyValueDiffers, providedIn: 'root', factory: defaultKeyValueDiffersFactory });
+KeyValueDiffers.ɵprov = ɵɵdefineInjectable({
+    token: KeyValueDiffers,
+    providedIn: 'root',
+    factory: () => new KeyValueDiffers([new DefaultKeyValueDifferFactory()])
+});
 
 /**
  * @license
@@ -30238,13 +34172,19 @@ function collectNativeNodes(tView, lView, tNode, result, isProjection = false) {
             }
         }
         else if (tNodeType & 16 /* Projection */) {
-            const nodesInSlot = getProjectionNodes(lView, tNode);
+            const componentView = lView[DECLARATION_COMPONENT_VIEW];
+            const componentHost = componentView[T_HOST];
+            const slotIdx = tNode.projection;
+            ngDevMode &&
+                assertDefined(componentHost.projection, 'Components with projection nodes (<ng-content>) must have projection slots defined.');
+            const nodesInSlot = componentHost.projection[slotIdx];
             if (Array.isArray(nodesInSlot)) {
                 result.push(...nodesInSlot);
             }
             else {
-                const parentView = getLViewParent(lView[DECLARATION_COMPONENT_VIEW]);
-                ngDevMode && assertParentView(parentView);
+                const parentView = getLViewParent(componentView);
+                ngDevMode &&
+                    assertDefined(parentView, 'Component views should always have a parent view (component\'s host view)');
                 collectNativeNodes(parentView[TVIEW], parentView, nodesInSlot, result, true);
             }
         }
@@ -30284,7 +34224,7 @@ class ViewRef {
         this._lView = _lView;
         this._cdRefInjectingView = _cdRefInjectingView;
         this._appRef = null;
-        this._attachedToViewContainer = false;
+        this._viewContainerRef = null;
     }
     get rootNodes() {
         const lView = this._lView;
@@ -30301,19 +34241,12 @@ class ViewRef {
         if (this._appRef) {
             this._appRef.detachView(this);
         }
-        else if (this._attachedToViewContainer) {
-            const parent = this._lView[PARENT];
-            if (isLContainer(parent)) {
-                const viewRefs = parent[VIEW_REFS];
-                const index = viewRefs ? viewRefs.indexOf(this) : -1;
-                if (index > -1) {
-                    ngDevMode &&
-                        assertEqual(index, parent.indexOf(this._lView) - CONTAINER_HEADER_OFFSET, 'An attached view should be in the same position within its container as its ViewRef in the VIEW_REFS array.');
-                    detachView(parent, index);
-                    removeFromArray(viewRefs, index);
-                }
+        else if (this._viewContainerRef) {
+            const index = this._viewContainerRef.indexOf(this);
+            if (index > -1) {
+                this._viewContainerRef.detach(index);
             }
-            this._attachedToViewContainer = false;
+            this._viewContainerRef = null;
         }
         destroyLView(this._lView[TVIEW], this._lView);
     }
@@ -30505,18 +34438,18 @@ class ViewRef {
     checkNoChanges() {
         checkNoChangesInternal(this._lView[TVIEW], this._lView, this.context);
     }
-    attachToViewContainerRef() {
+    attachToViewContainerRef(vcRef) {
         if (this._appRef) {
             throw new Error('This view is already attached directly to the ApplicationRef!');
         }
-        this._attachedToViewContainer = true;
+        this._viewContainerRef = vcRef;
     }
     detachFromAppRef() {
         this._appRef = null;
         renderDetachView(this._lView[TVIEW], this._lView);
     }
     attachToAppRef(appRef) {
-        if (this._attachedToViewContainer) {
+        if (this._viewContainerRef) {
             throw new Error('This view is already attached to a ViewContainer!');
         }
         this._appRef = appRef;
@@ -30897,7 +34830,7 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
         if (parentRNode !== null) {
             addViewToContainer(tView, lContainer[T_HOST], renderer, lView, parentRNode, beforeNode);
         }
-        viewRef.attachToViewContainerRef();
+        viewRef.attachToViewContainerRef(this);
         addToArray(getOrCreateViewRefs(lContainer), adjustedIdx, viewRef);
         return viewRef;
     }
@@ -32878,8 +36811,8 @@ class ComponentRef$1 extends ComponentRef {
  *
  * These metadata fields can later be read with Angular's `ReflectionCapabilities` API.
  *
- * Calls to `setClassMetadata` can be guarded by ngDevMode, resulting in the metadata assignments
- * being tree-shaken away during production builds.
+ * Calls to `setClassMetadata` can be marked as pure, resulting in the metadata assignments being
+ * tree-shaken away during production builds.
  */
 function setClassMetadata(type, decorators, ctorParameters, propDecorators) {
     return noSideEffects(() => {
@@ -33618,36 +37551,36 @@ class EventEmitter_ extends rxjs__WEBPACK_IMPORTED_MODULE_0__["Subject"] {
     emit(value) {
         super.next(value);
     }
-    subscribe(observerOrNext, error, complete) {
+    subscribe(generatorOrNext, error, complete) {
         let schedulerFn;
         let errorFn = (err) => null;
         let completeFn = () => null;
-        if (observerOrNext && typeof observerOrNext === 'object') {
+        if (generatorOrNext && typeof generatorOrNext === 'object') {
             schedulerFn = this.__isAsync ? (value) => {
-                setTimeout(() => observerOrNext.next(value));
+                setTimeout(() => generatorOrNext.next(value));
             } : (value) => {
-                observerOrNext.next(value);
+                generatorOrNext.next(value);
             };
-            if (observerOrNext.error) {
+            if (generatorOrNext.error) {
                 errorFn = this.__isAsync ? (err) => {
-                    setTimeout(() => observerOrNext.error(err));
+                    setTimeout(() => generatorOrNext.error(err));
                 } : (err) => {
-                    observerOrNext.error(err);
+                    generatorOrNext.error(err);
                 };
             }
-            if (observerOrNext.complete) {
+            if (generatorOrNext.complete) {
                 completeFn = this.__isAsync ? () => {
-                    setTimeout(() => observerOrNext.complete());
+                    setTimeout(() => generatorOrNext.complete());
                 } : () => {
-                    observerOrNext.complete();
+                    generatorOrNext.complete();
                 };
             }
         }
         else {
             schedulerFn = this.__isAsync ? (value) => {
-                setTimeout(() => observerOrNext(value));
+                setTimeout(() => generatorOrNext(value));
             } : (value) => {
-                observerOrNext(value);
+                generatorOrNext(value);
             };
             if (error) {
                 errorFn = this.__isAsync ? (err) => {
@@ -33665,8 +37598,8 @@ class EventEmitter_ extends rxjs__WEBPACK_IMPORTED_MODULE_0__["Subject"] {
             }
         }
         const sink = super.subscribe(schedulerFn, errorFn, completeFn);
-        if (observerOrNext instanceof rxjs__WEBPACK_IMPORTED_MODULE_0__["Subscription"]) {
-            observerOrNext.add(sink);
+        if (generatorOrNext instanceof rxjs__WEBPACK_IMPORTED_MODULE_0__["Subscription"]) {
+            generatorOrNext.add(sink);
         }
         return sink;
     }
@@ -33713,21 +37646,11 @@ function symbolIterator() {
  * @publicApi
  */
 class QueryList {
-    /**
-     * @param emitDistinctChangesOnly Whether `QueryList.changes` should fire only when actual change
-     *     has occurred. Or if it should fire when query is recomputed. (recomputing could resolve in
-     *     the same result) This is set to `false` for backwards compatibility but will be changed to
-     *     true in v12.
-     */
-    constructor(_emitDistinctChangesOnly = false) {
-        this._emitDistinctChangesOnly = _emitDistinctChangesOnly;
+    constructor() {
         this.dirty = true;
         this._results = [];
-        this._changesDetected = false;
-        this._changes = null;
+        this.changes = new EventEmitter();
         this.length = 0;
-        this.first = undefined;
-        this.last = undefined;
         // This function should be declared on the prototype, but doing so there will cause the class
         // declaration to have side-effects and become not tree-shakable. For this reason we do it in
         // the constructor.
@@ -33736,18 +37659,6 @@ class QueryList {
         const proto = QueryList.prototype;
         if (!proto[symbol])
             proto[symbol] = symbolIterator;
-    }
-    /**
-     * Returns `Observable` of `QueryList` notifying the subscriber of changes.
-     */
-    get changes() {
-        return this._changes || (this._changes = new EventEmitter());
-    }
-    /**
-     * Returns the QueryList entry at `index`.
-     */
-    get(index) {
-        return this._results[index];
     }
     /**
      * See
@@ -33806,31 +37717,19 @@ class QueryList {
      * occurs.
      *
      * @param resultsTree The query results to store
-     * @param identityAccessor Optional function for extracting stable object identity from a value
-     *    in the array. This function is executed for each element of the query result list while
-     *    comparing current query list with the new one (provided as a first argument of the `reset`
-     *    function) to detect if the lists are different. If the function is not provided, elements
-     *    are compared as is (without any pre-processing).
      */
-    reset(resultsTree, identityAccessor) {
-        // Cast to `QueryListInternal` so that we can mutate fields which are readonly for the usage of
-        // QueryList (but not for QueryList itself.)
-        const self = this;
-        self.dirty = false;
-        const newResultFlat = flatten(resultsTree);
-        if (this._changesDetected = !arrayEquals(self._results, newResultFlat, identityAccessor)) {
-            self._results = newResultFlat;
-            self.length = newResultFlat.length;
-            self.last = newResultFlat[this.length - 1];
-            self.first = newResultFlat[0];
-        }
+    reset(resultsTree) {
+        this._results = flatten(resultsTree);
+        this.dirty = false;
+        this.length = this._results.length;
+        this.last = this._results[this.length - 1];
+        this.first = this._results[0];
     }
     /**
      * Triggers a change event by emitting on the `changes` {@link EventEmitter}.
      */
     notifyOnChanges() {
-        if (this._changes && (this._changesDetected || !this._emitDistinctChangesOnly))
-            this._changes.emit(this);
+        this.changes.emit(this);
     }
     /** internal */
     setDirty() {
@@ -33922,9 +37821,10 @@ class LQueries_ {
     }
 }
 class TQueryMetadata_ {
-    constructor(predicate, flags, read = null) {
+    constructor(predicate, descendants, isStatic, read = null) {
         this.predicate = predicate;
-        this.flags = flags;
+        this.descendants = descendants;
+        this.isStatic = isStatic;
         this.read = read;
     }
 }
@@ -34017,8 +37917,7 @@ class TQuery_ {
         return null;
     }
     isApplyingToNode(tNode) {
-        if (this._appliesToNextNode &&
-            (this.metadata.flags & 1 /* descendants */) !== 1 /* descendants */) {
+        if (this._appliesToNextNode && this.metadata.descendants === false) {
             const declarationNodeIdx = this._declarationNodeIndex;
             let parent = tNode.parent;
             // Determine if a given TNode is a "direct" child of a node on which a content query was
@@ -34230,9 +38129,7 @@ function ɵɵqueryRefresh(queryList) {
     const queryIndex = getCurrentQueryIndex();
     setCurrentQueryIndex(queryIndex + 1);
     const tQuery = getTQuery(tView, queryIndex);
-    if (queryList.dirty &&
-        (isCreationMode(lView) ===
-            ((tQuery.metadata.flags & 2 /* isStatic */) === 2 /* isStatic */))) {
+    if (queryList.dirty && (isCreationMode(lView) === tQuery.metadata.isStatic)) {
         if (tQuery.matches === null) {
             queryList.reset([]);
         }
@@ -34240,7 +38137,7 @@ function ɵɵqueryRefresh(queryList) {
             const result = tQuery.crossesNgTemplate ?
                 collectQueryResults(tView, lView, queryIndex, []) :
                 materializeViewResults(tView, lView, tQuery, queryIndex);
-            queryList.reset(result, unwrapElementRef);
+            queryList.reset(result);
             queryList.notifyOnChanges();
         }
         return true;
@@ -34248,24 +38145,37 @@ function ɵɵqueryRefresh(queryList) {
     return false;
 }
 /**
- * Creates new QueryList, stores the reference in LView and returns QueryList.
+ * Creates new QueryList for a static view query.
  *
  * @param predicate The type for which the query will search
- * @param flags Flags associated with the query
+ * @param descend Whether or not to descend into children
  * @param read What to save in the query
  *
  * @codeGenApi
  */
-function ɵɵviewQuery(predicate, flags, read) {
-    ngDevMode && assertNumber(flags, 'Expecting flags');
-    const tView = getTView();
+function ɵɵstaticViewQuery(predicate, descend, read) {
+    viewQueryInternal(getTView(), getLView(), predicate, descend, read, true);
+}
+/**
+ * Creates new QueryList, stores the reference in LView and returns QueryList.
+ *
+ * @param predicate The type for which the query will search
+ * @param descend Whether or not to descend into children
+ * @param read What to save in the query
+ *
+ * @codeGenApi
+ */
+function ɵɵviewQuery(predicate, descend, read) {
+    viewQueryInternal(getTView(), getLView(), predicate, descend, read, false);
+}
+function viewQueryInternal(tView, lView, predicate, descend, read, isStatic) {
     if (tView.firstCreatePass) {
-        createTQuery(tView, new TQueryMetadata_(predicate, flags, read), -1);
-        if ((flags & 2 /* isStatic */) === 2 /* isStatic */) {
+        createTQuery(tView, new TQueryMetadata_(predicate, descend, isStatic, read), -1);
+        if (isStatic) {
             tView.staticViewQueries = true;
         }
     }
-    createLQuery(tView, getLView(), flags);
+    createLQuery(tView, lView);
 }
 /**
  * Registers a QueryList, associated with a content query, for later refresh (part of a view
@@ -34273,24 +38183,39 @@ function ɵɵviewQuery(predicate, flags, read) {
  *
  * @param directiveIndex Current directive index
  * @param predicate The type for which the query will search
- * @param flags Flags associated with the query
+ * @param descend Whether or not to descend into children
  * @param read What to save in the query
  * @returns QueryList<T>
  *
  * @codeGenApi
  */
-function ɵɵcontentQuery(directiveIndex, predicate, flags, read) {
-    ngDevMode && assertNumber(flags, 'Expecting flags');
-    const tView = getTView();
+function ɵɵcontentQuery(directiveIndex, predicate, descend, read) {
+    contentQueryInternal(getTView(), getLView(), predicate, descend, read, false, getCurrentTNode(), directiveIndex);
+}
+/**
+ * Registers a QueryList, associated with a static content query, for later refresh
+ * (part of a view refresh).
+ *
+ * @param directiveIndex Current directive index
+ * @param predicate The type for which the query will search
+ * @param descend Whether or not to descend into children
+ * @param read What to save in the query
+ * @returns QueryList<T>
+ *
+ * @codeGenApi
+ */
+function ɵɵstaticContentQuery(directiveIndex, predicate, descend, read) {
+    contentQueryInternal(getTView(), getLView(), predicate, descend, read, true, getCurrentTNode(), directiveIndex);
+}
+function contentQueryInternal(tView, lView, predicate, descend, read, isStatic, tNode, directiveIndex) {
     if (tView.firstCreatePass) {
-        const tNode = getCurrentTNode();
-        createTQuery(tView, new TQueryMetadata_(predicate, flags, read), tNode.index);
+        createTQuery(tView, new TQueryMetadata_(predicate, descend, isStatic, read), tNode.index);
         saveContentQueryAndDirectiveIndex(tView, directiveIndex);
-        if ((flags & 2 /* isStatic */) === 2 /* isStatic */) {
+        if (isStatic) {
             tView.staticContentQueries = true;
         }
     }
-    createLQuery(tView, getLView(), flags);
+    createLQuery(tView, lView);
 }
 /**
  * Loads a QueryList corresponding to the current view or content query.
@@ -34306,8 +38231,8 @@ function loadQueryInternal(lView, queryIndex) {
     ngDevMode && assertIndexInRange(lView[QUERIES].queries, queryIndex);
     return lView[QUERIES].queries[queryIndex].queryList;
 }
-function createLQuery(tView, lView, flags) {
-    const queryList = new QueryList((flags & 4 /* emitDistinctChangesOnly */) === 4 /* emitDistinctChangesOnly */);
+function createLQuery(tView, lView) {
+    const queryList = new QueryList();
     storeCleanupWithContext(tView, lView, queryList, queryList.destroy);
     if (lView[QUERIES] === null)
         lView[QUERIES] = new LQueries_();
@@ -34394,6 +38319,7 @@ const ɵ0$c = () => ({
     'ɵɵdefineNgModule': ɵɵdefineNgModule,
     'ɵɵdefinePipe': ɵɵdefinePipe,
     'ɵɵdirectiveInject': ɵɵdirectiveInject,
+    'ɵɵgetFactoryOf': ɵɵgetFactoryOf,
     'ɵɵgetInheritedFactory': ɵɵgetInheritedFactory,
     'ɵɵinject': ɵɵinject,
     'ɵɵinjectAttribute': ɵɵinjectAttribute,
@@ -34454,6 +38380,8 @@ const ɵ0$c = () => ({
     'ɵɵpipe': ɵɵpipe,
     'ɵɵqueryRefresh': ɵɵqueryRefresh,
     'ɵɵviewQuery': ɵɵviewQuery,
+    'ɵɵstaticViewQuery': ɵɵstaticViewQuery,
+    'ɵɵstaticContentQuery': ɵɵstaticContentQuery,
     'ɵɵloadQuery': ɵɵloadQuery,
     'ɵɵcontentQuery': ɵɵcontentQuery,
     'ɵɵreference': ɵɵreference,
@@ -34520,9 +38448,8 @@ const ɵ0$c = () => ({
     'ɵɵsanitizeUrl': ɵɵsanitizeUrl,
     'ɵɵsanitizeUrlOrResourceUrl': ɵɵsanitizeUrlOrResourceUrl,
     'ɵɵtrustConstantHtml': ɵɵtrustConstantHtml,
+    'ɵɵtrustConstantScript': ɵɵtrustConstantScript,
     'ɵɵtrustConstantResourceUrl': ɵɵtrustConstantResourceUrl,
-    'forwardRef': forwardRef,
-    'resolveForwardRef': resolveForwardRef,
 });
 /**
  * A mapping of the @angular/core API surface used in generated expressions to the actual symbols.
@@ -34619,7 +38546,7 @@ function compileNgModule(moduleType, ngModule = {}) {
     enqueueModuleForDelayedScoping(moduleType, ngModule);
 }
 /**
- * Compiles and adds the `ɵmod`, `ɵfac` and `ɵinj` properties to the module class.
+ * Compiles and adds the `ɵmod` and `ɵinj` properties to the module class.
  *
  * It's possible to compile a module via this API which will allow duplicate declarations in its
  * root.
@@ -34662,25 +38589,6 @@ function compileNgModuleDefs(moduleType, ngModule, allowDuplicateDeclarationsInR
             return ngModuleDef;
         }
     });
-    let ngFactoryDef = null;
-    Object.defineProperty(moduleType, NG_FACTORY_DEF, {
-        get: () => {
-            if (ngFactoryDef === null) {
-                const compiler = getCompilerFacade();
-                ngFactoryDef = compiler.compileFactory(angularCoreEnv, `ng:///${moduleType.name}/ɵfac.js`, {
-                    name: moduleType.name,
-                    type: moduleType,
-                    deps: reflectDependencies(moduleType),
-                    injectFn: 'inject',
-                    target: compiler.R3FactoryTarget.NgModule,
-                    typeArgumentCount: 0,
-                });
-            }
-            return ngFactoryDef;
-        },
-        // Make the property configurable in dev mode to allow overriding in tests
-        configurable: !!ngDevMode,
-    });
     let ngInjectorDef = null;
     Object.defineProperty(moduleType, NG_INJ_DEF, {
         get: () => {
@@ -34690,6 +38598,7 @@ function compileNgModuleDefs(moduleType, ngModule, allowDuplicateDeclarationsInR
                 const meta = {
                     name: moduleType.name,
                     type: moduleType,
+                    deps: reflectDependencies(moduleType),
                     providers: ngModule.providers || EMPTY_ARRAY$5,
                     imports: [
                         (ngModule.imports || EMPTY_ARRAY$5).map(resolveForwardRef),
@@ -35098,7 +39007,7 @@ function compileComponent(type, metadata) {
                     }
                 }
                 const templateUrl = metadata.templateUrl || `ng:///${type.name}/template.html`;
-                const meta = Object.assign(Object.assign({}, directiveMetadata(type, metadata)), { typeSourceSpan: compiler.createParseSourceSpan('Component', type.name, templateUrl), template: metadata.template || '', preserveWhitespaces, styles: metadata.styles || EMPTY_ARRAY$1, animations: metadata.animations, directives: [], changeDetection: metadata.changeDetection, pipes: new Map(), encapsulation, interpolation: metadata.interpolation, viewProviders: metadata.viewProviders || null });
+                const meta = Object.assign(Object.assign({}, directiveMetadata(type, metadata)), { typeSourceSpan: compiler.createParseSourceSpan('Component', type.name, templateUrl), template: metadata.template || '', preserveWhitespaces, styles: metadata.styles || EMPTY_ARRAY, animations: metadata.animations, directives: [], changeDetection: metadata.changeDetection, pipes: new Map(), encapsulation, interpolation: metadata.interpolation, viewProviders: metadata.viewProviders || null });
                 compilationDepth++;
                 try {
                     if (meta.usesInheritance) {
@@ -35207,8 +39116,8 @@ function directiveMetadata(type, metadata) {
         deps: reflectDependencies(type),
         host: metadata.host || EMPTY_OBJ,
         propMetadata: propMetadata,
-        inputs: metadata.inputs || EMPTY_ARRAY$1,
-        outputs: metadata.outputs || EMPTY_ARRAY$1,
+        inputs: metadata.inputs || EMPTY_ARRAY,
+        outputs: metadata.outputs || EMPTY_ARRAY,
         queries: extractQueriesMetadata(type, propMetadata, isContentQuery),
         lifecycle: { usesOnChanges: reflect.hasLifecycleHook(type, 'ngOnChanges') },
         typeSourceSpan: null,
@@ -35245,8 +39154,7 @@ function convertToR3QueryMetadata(propertyName, ann) {
         descendants: ann.descendants,
         first: ann.first,
         read: ann.read ? ann.read : null,
-        static: !!ann.static,
-        emitDistinctChangesOnly: !!ann.emitDistinctChangesOnly,
+        static: !!ann.static
     };
 }
 function extractQueriesMetadata(type, propMetadata, isQueryAnn) {
@@ -35501,10 +39409,11 @@ function preR3NgModuleCompile(moduleType, metadata) {
     if (metadata && metadata.exports) {
         imports = [...imports, metadata.exports];
     }
-    const moduleInjectorType = moduleType;
-    moduleInjectorType.ɵfac = convertInjectableProviderToFactory(moduleType, { useClass: moduleType });
-    moduleInjectorType.ɵinj =
-        ɵɵdefineInjector({ providers: metadata && metadata.providers, imports: imports });
+    moduleType.ɵinj = ɵɵdefineInjector({
+        factory: convertInjectableProviderToFactory(moduleType, { useClass: moduleType }),
+        providers: metadata && metadata.providers,
+        imports: imports,
+    });
 }
 const SWITCH_COMPILE_NGMODULE__POST_R3__ = compileNgModule;
 const SWITCH_COMPILE_NGMODULE__PRE_R3__ = preR3NgModuleCompile;
@@ -35604,7 +39513,7 @@ ApplicationInitStatus.ɵprov = ɵɵdefineInjectable({ token: ApplicationInitStat
 ApplicationInitStatus.ctorParameters = () => [
     { type: Array, decorators: [{ type: Inject, args: [APP_INITIALIZER,] }, { type: Optional }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApplicationInitStatus, [{
+/*@__PURE__*/ (function () { setClassMetadata(ApplicationInitStatus, [{
         type: Injectable
     }], function () { return [{ type: Array, decorators: [{
                 type: Inject,
@@ -35695,7 +39604,7 @@ class Console {
 }
 Console.ɵfac = function Console_Factory(t) { return new (t || Console)(); };
 Console.ɵprov = ɵɵdefineInjectable({ token: Console, factory: Console.ɵfac });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Console, [{
+/*@__PURE__*/ (function () { setClassMetadata(Console, [{
         type: Injectable
     }], null, null); })();
 
@@ -35864,7 +39773,7 @@ const ivyEnabled = SWITCH_IVY_ENABLED__POST_R3__;
  * found in the LICENSE file at https://angular.io/license
  */
 /**
- * Combination of NgModuleFactory and ComponentFactories.
+ * Combination of NgModuleFactory and ComponentFactorys.
  *
  * @publicApi
  */
@@ -35953,7 +39862,7 @@ class Compiler {
 }
 Compiler.ɵfac = function Compiler_Factory(t) { return new (t || Compiler)(); };
 Compiler.ɵprov = ɵɵdefineInjectable({ token: Compiler, factory: Compiler.ɵfac });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Compiler, [{
+/*@__PURE__*/ (function () { setClassMetadata(Compiler, [{
         type: Injectable
     }], function () { return []; }, null); })();
 /**
@@ -36097,7 +40006,7 @@ function getNativeRequestAnimationFrame() {
  * @publicApi
  */
 class NgZone {
-    constructor({ enableLongStackTrace = false, shouldCoalesceEventChangeDetection = false, shouldCoalesceRunChangeDetection = false }) {
+    constructor({ enableLongStackTrace = false, shouldCoalesceEventChangeDetection = false }) {
         this.hasPendingMacrotasks = false;
         this.hasPendingMicrotasks = false;
         /**
@@ -36137,11 +40046,7 @@ class NgZone {
         if (enableLongStackTrace && Zone['longStackTraceZoneSpec']) {
             self._inner = self._inner.fork(Zone['longStackTraceZoneSpec']);
         }
-        // if shouldCoalesceRunChangeDetection is true, all tasks including event tasks will be
-        // coalesced, so shouldCoalesceEventChangeDetection option is not necessary and can be skipped.
-        self.shouldCoalesceEventChangeDetection =
-            !shouldCoalesceRunChangeDetection && shouldCoalesceEventChangeDetection;
-        self.shouldCoalesceRunChangeDetection = shouldCoalesceRunChangeDetection;
+        self.shouldCoalesceEventChangeDetection = shouldCoalesceEventChangeDetection;
         self.lastRequestAnimationFrameId = -1;
         self.nativeRequestAnimationFrame = getNativeRequestAnimationFrame().nativeRequestAnimationFrame;
         forkInnerZoneWithAngularBehavior(self);
@@ -36269,18 +40174,19 @@ function forkInnerZoneWithAngularBehavior(zone) {
     const delayChangeDetectionForEventsDelegate = () => {
         delayChangeDetectionForEvents(zone);
     };
+    const maybeDelayChangeDetection = !!zone.shouldCoalesceEventChangeDetection &&
+        zone.nativeRequestAnimationFrame && delayChangeDetectionForEventsDelegate;
     zone._inner = zone._inner.fork({
         name: 'angular',
-        properties: { 'isAngularZone': true },
+        properties: { 'isAngularZone': true, 'maybeDelayChangeDetection': maybeDelayChangeDetection },
         onInvokeTask: (delegate, current, target, task, applyThis, applyArgs) => {
             try {
                 onEnter(zone);
                 return delegate.invokeTask(target, task, applyThis, applyArgs);
             }
             finally {
-                if ((zone.shouldCoalesceEventChangeDetection && task.type === 'eventTask') ||
-                    zone.shouldCoalesceRunChangeDetection) {
-                    delayChangeDetectionForEventsDelegate();
+                if (maybeDelayChangeDetection && task.type === 'eventTask') {
+                    maybeDelayChangeDetection();
                 }
                 onLeave(zone);
             }
@@ -36291,9 +40197,6 @@ function forkInnerZoneWithAngularBehavior(zone) {
                 return delegate.invoke(target, callback, applyThis, applyArgs, source);
             }
             finally {
-                if (zone.shouldCoalesceRunChangeDetection) {
-                    delayChangeDetectionForEventsDelegate();
-                }
                 onLeave(zone);
             }
         },
@@ -36321,8 +40224,7 @@ function forkInnerZoneWithAngularBehavior(zone) {
 }
 function updateMicroTaskStatus(zone) {
     if (zone._hasPendingMicrotasks ||
-        ((zone.shouldCoalesceEventChangeDetection || zone.shouldCoalesceRunChangeDetection) &&
-            zone.lastRequestAnimationFrameId !== -1)) {
+        (zone.shouldCoalesceEventChangeDetection && zone.lastRequestAnimationFrameId !== -1)) {
         zone.hasPendingMicrotasks = true;
     }
     else {
@@ -36541,7 +40443,7 @@ Testability.ɵprov = ɵɵdefineInjectable({ token: Testability, factory: Testabi
 Testability.ctorParameters = () => [
     { type: NgZone }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Testability, [{
+/*@__PURE__*/ (function () { setClassMetadata(Testability, [{
         type: Injectable
     }], function () { return [{ type: NgZone }]; }, null); })();
 /**
@@ -36607,7 +40509,7 @@ class TestabilityRegistry {
 TestabilityRegistry.ɵfac = function TestabilityRegistry_Factory(t) { return new (t || TestabilityRegistry)(); };
 TestabilityRegistry.ɵprov = ɵɵdefineInjectable({ token: TestabilityRegistry, factory: TestabilityRegistry.ɵfac });
 TestabilityRegistry.ctorParameters = () => [];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TestabilityRegistry, [{
+/*@__PURE__*/ (function () { setClassMetadata(TestabilityRegistry, [{
         type: Injectable
     }], function () { return []; }, null); })();
 class _NoopGetTestability {
@@ -36878,13 +40780,10 @@ class PlatformRef {
         // pass that as parent to the NgModuleFactory.
         const ngZoneOption = options ? options.ngZone : undefined;
         const ngZoneEventCoalescing = (options && options.ngZoneEventCoalescing) || false;
-        const ngZoneRunCoalescing = (options && options.ngZoneRunCoalescing) || false;
-        const ngZone = getNgZone(ngZoneOption, { ngZoneEventCoalescing, ngZoneRunCoalescing });
+        const ngZone = getNgZone(ngZoneOption, ngZoneEventCoalescing);
         const providers = [{ provide: NgZone, useValue: ngZone }];
-        // Note: Create ngZoneInjector within ngZone.run so that all of the instantiated services are
-        // created within the Angular zone
-        // Do not try to replace ngZone.run with ApplicationRef#run because ApplicationRef would then be
-        // created outside of the Angular zone.
+        // Attention: Don't use ApplicationRef.run here,
+        // as we want to be sure that all possible constructor calls are inside `ngZone.run`!
         return ngZone.run(() => {
             const ngZoneInjector = Injector.create({ providers: providers, parent: this.injector, name: moduleFactory.moduleType.name });
             const moduleRef = moduleFactory.create(ngZoneInjector);
@@ -36988,10 +40887,10 @@ PlatformRef.ɵprov = ɵɵdefineInjectable({ token: PlatformRef, factory: Platfor
 PlatformRef.ctorParameters = () => [
     { type: Injector }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PlatformRef, [{
+/*@__PURE__*/ (function () { setClassMetadata(PlatformRef, [{
         type: Injectable
     }], function () { return [{ type: Injector }]; }, null); })();
-function getNgZone(ngZoneOption, extra) {
+function getNgZone(ngZoneOption, ngZoneEventCoalescing) {
     let ngZone;
     if (ngZoneOption === 'noop') {
         ngZone = new NoopNgZone();
@@ -36999,8 +40898,7 @@ function getNgZone(ngZoneOption, extra) {
     else {
         ngZone = (ngZoneOption === 'zone.js' ? undefined : ngZoneOption) || new NgZone({
             enableLongStackTrace: isDevMode(),
-            shouldCoalesceEventChangeDetection: !!(extra === null || extra === void 0 ? void 0 : extra.ngZoneEventCoalescing),
-            shouldCoalesceRunChangeDetection: !!(extra === null || extra === void 0 ? void 0 : extra.ngZoneRunCoalescing)
+            shouldCoalesceEventChangeDetection: ngZoneEventCoalescing
         });
     }
     return ngZone;
@@ -37127,8 +41025,9 @@ function optionsReducer(dst, objs) {
  */
 class ApplicationRef {
     /** @internal */
-    constructor(_zone, _injector, _exceptionHandler, _componentFactoryResolver, _initStatus) {
+    constructor(_zone, _console, _injector, _exceptionHandler, _componentFactoryResolver, _initStatus) {
         this._zone = _zone;
+        this._console = _console;
         this._injector = _injector;
         this._exceptionHandler = _exceptionHandler;
         this._componentFactoryResolver = _componentFactoryResolver;
@@ -37244,11 +41143,8 @@ class ApplicationRef {
             }
         });
         this._loadComponent(compRef);
-        // Note that we have still left the `isDevMode()` condition in order to avoid
-        // creating a breaking change for projects that still use the View Engine.
-        if ((typeof ngDevMode === 'undefined' || ngDevMode) && isDevMode()) {
-            const _console = this._injector.get(Console);
-            _console.log(`Angular is running in development mode. Call enableProdMode() to enable production mode.`);
+        if (isDevMode()) {
+            this._console.log(`Angular is running in development mode. Call enableProdMode() to enable production mode.`);
         }
         return compRef;
     }
@@ -37325,18 +41221,19 @@ class ApplicationRef {
         return this._views.length;
     }
 }
-ApplicationRef.ɵfac = function ApplicationRef_Factory(t) { return new (t || ApplicationRef)(ɵɵinject(NgZone), ɵɵinject(Injector), ɵɵinject(ErrorHandler), ɵɵinject(ComponentFactoryResolver), ɵɵinject(ApplicationInitStatus)); };
+ApplicationRef.ɵfac = function ApplicationRef_Factory(t) { return new (t || ApplicationRef)(ɵɵinject(NgZone), ɵɵinject(Console), ɵɵinject(Injector), ɵɵinject(ErrorHandler), ɵɵinject(ComponentFactoryResolver), ɵɵinject(ApplicationInitStatus)); };
 ApplicationRef.ɵprov = ɵɵdefineInjectable({ token: ApplicationRef, factory: ApplicationRef.ɵfac });
 ApplicationRef.ctorParameters = () => [
     { type: NgZone },
+    { type: Console },
     { type: Injector },
     { type: ErrorHandler },
     { type: ComponentFactoryResolver },
     { type: ApplicationInitStatus }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApplicationRef, [{
+/*@__PURE__*/ (function () { setClassMetadata(ApplicationRef, [{
         type: Injectable
-    }], function () { return [{ type: NgZone }, { type: Injector }, { type: ErrorHandler }, { type: ComponentFactoryResolver }, { type: ApplicationInitStatus }]; }, null); })();
+    }], function () { return [{ type: NgZone }, { type: Console }, { type: Injector }, { type: ErrorHandler }, { type: ComponentFactoryResolver }, { type: ApplicationInitStatus }]; }, null); })();
 function remove(list, el) {
     const index = list.indexOf(el);
     if (index > -1) {
@@ -37478,7 +41375,7 @@ SystemJsNgModuleLoader.ctorParameters = () => [
     { type: Compiler },
     { type: SystemJsNgModuleLoaderConfig, decorators: [{ type: Optional }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SystemJsNgModuleLoader, [{
+/*@__PURE__*/ (function () { setClassMetadata(SystemJsNgModuleLoader, [{
         type: Injectable
     }], function () { return [{ type: Compiler }, { type: SystemJsNgModuleLoaderConfig, decorators: [{
                 type: Optional
@@ -38278,7 +42175,7 @@ const APPLICATION_MODULE_PROVIDERS = [
     {
         provide: ApplicationRef,
         useClass: ApplicationRef,
-        deps: [NgZone, Injector, ErrorHandler, ComponentFactoryResolver, ApplicationInitStatus]
+        deps: [NgZone, Console, Injector, ErrorHandler, ComponentFactoryResolver, ApplicationInitStatus]
     },
     { provide: SCHEDULER, deps: [NgZone], useFactory: zoneSchedulerFactory },
     {
@@ -38331,13 +42228,12 @@ class ApplicationModule {
     // Inject ApplicationRef to make it eager...
     constructor(appRef) { }
 }
-ApplicationModule.ɵfac = function ApplicationModule_Factory(t) { return new (t || ApplicationModule)(ɵɵinject(ApplicationRef)); };
 ApplicationModule.ɵmod = ɵɵdefineNgModule({ type: ApplicationModule });
-ApplicationModule.ɵinj = ɵɵdefineInjector({ providers: APPLICATION_MODULE_PROVIDERS });
+ApplicationModule.ɵinj = ɵɵdefineInjector({ factory: function ApplicationModule_Factory(t) { return new (t || ApplicationModule)(ɵɵinject(ApplicationRef)); }, providers: APPLICATION_MODULE_PROVIDERS });
 ApplicationModule.ctorParameters = () => [
     { type: ApplicationRef }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ApplicationModule, [{
+/*@__PURE__*/ (function () { setClassMetadata(ApplicationModule, [{
         type: NgModule,
         args: [{ providers: APPLICATION_MODULE_PROVIDERS }]
     }], function () { return [{ type: ApplicationRef }]; }, null); })();
@@ -38676,8 +42572,8 @@ function queryDef(flags, id, bindings) {
         ngContent: null
     };
 }
-function createQuery(emitDistinctChangesOnly) {
-    return new QueryList(emitDistinctChangesOnly);
+function createQuery() {
+    return new QueryList();
 }
 function dirtyParentQueries(view) {
     const queryIds = view.def.nodeMatchedQueries;
@@ -38729,7 +42625,7 @@ function checkAndUpdateQuery(view, nodeDef) {
         newValues = calcQueryValues(view, 0, view.def.nodes.length - 1, nodeDef.query, []);
         directiveInstance = view.component;
     }
-    queryList.reset(newValues, unwrapElementRef);
+    queryList.reset(newValues);
     const bindings = nodeDef.query.bindings;
     let notify = false;
     for (let i = 0; i < bindings.length; i++) {
@@ -39490,8 +43386,7 @@ function createViewNodes(view) {
                 break;
             case 67108864 /* TypeContentQuery */:
             case 134217728 /* TypeViewQuery */:
-                nodeData = createQuery((nodeDef.flags & -2147483648 /* EmitDistinctChangesOnly */) ===
-                    -2147483648 /* EmitDistinctChangesOnly */);
+                nodeData = createQuery();
                 break;
             case 8 /* TypeNgContent */:
                 appendNgContent(view, renderHost, nodeDef);
@@ -40639,41 +44534,6 @@ class NgModuleFactory_ extends NgModuleFactory {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/**
- * Compiles a partial directive declaration object into a full directive definition object.
- *
- * @codeGenApi
- */
-function ɵɵngDeclareDirective(decl) {
-    const compiler = getCompilerFacade();
-    return compiler.compileDirectiveDeclaration(angularCoreEnv, `ng:///${decl.type.name}/ɵfac.js`, decl);
-}
-/**
- * Compiles a partial component declaration object into a full component definition object.
- *
- * @codeGenApi
- */
-function ɵɵngDeclareComponent(decl) {
-    const compiler = getCompilerFacade();
-    return compiler.compileComponentDeclaration(angularCoreEnv, `ng:///${decl.type.name}/ɵcmp.js`, decl);
-}
-/**
- * Compiles a partial pipe declaration object into a full pipe definition object.
- *
- * @codeGenApi
- */
-function ɵɵngDeclarePipe(decl) {
-    const compiler = getCompilerFacade();
-    return compiler.compilePipeDeclaration(angularCoreEnv, `ng:///${decl.type.name}/ɵpipe.js`, decl);
-}
-
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 // clang-format on
 
 /**
@@ -41216,8 +45076,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ɵgetDOM", function() { return _angular_common__WEBPACK_IMPORTED_MODULE_0__["ɵgetDOM"]; });
 
 /**
- * @license Angular v11.2.8
- * (c) 2010-2021 Google LLC. https://angular.io/
+ * @license Angular v11.0.7
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -41653,7 +45513,7 @@ EventManager.ctorParameters = () => [
     { type: Array, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [EVENT_MANAGER_PLUGINS,] }] },
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](EventManager, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](EventManager, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return [{ type: Array, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"],
@@ -41701,7 +45561,7 @@ class SharedStylesHost {
 }
 SharedStylesHost.ɵfac = function SharedStylesHost_Factory(t) { return new (t || SharedStylesHost)(); };
 SharedStylesHost.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: SharedStylesHost, factory: SharedStylesHost.ɵfac });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](SharedStylesHost, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](SharedStylesHost, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return []; }, null); })();
 class DomSharedStylesHost extends SharedStylesHost {
@@ -41738,7 +45598,7 @@ DomSharedStylesHost.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdef
 DomSharedStylesHost.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomSharedStylesHost, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomSharedStylesHost, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return [{ type: undefined, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"],
@@ -41857,7 +45717,7 @@ DomRendererFactory2.ctorParameters = () => [
     { type: DomSharedStylesHost },
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["APP_ID"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomRendererFactory2, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomRendererFactory2, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return [{ type: EventManager }, { type: DomSharedStylesHost }, { type: String, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"],
@@ -42076,7 +45936,7 @@ DomEventsPlugin.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineI
 DomEventsPlugin.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomEventsPlugin, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomEventsPlugin, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return [{ type: undefined, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"],
@@ -42129,7 +45989,6 @@ const EVENT_NAMES = {
     'swipedown': true,
     // tap
     'tap': true,
-    'doubletap': true
 };
 /**
  * DI token for providing [HammerJS](https://hammerjs.github.io/) support to Angular.
@@ -42194,7 +46053,7 @@ class HammerGestureConfig {
 }
 HammerGestureConfig.ɵfac = function HammerGestureConfig_Factory(t) { return new (t || HammerGestureConfig)(); };
 HammerGestureConfig.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: HammerGestureConfig, factory: HammerGestureConfig.ɵfac });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](HammerGestureConfig, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](HammerGestureConfig, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return []; }, null); })();
 /**
@@ -42208,17 +46067,14 @@ class HammerGesturesPlugin extends EventManagerPlugin {
         this._config = _config;
         this.console = console;
         this.loader = loader;
-        this._loaderPromise = null;
     }
     supports(eventName) {
         if (!EVENT_NAMES.hasOwnProperty(eventName.toLowerCase()) && !this.isCustomEvent(eventName)) {
             return false;
         }
         if (!window.Hammer && !this.loader) {
-            if (typeof ngDevMode === 'undefined' || ngDevMode) {
-                this.console.warn(`The "${eventName}" event cannot be bound because Hammer.JS is not ` +
-                    `loaded and no custom loader has been specified.`);
-            }
+            this.console.warn(`The "${eventName}" event cannot be bound because Hammer.JS is not ` +
+                `loaded and no custom loader has been specified.`);
             return false;
         }
         return true;
@@ -42229,7 +46085,6 @@ class HammerGesturesPlugin extends EventManagerPlugin {
         // If Hammer is not present but a loader is specified, we defer adding the event listener
         // until Hammer is loaded.
         if (!window.Hammer && this.loader) {
-            this._loaderPromise = this._loaderPromise || this.loader();
             // This `addEventListener` method returns a function to remove the added listener.
             // Until Hammer is loaded, the returned function needs to *cancel* the registration rather
             // than remove anything.
@@ -42237,13 +46092,11 @@ class HammerGesturesPlugin extends EventManagerPlugin {
             let deregister = () => {
                 cancelRegistration = true;
             };
-            this._loaderPromise
+            this.loader()
                 .then(() => {
                 // If Hammer isn't actually loaded when the custom loader resolves, give up.
                 if (!window.Hammer) {
-                    if (typeof ngDevMode === 'undefined' || ngDevMode) {
-                        this.console.warn(`The custom HAMMER_LOADER completed, but Hammer.JS is not present.`);
-                    }
+                    this.console.warn(`The custom HAMMER_LOADER completed, but Hammer.JS is not present.`);
                     deregister = () => { };
                     return;
                 }
@@ -42254,10 +46107,8 @@ class HammerGesturesPlugin extends EventManagerPlugin {
                 }
             })
                 .catch(() => {
-                if (typeof ngDevMode === 'undefined' || ngDevMode) {
-                    this.console.warn(`The "${eventName}" event cannot be bound because the custom ` +
-                        `Hammer.JS loader failed.`);
-                }
+                this.console.warn(`The "${eventName}" event cannot be bound because the custom ` +
+                    `Hammer.JS loader failed.`);
                 deregister = () => { };
             });
             // Return a function that *executes* `deregister` (and not `deregister` itself) so that we
@@ -42297,7 +46148,7 @@ HammerGesturesPlugin.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵConsole"] },
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [HAMMER_LOADER,] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](HammerGesturesPlugin, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](HammerGesturesPlugin, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return [{ type: undefined, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"],
@@ -42343,10 +46194,9 @@ const HAMMER_PROVIDERS = HAMMER_PROVIDERS__POST_R3__;
  */
 class HammerModule {
 }
-HammerModule.ɵfac = function HammerModule_Factory(t) { return new (t || HammerModule)(); };
 HammerModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineNgModule"]({ type: HammerModule });
-HammerModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({ providers: HAMMER_PROVIDERS__PRE_R3__ });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](HammerModule, [{
+HammerModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({ factory: function HammerModule_Factory(t) { return new (t || HammerModule)(); }, providers: HAMMER_PROVIDERS__PRE_R3__ });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](HammerModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"],
         args: [{ providers: HAMMER_PROVIDERS__PRE_R3__ }]
     }], null, null); })();
@@ -42526,7 +46376,7 @@ KeyEventsPlugin.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineI
 KeyEventsPlugin.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](KeyEventsPlugin, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](KeyEventsPlugin, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return [{ type: undefined, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"],
@@ -42597,7 +46447,7 @@ class DomSanitizer {
 }
 DomSanitizer.ɵfac = function DomSanitizer_Factory(t) { return new (t || DomSanitizer)(); };
 DomSanitizer.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"])({ factory: function DomSanitizer_Factory() { return Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"])(DomSanitizerImpl); }, token: DomSanitizer, providedIn: "root" });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomSanitizer, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomSanitizer, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{ providedIn: 'root', useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["forwardRef"])(() => DomSanitizerImpl) }]
     }], null, null); })();
@@ -42619,7 +46469,7 @@ class DomSanitizerImpl extends DomSanitizer {
                 if (Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵallowSanitizationBypassAndThrow"])(value, "HTML" /* Html */)) {
                     return Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵunwrapSafeValue"])(value);
                 }
-                return Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ_sanitizeHtml"])(this._doc, String(value)).toString();
+                return Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ_sanitizeHtml"])(this._doc, String(value));
             case _angular_core__WEBPACK_IMPORTED_MODULE_1__["SecurityContext"].STYLE:
                 if (Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵallowSanitizationBypassAndThrow"])(value, "Style" /* Style */)) {
                     return Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵunwrapSafeValue"])(value);
@@ -42666,7 +46516,7 @@ DomSanitizerImpl.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵ�
 DomSanitizerImpl.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomSanitizerImpl, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](DomSanitizerImpl, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{ providedIn: 'root', useFactory: domSanitizerImplFactory, deps: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"]] }]
     }], function () { return [{ type: undefined, decorators: [{
@@ -42776,14 +46626,13 @@ class BrowserModule {
         };
     }
 }
-BrowserModule.ɵfac = function BrowserModule_Factory(t) { return new (t || BrowserModule)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](BrowserModule, 12)); };
 BrowserModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineNgModule"]({ type: BrowserModule });
-BrowserModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({ providers: BROWSER_MODULE_PROVIDERS, imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["ApplicationModule"]] });
+BrowserModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({ factory: function BrowserModule_Factory(t) { return new (t || BrowserModule)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](BrowserModule, 12)); }, providers: BROWSER_MODULE_PROVIDERS, imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["ApplicationModule"]] });
 BrowserModule.ctorParameters = () => [
     { type: BrowserModule, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["SkipSelf"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [BrowserModule,] }] }
 ];
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsetNgModuleScope"](BrowserModule, { exports: function () { return [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["ApplicationModule"]]; } }); })();
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](BrowserModule, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](BrowserModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"],
         args: [{ providers: BROWSER_MODULE_PROVIDERS, exports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["CommonModule"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["ApplicationModule"]] }]
     }], function () { return [{ type: BrowserModule, decorators: [{
@@ -42963,7 +46812,7 @@ Meta.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjec
 Meta.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](Meta, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](Meta, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{ providedIn: 'root', useFactory: createMeta, deps: [] }]
     }], function () { return [{ type: undefined, decorators: [{
@@ -43023,7 +46872,7 @@ Title.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInje
 Title.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Inject"], args: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](Title, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](Title, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{ providedIn: 'root', useFactory: createTitle, deps: [] }]
     }], function () { return [{ type: undefined, decorators: [{
@@ -43255,7 +47104,7 @@ class TransferState {
 }
 TransferState.ɵfac = function TransferState_Factory(t) { return new (t || TransferState)(); };
 TransferState.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: TransferState, factory: TransferState.ɵfac });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](TransferState, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](TransferState, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"]
     }], function () { return []; }, null); })();
 function initTransferState(doc, appId) {
@@ -43265,7 +47114,6 @@ function initTransferState(doc, appId) {
     let initialState = {};
     if (script && script.textContent) {
         try {
-            // Avoid using any here as it triggers lint errors in google3 (any is not allowed).
             initialState = JSON.parse(unescapeHtml(script.textContent));
         }
         catch (e) {
@@ -43282,10 +47130,9 @@ function initTransferState(doc, appId) {
  */
 class BrowserTransferStateModule {
 }
-BrowserTransferStateModule.ɵfac = function BrowserTransferStateModule_Factory(t) { return new (t || BrowserTransferStateModule)(); };
 BrowserTransferStateModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineNgModule"]({ type: BrowserTransferStateModule });
-BrowserTransferStateModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({ providers: [{ provide: TransferState, useFactory: initTransferState, deps: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["APP_ID"]] }] });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](BrowserTransferStateModule, [{
+BrowserTransferStateModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({ factory: function BrowserTransferStateModule_Factory(t) { return new (t || BrowserTransferStateModule)(); }, providers: [{ provide: TransferState, useFactory: initTransferState, deps: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["APP_ID"]] }] });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](BrowserTransferStateModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"],
         args: [{
                 providers: [{ provide: TransferState, useFactory: initTransferState, deps: [_angular_common__WEBPACK_IMPORTED_MODULE_0__["DOCUMENT"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["APP_ID"]] }]
@@ -43370,7 +47217,7 @@ function elementMatches(n, selector) {
 /**
  * @publicApi
  */
-const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('11.2.8');
+const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('11.0.7');
 
 /**
  * @license
@@ -44433,6 +48280,280 @@ function isDate(value) {
 
 /***/ }),
 
+/***/ "mrSG":
+/*!*****************************************!*\
+  !*** ./node_modules/tslib/tslib.es6.js ***!
+  \*****************************************/
+/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __createBinding, __exportStar, __values, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__extends", function() { return __extends; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__assign", function() { return __assign; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__rest", function() { return __rest; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__decorate", function() { return __decorate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__param", function() { return __param; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__metadata", function() { return __metadata; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__awaiter", function() { return __awaiter; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__generator", function() { return __generator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__createBinding", function() { return __createBinding; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__exportStar", function() { return __exportStar; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spreadArrays", function() { return __spreadArrays; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spreadArray", function() { return __spreadArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncValues", function() { return __asyncValues; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__makeTemplateObject", function() { return __makeTemplateObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importStar", function() { return __importStar; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importDefault", function() { return __importDefault; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__classPrivateFieldGet", function() { return __classPrivateFieldGet; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__classPrivateFieldSet", function() { return __classPrivateFieldSet; });
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global Reflect, Promise */
+
+var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+    return extendStatics(d, b);
+};
+
+function __extends(d, b) {
+    if (typeof b !== "function" && b !== null)
+        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    }
+    return __assign.apply(this, arguments);
+}
+
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+}
+
+function __decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+
+function __param(paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+}
+
+function __metadata(metadataKey, metadataValue) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
+}
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+function __generator(thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+}
+
+var __createBinding = Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+});
+
+function __exportStar(m, o) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
+}
+
+function __values(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+}
+
+function __read(o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+}
+
+/** @deprecated */
+function __spread() {
+    for (var ar = [], i = 0; i < arguments.length; i++)
+        ar = ar.concat(__read(arguments[i]));
+    return ar;
+}
+
+/** @deprecated */
+function __spreadArrays() {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+}
+
+function __spreadArray(to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+}
+
+function __await(v) {
+    return this instanceof __await ? (this.v = v, this) : new __await(v);
+}
+
+function __asyncGenerator(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
+    function fulfill(value) { resume("next", value); }
+    function reject(value) { resume("throw", value); }
+    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+}
+
+function __asyncDelegator(o) {
+    var i, p;
+    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
+    function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
+}
+
+function __asyncValues(o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+}
+
+function __makeTemplateObject(cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
+
+var __setModuleDefault = Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+};
+
+function __importStar(mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+}
+
+function __importDefault(mod) {
+    return (mod && mod.__esModule) ? mod : { default: mod };
+}
+
+function __classPrivateFieldGet(receiver, privateMap) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to get private field on non-instance");
+    }
+    return privateMap.get(receiver);
+}
+
+function __classPrivateFieldSet(receiver, privateMap, value) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to set private field on non-instance");
+    }
+    privateMap.set(receiver, value);
+    return value;
+}
+
+
+/***/ }),
+
 /***/ "n6bG":
 /*!****************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/util/isFunction.js ***!
@@ -44658,8 +48779,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵsetRootDomAdapter", function() { return setRootDomAdapter; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /**
- * @license Angular v11.2.8
- * (c) 2010-2021 Google LLC. https://angular.io/
+ * @license Angular v11.0.7
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -44745,7 +48866,7 @@ class PlatformLocation {
 }
 PlatformLocation.ɵfac = function PlatformLocation_Factory(t) { return new (t || PlatformLocation)(); };
 PlatformLocation.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"])({ factory: useBrowserPlatformLocation, token: PlatformLocation, providedIn: "platform" });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PlatformLocation, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PlatformLocation, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
                 providedIn: 'platform',
@@ -44844,7 +48965,7 @@ BrowserPlatformLocation.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0
 BrowserPlatformLocation.ctorParameters = () => [
     { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [DOCUMENT,] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](BrowserPlatformLocation, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](BrowserPlatformLocation, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
                 providedIn: 'platform',
@@ -44962,7 +49083,7 @@ class LocationStrategy {
 }
 LocationStrategy.ɵfac = function LocationStrategy_Factory(t) { return new (t || LocationStrategy)(); };
 LocationStrategy.ɵprov = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"])({ factory: provideLocationStrategy, token: LocationStrategy, providedIn: "root" });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](LocationStrategy, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](LocationStrategy, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{ providedIn: 'root', useFactory: provideLocationStrategy }]
     }], null, null); })();
@@ -45074,7 +49195,7 @@ PathLocationStrategy.ctorParameters = () => [
     { type: PlatformLocation },
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [APP_BASE_HREF,] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PathLocationStrategy, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PathLocationStrategy, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
     }], function () { return [{ type: PlatformLocation }, { type: String, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
@@ -45163,7 +49284,7 @@ HashLocationStrategy.ctorParameters = () => [
     { type: PlatformLocation },
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [APP_BASE_HREF,] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](HashLocationStrategy, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](HashLocationStrategy, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
     }], function () { return [{ type: PlatformLocation }, { type: String, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Optional"]
@@ -45385,7 +49506,7 @@ Location.ctorParameters = () => [
     { type: LocationStrategy },
     { type: PlatformLocation }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](Location, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](Location, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
                 providedIn: 'root',
@@ -45679,7 +49800,7 @@ var NumberSymbol;
     /**
      * Decimal separator.
      * For `en-US`, the dot character.
-     * Example: 2,345`.`67
+     * Example : 2,345`.`67
      */
     NumberSymbol[NumberSymbol["Decimal"] = 0] = "Decimal";
     /**
@@ -46281,34 +50402,6 @@ function formatDate(value, format, locale, timezone) {
     });
     return text;
 }
-/**
- * Create a new Date object with the given date value, and the time set to midnight.
- *
- * We cannot use `new Date(year, month, date)` because it maps years between 0 and 99 to 1900-1999.
- * See: https://github.com/angular/angular/issues/40377
- *
- * Note that this function returns a Date object whose time is midnight in the current locale's
- * timezone. In the future we might want to change this to be midnight in UTC, but this would be a
- * considerable breaking change.
- */
-function createDate(year, month, date) {
-    // The `newDate` is set to midnight (UTC) on January 1st 1970.
-    // - In PST this will be December 31st 1969 at 4pm.
-    // - In GMT this will be January 1st 1970 at 1am.
-    // Note that they even have different years, dates and months!
-    const newDate = new Date(0);
-    // `setFullYear()` allows years like 0001 to be set correctly. This function does not
-    // change the internal time of the date.
-    // Consider calling `setFullYear(2019, 8, 20)` (September 20, 2019).
-    // - In PST this will now be September 20, 2019 at 4pm
-    // - In GMT this will now be September 20, 2019 at 1am
-    newDate.setFullYear(year, month, date);
-    // We want the final date to be at local midnight, so we reset the time.
-    // - In PST this will now be September 20, 2019 at 12am
-    // - In GMT this will now be September 20, 2019 at 12am
-    newDate.setHours(0, 0, 0);
-    return newDate;
-}
 function getNamedFormat(locale, format) {
     const localeId = getLocaleId(locale);
     NAMED_FORMATS[localeId] = NAMED_FORMATS[localeId] || {};
@@ -46552,11 +50645,11 @@ function timeZoneGetter(width) {
 const JANUARY = 0;
 const THURSDAY = 4;
 function getFirstThursdayOfYear(year) {
-    const firstDayOfYear = createDate(year, JANUARY, 1).getDay();
-    return createDate(year, 0, 1 + ((firstDayOfYear <= THURSDAY) ? THURSDAY : THURSDAY + 7) - firstDayOfYear);
+    const firstDayOfYear = (new Date(year, JANUARY, 1)).getDay();
+    return new Date(year, 0, 1 + ((firstDayOfYear <= THURSDAY) ? THURSDAY : THURSDAY + 7) - firstDayOfYear);
 }
 function getThursdayThisWeek(datetime) {
-    return createDate(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() + (THURSDAY - datetime.getDay()));
+    return new Date(datetime.getFullYear(), datetime.getMonth(), datetime.getDate() + (THURSDAY - datetime.getDay()));
 }
 function weekGetter(size, monthBased = false) {
     return function (date, locale) {
@@ -46857,7 +50950,12 @@ function toDate(value) {
     }
     if (typeof value === 'string') {
         value = value.trim();
-        if (/^(\d{4}(-\d{1,2}(-\d{1,2})?)?)$/.test(value)) {
+        const parsedNb = parseFloat(value);
+        // any string that only contains numbers, like "1234" but not like "1234hello"
+        if (!isNaN(value - parsedNb)) {
+            return new Date(parsedNb);
+        }
+        if (/^(\d{4}-\d{1,2}-\d{1,2})$/.test(value)) {
             /* For ISO Strings without time the day, month and year must be extracted from the ISO String
             before Date creation to avoid time offset and errors in the new Date.
             If we only replace '-' with ',' in the ISO String ("2015,01,01"), and try to create a new
@@ -46865,13 +50963,8 @@ function toDate(value) {
             If we leave the '-' ("2015-01-01") and try to create a new Date("2015-01-01") the timeoffset
             is applied.
             Note: ISO months are 0 for January, 1 for February, ... */
-            const [y, m = 1, d = 1] = value.split('-').map((val) => +val);
-            return createDate(y, m - 1, d);
-        }
-        const parsedNb = parseFloat(value);
-        // any string that only contains numbers, like "1234" but not like "1234hello"
-        if (!isNaN(value - parsedNb)) {
-            return new Date(parsedNb);
+            const [y, m, d] = value.split('-').map((val) => +val);
+            return new Date(y, m - 1, d);
         }
         let match;
         if (match = value.match(ISO8601_DATE_REGEX)) {
@@ -47033,7 +51126,7 @@ function formatNumberToLocaleString(value, pattern, locale, groupSymbol, decimal
  * @param currencyCode The [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)
  * currency code, such as `USD` for the US dollar and `EUR` for the euro.
  * Used to determine the number of digits in the decimal part.
- * @param digitsInfo Decimal representation options, specified by a string in the following format:
+ * @param digitInfo Decimal representation options, specified by a string in the following format:
  * `{minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}`. See `DecimalPipe` for more details.
  *
  * @returns The formatted currency value.
@@ -47068,7 +51161,7 @@ function formatCurrency(value, locale, currency, currencyCode, digitsInfo) {
  *
  * @param value The number to format.
  * @param locale A locale code for the locale format rules to use.
- * @param digitsInfo Decimal representation options, specified by a string in the following format:
+ * @param digitInfo Decimal representation options, specified by a string in the following format:
  * `{minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}`. See `DecimalPipe` for more details.
  *
  * @returns The formatted percentage value.
@@ -47094,7 +51187,7 @@ function formatPercent(value, locale, digitsInfo) {
  *
  * @param value The number to format.
  * @param locale A locale code for the locale format rules to use.
- * @param digitsInfo Decimal representation options, specified by a string in the following format:
+ * @param digitInfo Decimal representation options, specified by a string in the following format:
  * `{minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}`. See `DecimalPipe` for more details.
  *
  * @returns The formatted text string.
@@ -47373,7 +51466,7 @@ NgLocaleLocalization.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵde
 NgLocaleLocalization.ctorParameters = () => [
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["LOCALE_ID"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgLocaleLocalization, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgLocaleLocalization, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
     }], function () { return [{ type: String, decorators: [{
                 type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
@@ -47577,7 +51670,7 @@ NgClass.propDecorators = {
     klass: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['class',] }],
     ngClass: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['ngClass',] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgClass, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgClass, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngClass]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["IterableDiffers"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["KeyValueDiffers"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ElementRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Renderer2"] }]; }, { klass: [{
@@ -47694,7 +51787,7 @@ NgComponentOutlet.propDecorators = {
     ngComponentOutletContent: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     ngComponentOutletNgModuleFactory: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgComponentOutlet, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgComponentOutlet, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngComponentOutlet]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] }]; }, { ngComponentOutlet: [{
@@ -47744,7 +51837,7 @@ class NgForOfContext {
  * of the cloned templates.
  *
  * The `ngForOf` directive is generally used in the
- * [shorthand form](guide/structural-directives#asterisk) `*ngFor`.
+ * [shorthand form](guide/structural-directives#the-asterisk--prefix) `*ngFor`.
  * In this form, the template to be rendered for each iteration is the content
  * of an anchor element containing the directive.
  *
@@ -47773,11 +51866,11 @@ class NgForOfContext {
  * context according to its lexical position.
  *
  * When using the shorthand syntax, Angular allows only [one structural directive
- * on an element](guide/built-in-directives#one-per-element).
+ * on an element](guide/structural-directives#one-structural-directive-per-host-element).
  * If you want to iterate conditionally, for example,
  * put the `*ngIf` on a container element that wraps the `*ngFor` element.
  * For futher discussion, see
- * [Structural Directives](guide/built-in-directives#one-per-element).
+ * [Structural Directives](guide/structural-directives#one-per-element).
  *
  * @usageNotes
  *
@@ -47846,7 +51939,7 @@ class NgForOf {
     }
     /**
      * The value of the iterable expression, which can be used as a
-     * [template input variable](guide/structural-directives#shorthand).
+     * [template input variable](guide/structural-directives#template-input-variable).
      */
     set ngForOf(ngForOf) {
         this._ngForOf = ngForOf;
@@ -47977,7 +52070,7 @@ NgForOf.propDecorators = {
     ngForTrackBy: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     ngForTemplate: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgForOf, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgForOf, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngFor][ngForOf]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["TemplateRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["IterableDiffers"] }]; }, { ngForOf: [{
@@ -48012,7 +52105,7 @@ function getTypeName(type) {
  * Angular renders the template provided in an optional `else` clause. The default
  * template for the `else` clause is blank.
  *
- * A [shorthand form](guide/structural-directives#asterisk) of the directive,
+ * A [shorthand form](guide/structural-directives#the-asterisk--prefix) of the directive,
  * `*ngIf="condition"`, is generally used, provided
  * as an attribute of the anchor element for the inserted template.
  * Angular expands this into a more explicit version, in which the anchor element
@@ -48085,7 +52178,7 @@ function getTypeName(type) {
  * You might want to show a set of properties from the same object. If you are waiting
  * for asynchronous data, the object can be undefined.
  * In this case, you can use `ngIf` and store the result of the condition in a local
- * variable as shown in the following example.
+ * variable as shown in the the following example.
  *
  * {@example common/ngIf/ts/module.ts region='NgIfAs'}
  *
@@ -48138,7 +52231,7 @@ function getTypeName(type) {
  *
  * The presence of the implicit template object has implications for the nesting of
  * structural directives. For more on this subject, see
- * [Structural Directives](https://angular.io/guide/built-in-directives#one-per-element).
+ * [Structural Directives](https://angular.io/guide/structural-directives#one-per-element).
  *
  * @ngModule CommonModule
  * @publicApi
@@ -48221,7 +52314,7 @@ NgIf.propDecorators = {
     ngIfThen: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     ngIfElse: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgIf, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgIf, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngIf]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["TemplateRef"] }]; }, { ngIf: [{
@@ -48394,7 +52487,7 @@ NgSwitch.ɵdir = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineDirective
 NgSwitch.propDecorators = {
     ngSwitch: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgSwitch, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgSwitch, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngSwitch]' }]
     }], function () { return []; }, { ngSwitch: [{
@@ -48456,7 +52549,7 @@ NgSwitchCase.ctorParameters = () => [
 NgSwitchCase.propDecorators = {
     ngSwitchCase: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgSwitchCase, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgSwitchCase, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngSwitchCase]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["TemplateRef"] }, { type: NgSwitch, decorators: [{
@@ -48490,7 +52583,7 @@ NgSwitchDefault.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["TemplateRef"] },
     { type: NgSwitch, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Host"] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgSwitchDefault, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgSwitchDefault, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngSwitchDefault]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["TemplateRef"] }, { type: NgSwitch, decorators: [{
@@ -48572,7 +52665,7 @@ NgPlural.ctorParameters = () => [
 NgPlural.propDecorators = {
     ngPlural: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgPlural, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgPlural, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngPlural]' }]
     }], function () { return [{ type: NgLocalization }]; }, { ngPlural: [{
@@ -48613,7 +52706,7 @@ NgPluralCase.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] },
     { type: NgPlural, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Host"] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgPluralCase, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgPluralCase, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngPluralCase]' }]
     }], function () { return [{ type: String, decorators: [{
@@ -48714,7 +52807,7 @@ NgStyle.ctorParameters = () => [
 NgStyle.propDecorators = {
     ngStyle: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['ngStyle',] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgStyle, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgStyle, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngStyle]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ElementRef"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["KeyValueDiffers"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Renderer2"] }]; }, { ngStyle: [{
@@ -48826,7 +52919,7 @@ NgTemplateOutlet.propDecorators = {
     ngTemplateOutletContext: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     ngTemplateOutlet: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }]
 };
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgTemplateOutlet, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgTemplateOutlet, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Directive"],
         args: [{ selector: '[ngTemplateOutlet]' }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewContainerRef"] }]; }, { ngTemplateOutletContext: [{
@@ -48878,7 +52971,7 @@ function invalidPipeArgumentError(type, value) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-class SubscribableStrategy {
+class ObservableStrategy {
     createSubscription(async, updateLatestValue) {
         return async.subscribe({
             next: updateLatestValue,
@@ -48904,7 +52997,7 @@ class PromiseStrategy {
     onDestroy(subscription) { }
 }
 const _promiseStrategy = new PromiseStrategy();
-const _subscribableStrategy = new SubscribableStrategy();
+const _observableStrategy = new ObservableStrategy();
 /**
  * @ngModule CommonModule
  * @description
@@ -48967,8 +53060,8 @@ class AsyncPipe {
         if (Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵisPromise"])(obj)) {
             return _promiseStrategy;
         }
-        if (Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵisSubscribable"])(obj)) {
-            return _subscribableStrategy;
+        if (Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵisObservable"])(obj)) {
+            return _observableStrategy;
         }
         throw invalidPipeArgumentError(AsyncPipe, obj);
     }
@@ -48990,7 +53083,7 @@ AsyncPipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"](
 AsyncPipe.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](AsyncPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](AsyncPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'async', pure: false }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"] }]; }, null); })();
@@ -49029,7 +53122,7 @@ class LowerCasePipe {
 }
 LowerCasePipe.ɵfac = function LowerCasePipe_Factory(t) { return new (t || LowerCasePipe)(); };
 LowerCasePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "lowercase", type: LowerCasePipe, pure: true });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](LowerCasePipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](LowerCasePipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'lowercase' }]
     }], null, null); })();
@@ -49071,7 +53164,7 @@ class TitleCasePipe {
 }
 TitleCasePipe.ɵfac = function TitleCasePipe_Factory(t) { return new (t || TitleCasePipe)(); };
 TitleCasePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "titlecase", type: TitleCasePipe, pure: true });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](TitleCasePipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](TitleCasePipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'titlecase' }]
     }], null, null); })();
@@ -49095,7 +53188,7 @@ class UpperCasePipe {
 }
 UpperCasePipe.ɵfac = function UpperCasePipe_Factory(t) { return new (t || UpperCasePipe)(); };
 UpperCasePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "uppercase", type: UpperCasePipe, pure: true });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](UpperCasePipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](UpperCasePipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'uppercase' }]
     }], null, null); })();
@@ -49211,6 +53304,7 @@ UpperCasePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePip
  *  |                    | O, OO & OOO | Short localized GMT format                                    | GMT-8                                                      |
  *  |                    | OOOO        | Long localized GMT format                                     | GMT-08:00                                                  |
  *
+ * Note that timezone correction is not applied to an ISO string that has no time component, such as "2016-09-19"
  *
  * ### Format examples
  *
@@ -49268,7 +53362,7 @@ DatePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({
 DatePipe.ctorParameters = () => [
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["LOCALE_ID"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](DatePipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](DatePipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'date', pure: true }]
     }], function () { return [{ type: String, decorators: [{
@@ -49324,7 +53418,7 @@ I18nPluralPipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePi
 I18nPluralPipe.ctorParameters = () => [
     { type: NgLocalization }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](I18nPluralPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](I18nPluralPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'i18nPlural', pure: true }]
     }], function () { return [{ type: NgLocalization }]; }, null); })();
@@ -49376,7 +53470,7 @@ class I18nSelectPipe {
 }
 I18nSelectPipe.ɵfac = function I18nSelectPipe_Factory(t) { return new (t || I18nSelectPipe)(); };
 I18nSelectPipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "i18nSelect", type: I18nSelectPipe, pure: true });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](I18nSelectPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](I18nSelectPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'i18nSelect', pure: true }]
     }], null, null); })();
@@ -49413,7 +53507,7 @@ class JsonPipe {
 }
 JsonPipe.ɵfac = function JsonPipe_Factory(t) { return new (t || JsonPipe)(); };
 JsonPipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "json", type: JsonPipe, pure: false });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](JsonPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](JsonPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'json', pure: false }]
     }], null, null); })();
@@ -49477,7 +53571,7 @@ KeyValuePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe
 KeyValuePipe.ctorParameters = () => [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["KeyValueDiffers"] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](KeyValuePipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](KeyValuePipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'keyvalue', pure: false }]
     }], function () { return [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["KeyValueDiffers"] }]; }, null); })();
@@ -49523,60 +53617,32 @@ function defaultComparator(keyValueA, keyValueB) {
  * @ngModule CommonModule
  * @description
  *
- * Formats a value according to digit options and locale rules.
- * Locale determines group sizing and separator,
- * decimal point character, and other locale-specific configurations.
+ * Transforms a number into a string,
+ * formatted according to locale rules that determine group sizing and
+ * separator, decimal-point character, and other locale-specific
+ * configurations.
+ *
+ * If no parameters are specified, the function rounds off to the nearest value using this
+ * [rounding method](https://en.wikibooks.org/wiki/Arithmetic/Rounding).
+ * The behavior differs from that of the JavaScript ```Math.round()``` function.
+ * In the following case for example, the pipe rounds down where
+ * ```Math.round()``` rounds up:
+ *
+ * ```html
+ * -2.5 | number:'1.0-0'
+ * > -3
+ * Math.round(-2.5)
+ * > -2
+ * ```
  *
  * @see `formatNumber()`
  *
  * @usageNotes
- *
- * ### digitsInfo
- *
- * The value's decimal representation is specified by the `digitsInfo`
- * parameter, written in the following format:<br>
- *
- * ```
- * {minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}
- * ```
- *
- *  - `minIntegerDigits`:
- * The minimum number of integer digits before the decimal point.
- * Default is 1.
- *
- * - `minFractionDigits`:
- * The minimum number of digits after the decimal point.
- * Default is 0.
- *
- *  - `maxFractionDigits`:
- * The maximum number of digits after the decimal point.
- * Default is 3.
- *
- * If the formatted value is truncated it will be rounded using the "to-nearest" method:
- *
- * ```
- * {{3.6 | number: '1.0-0'}}
- * <!--will output '4'-->
- *
- * {{-3.6 | number:'1.0-0'}}
- * <!--will output '-4'-->
- * ```
- *
- * ### locale
- *
- * `locale` will format a value according to locale rules.
- * Locale determines group sizing and separator,
- * decimal point character, and other locale-specific configurations.
- *
- * When not supplied, uses the value of `LOCALE_ID`, which is `en-US` by default.
- *
- * See [Setting your app locale](guide/i18n#setting-up-the-locale-of-your-app).
+ * The following code shows how the pipe transforms numbers
+ * into text strings, according to various format specifications,
+ * where the caller's default locale is `en-US`.
  *
  * ### Example
- *
- * The following code shows how the pipe transforms values
- * according to various format specifications,
- * where the caller's default locale is `en-US`.
  *
  * <code-example path="common/pipes/ts/number_pipe.ts" region='NumberPipe'></code-example>
  *
@@ -49586,13 +53652,6 @@ class DecimalPipe {
     constructor(_locale) {
         this._locale = _locale;
     }
-    /**
-     * @param value The value to be formatted.
-     * @param digitsInfo Sets digit and decimal representation.
-     * [See more](#digitsinfo).
-     * @param locale Specifies what locale format rules to use.
-     * [See more](#locale).
-     */
     transform(value, digitsInfo, locale) {
         if (!isValue(value))
             return null;
@@ -49611,7 +53670,7 @@ DecimalPipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"
 DecimalPipe.ctorParameters = () => [
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["LOCALE_ID"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](DecimalPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](DecimalPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'number' }]
     }], function () { return [{ type: String, decorators: [{
@@ -49660,7 +53719,7 @@ PercentPipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"
 PercentPipe.ctorParameters = () => [
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["LOCALE_ID"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PercentPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](PercentPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'percent' }]
     }], function () { return [{ type: String, decorators: [{
@@ -49683,7 +53742,7 @@ PercentPipe.ctorParameters = () => [
  * The default currency code is currently always `USD` but this is deprecated from v9.
  *
  * **In v11 the default currency code will be taken from the current locale identified by
- * the `LOCALE_ID` token. See the [i18n guide](guide/i18n#setting-up-the-locale-of-your-app) for
+ * the `LOCAL_ID` token. See the [i18n guide](guide/i18n#setting-up-the-locale-of-your-app) for
  * more information.**
  *
  * If you need the previous behavior then set it by creating a `DEFAULT_CURRENCY_CODE` provider in
@@ -49746,7 +53805,7 @@ CurrencyPipe.ctorParameters = () => [
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["LOCALE_ID"],] }] },
     { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["DEFAULT_CURRENCY_CODE"],] }] }
 ];
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CurrencyPipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CurrencyPipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'currency' }]
     }], function () { return [{ type: String, decorators: [{
@@ -49830,7 +53889,7 @@ class SlicePipe {
 }
 SlicePipe.ɵfac = function SlicePipe_Factory(t) { return new (t || SlicePipe)(); };
 SlicePipe.ɵpipe = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefinePipe"]({ name: "slice", type: SlicePipe, pure: false });
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](SlicePipe, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](SlicePipe, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"],
         args: [{ name: 'slice', pure: false }]
     }], null, null); })();
@@ -49885,13 +53944,12 @@ const COMMON_PIPES = [
  */
 class CommonModule {
 }
-CommonModule.ɵfac = function CommonModule_Factory(t) { return new (t || CommonModule)(); };
 CommonModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: CommonModule });
-CommonModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ providers: [
+CommonModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ factory: function CommonModule_Factory(t) { return new (t || CommonModule)(); }, providers: [
         { provide: NgLocalization, useClass: NgLocaleLocalization },
     ] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsetNgModuleScope"](CommonModule, { declarations: [NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, NgPlural, NgPluralCase, AsyncPipe, UpperCasePipe, LowerCasePipe, JsonPipe, SlicePipe, DecimalPipe, PercentPipe, TitleCasePipe, CurrencyPipe, DatePipe, I18nPluralPipe, I18nSelectPipe, KeyValuePipe], exports: [NgClass, NgComponentOutlet, NgForOf, NgIf, NgTemplateOutlet, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault, NgPlural, NgPluralCase, AsyncPipe, UpperCasePipe, LowerCasePipe, JsonPipe, SlicePipe, DecimalPipe, PercentPipe, TitleCasePipe, CurrencyPipe, DatePipe, I18nPluralPipe, I18nSelectPipe, KeyValuePipe] }); })();
-(function () { (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CommonModule, [{
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CommonModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"],
         args: [{
                 declarations: [COMMON_DIRECTIVES, COMMON_PIPES],
@@ -49952,7 +54010,7 @@ function isPlatformWorkerUi(platformId) {
 /**
  * @publicApi
  */
-const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["Version"]('11.2.8');
+const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["Version"]('11.0.7');
 
 /**
  * @license
@@ -51927,6 +55985,260 @@ function isEventTarget(sourceObj) {
 
 /***/ }),
 
+/***/ "xuHu":
+/*!******************************************************************************************!*\
+  !*** ./node_modules/@ngxs/devtools-plugin/__ivy_ngcc__/fesm2015/ngxs-devtools-plugin.js ***!
+  \******************************************************************************************/
+/*! exports provided: NGXS_DEVTOOLS_OPTIONS, NgxsReduxDevtoolsPlugin, NgxsReduxDevtoolsPluginModule, ɵa, ɵb */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NGXS_DEVTOOLS_OPTIONS", function() { return NGXS_DEVTOOLS_OPTIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsReduxDevtoolsPlugin", function() { return NgxsReduxDevtoolsPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsReduxDevtoolsPluginModule", function() { return NgxsReduxDevtoolsPluginModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵa", function() { return devtoolsOptionsFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵb", function() { return USER_OPTIONS; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ngxs_store__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @ngxs/store */ "AcyG");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "kU1M");
+
+
+
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Interface for the redux-devtools-extension API.
+ * @record
+ */
+
+function NgxsDevtoolsExtension() { }
+if (false) {}
+/**
+ * @record
+ */
+function NgxsDevtoolsAction() { }
+if (false) {}
+/**
+ * @record
+ */
+function NgxsDevtoolsOptions() { }
+if (false) {}
+/** @type {?} */
+const NGXS_DEVTOOLS_OPTIONS = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('NGXS_DEVTOOLS_OPTIONS');
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * Adds support for the Redux Devtools extension:
+ * http://extension.remotedev.io/
+ */
+class NgxsReduxDevtoolsPlugin {
+    /**
+     * @param {?} _options
+     * @param {?} _injector
+     */
+    constructor(_options, _injector) {
+        this._options = _options;
+        this._injector = _injector;
+        this.devtoolsExtension = null;
+        this.windowObj = typeof window !== 'undefined' ? window : {};
+        /** @type {?} */
+        const globalDevtools = this.windowObj['__REDUX_DEVTOOLS_EXTENSION__'] || this.windowObj['devToolsExtension'];
+        if (globalDevtools) {
+            this.devtoolsExtension = (/** @type {?} */ (globalDevtools.connect(_options)));
+            this.devtoolsExtension.subscribe((/**
+             * @param {?} a
+             * @return {?}
+             */
+            a => this.dispatched(a)));
+        }
+    }
+    /**
+     * Lazy get the store for circular dependency issues
+     * @private
+     * @return {?}
+     */
+    get store() {
+        return this._injector.get(_ngxs_store__WEBPACK_IMPORTED_MODULE_1__["Store"]);
+    }
+    /**
+     * Middleware handle function
+     * @param {?} state
+     * @param {?} action
+     * @param {?} next
+     * @return {?}
+     */
+    handle(state, action, next) {
+        /** @type {?} */
+        const isDisabled = this._options && this._options.disabled;
+        if (!this.devtoolsExtension || isDisabled) {
+            return next(state, action);
+        }
+        return next(state, action).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["catchError"])((/**
+         * @param {?} error
+         * @return {?}
+         */
+        error => {
+            /** @type {?} */
+            const newState = this.store.snapshot();
+            this.sendToDevTools(state, action, newState);
+            throw error;
+        })), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])((/**
+         * @param {?} newState
+         * @return {?}
+         */
+        newState => {
+            this.sendToDevTools(state, action, newState);
+        })));
+    }
+    /**
+     * @private
+     * @param {?} state
+     * @param {?} action
+     * @param {?} newState
+     * @return {?}
+     */
+    sendToDevTools(state, action, newState) {
+        /** @type {?} */
+        const type = Object(_ngxs_store__WEBPACK_IMPORTED_MODULE_1__["getActionTypeFromInstance"])(action);
+        // if init action, send initial state to dev tools
+        /** @type {?} */
+        const isInitAction = type === '@@INIT';
+        if (isInitAction) {
+            (/** @type {?} */ (this.devtoolsExtension)).init(state);
+        }
+        else {
+            (/** @type {?} */ (this.devtoolsExtension)).send(Object.assign({}, action, { action: null, type }), newState);
+        }
+    }
+    /**
+     * Handle the action from the dev tools subscription
+     * @param {?} action
+     * @return {?}
+     */
+    dispatched(action) {
+        if (action.type === 'DISPATCH') {
+            if (action.payload.type === 'JUMP_TO_ACTION' ||
+                action.payload.type === 'JUMP_TO_STATE') {
+                /** @type {?} */
+                const prevState = JSON.parse(action.state);
+                this.store.reset(prevState);
+            }
+            else if (action.payload.type === 'TOGGLE_ACTION') {
+                console.warn('Skip is not supported at this time.');
+            }
+            else if (action.payload.type === 'IMPORT_STATE') {
+                const { actionsById, computedStates, currentStateIndex } = action.payload.nextLiftedState;
+                (/** @type {?} */ (this.devtoolsExtension)).init(computedStates[0].state);
+                Object.keys(actionsById)
+                    .filter((/**
+                 * @param {?} actionId
+                 * @return {?}
+                 */
+                actionId => actionId !== '0'))
+                    .forEach((/**
+                 * @param {?} actionId
+                 * @return {?}
+                 */
+                actionId => (/** @type {?} */ (this.devtoolsExtension)).send(actionsById[actionId], computedStates[actionId].state)));
+                this.store.reset(computedStates[currentStateIndex].state);
+            }
+        }
+        else if (action.type === 'ACTION') {
+            /** @type {?} */
+            const actionPayload = JSON.parse(action.payload);
+            this.store.dispatch(actionPayload);
+        }
+    }
+}
+NgxsReduxDevtoolsPlugin.ɵfac = function NgxsReduxDevtoolsPlugin_Factory(t) { return new (t || NgxsReduxDevtoolsPlugin)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](NGXS_DEVTOOLS_OPTIONS), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"])); };
+NgxsReduxDevtoolsPlugin.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: NgxsReduxDevtoolsPlugin, factory: NgxsReduxDevtoolsPlugin.ɵfac });
+/** @nocollapse */
+NgxsReduxDevtoolsPlugin.ctorParameters = () => [
+    { type: undefined, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [NGXS_DEVTOOLS_OPTIONS,] }] },
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"] }
+];
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsReduxDevtoolsPlugin, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return [{ type: undefined, decorators: [{
+                type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"],
+                args: [NGXS_DEVTOOLS_OPTIONS]
+            }] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injector"] }]; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @param {?} options
+ * @return {?}
+ */
+function devtoolsOptionsFactory(options) {
+    return Object.assign({ name: 'NGXS' }, options);
+}
+/** @type {?} */
+const USER_OPTIONS = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('USER_OPTIONS');
+class NgxsReduxDevtoolsPluginModule {
+    /**
+     * @param {?=} options
+     * @return {?}
+     */
+    static forRoot(options) {
+        return {
+            ngModule: NgxsReduxDevtoolsPluginModule,
+            providers: [
+                {
+                    provide: _ngxs_store__WEBPACK_IMPORTED_MODULE_1__["NGXS_PLUGINS"],
+                    useClass: NgxsReduxDevtoolsPlugin,
+                    multi: true
+                },
+                {
+                    provide: USER_OPTIONS,
+                    useValue: options
+                },
+                {
+                    provide: NGXS_DEVTOOLS_OPTIONS,
+                    useFactory: devtoolsOptionsFactory,
+                    deps: [USER_OPTIONS]
+                }
+            ]
+        };
+    }
+}
+NgxsReduxDevtoolsPluginModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineNgModule"]({ type: NgxsReduxDevtoolsPluginModule });
+NgxsReduxDevtoolsPluginModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjector"]({ factory: function NgxsReduxDevtoolsPluginModule_Factory(t) { return new (t || NgxsReduxDevtoolsPluginModule)(); } });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsReduxDevtoolsPluginModule, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"]
+    }], null, null); })();
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+
+
+//# sourceMappingURL=ngxs-devtools-plugin.js.map
+
+/***/ }),
+
 /***/ "yCtX":
 /*!*********************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/observable/fromArray.js ***!
@@ -52087,6 +56399,228 @@ function isScheduler(value) {
     return value && typeof value.schedule === 'function';
 }
 //# sourceMappingURL=isScheduler.js.map
+
+/***/ }),
+
+/***/ "z5Zb":
+/*!********************************************************************************!*\
+  !*** ./node_modules/@ngxs/store/__ivy_ngcc__/fesm2015/ngxs-store-internals.js ***!
+  \********************************************************************************/
+/*! exports provided: INITIAL_STATE_TOKEN, InitialState, NGXS_STATE_CONTEXT_FACTORY, NGXS_STATE_FACTORY, NgxsBootstrapper, isAngularInTestMode, memoize */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "INITIAL_STATE_TOKEN", function() { return INITIAL_STATE_TOKEN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InitialState", function() { return InitialState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NGXS_STATE_CONTEXT_FACTORY", function() { return NGXS_STATE_CONTEXT_FACTORY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NGXS_STATE_FACTORY", function() { return NGXS_STATE_FACTORY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxsBootstrapper", function() { return NgxsBootstrapper; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isAngularInTestMode", function() { return isAngularInTestMode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "memoize", function() { return memoize; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "qCKp");
+
+
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+
+function defaultEqualityCheck(a, b) {
+    return a === b;
+}
+/**
+ * @param {?} equalityCheck
+ * @param {?} prev
+ * @param {?} next
+ * @return {?}
+ */
+function areArgumentsShallowlyEqual(equalityCheck, prev, next) {
+    if (prev === null || next === null || prev.length !== next.length) {
+        return false;
+    }
+    // Do this in a for loop (and not a `forEach` or an `every`) so we can determine equality as fast as possible.
+    /** @type {?} */
+    const length = prev.length;
+    for (let i = 0; i < length; i++) {
+        if (!equalityCheck(prev[i], next[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+/**
+ * Memoize a function on its last inputs only.
+ * Originally from: https://github.com/reduxjs/reselect/blob/master/src/index.js
+ *
+ * @ignore
+ * @template T
+ * @param {?} func
+ * @param {?=} equalityCheck
+ * @return {?}
+ */
+function memoize(func, equalityCheck = defaultEqualityCheck) {
+    /** @type {?} */
+    let lastArgs = null;
+    /** @type {?} */
+    let lastResult = null;
+    // we reference arguments instead of spreading them for performance reasons
+    /**
+     * @return {?}
+     */
+    function memoized() {
+        if (!areArgumentsShallowlyEqual(equalityCheck, lastArgs, arguments)) {
+            // apply arguments instead of spreading for performance.
+            lastResult = ((/** @type {?} */ (func))).apply(null, arguments);
+        }
+        lastArgs = arguments;
+        return lastResult;
+    }
+    ((/** @type {?} */ (memoized))).reset = (/**
+     * @return {?}
+     */
+    function () {
+        // The hidden (for now) ability to reset the memoization
+        lastArgs = null;
+        lastResult = null;
+    });
+    return (/** @type {?} */ (memoized));
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @return {?}
+ */
+function _isAngularInTestMode() {
+    /** @type {?} */
+    const platformRef = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["getPlatform"])();
+    if (!platformRef)
+        return false;
+    /** @type {?} */
+    const compilerOptions = platformRef.injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_0__["COMPILER_OPTIONS"], null);
+    if (!compilerOptions)
+        return false;
+    /** @type {?} */
+    const isInTestMode = compilerOptions.some((/**
+     * @param {?} item
+     * @return {?}
+     */
+    (item) => {
+        /** @type {?} */
+        const providers = (item && item.providers) || [];
+        return providers.some((/**
+         * @param {?} provider
+         * @return {?}
+         */
+        (provider) => {
+            return ((provider && provider.provide && provider.provide.name === 'MockNgModuleResolver') ||
+                false);
+        }));
+    }));
+    return isInTestMode;
+}
+/** @type {?} */
+const isAngularInTestMode = memoize(_isAngularInTestMode);
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class NgxsBootstrapper {
+    constructor() {
+        /**
+         * Use `ReplaySubject`, thus we can get cached value even if the stream is completed
+         */
+        this.bootstrap$ = new rxjs__WEBPACK_IMPORTED_MODULE_1__["ReplaySubject"](1);
+    }
+    /**
+     * @return {?}
+     */
+    get appBootstrapped$() {
+        return this.bootstrap$.asObservable();
+    }
+    /**
+     * This event will be emitted after attaching `ComponentRef` of the root component
+     * to the tree of views, that's a signal that application has been fully rendered
+     * @return {?}
+     */
+    bootstrap() {
+        this.bootstrap$.next(true);
+        this.bootstrap$.complete();
+    }
+}
+NgxsBootstrapper.ɵfac = function NgxsBootstrapper_Factory(t) { return new (t || NgxsBootstrapper)(); };
+NgxsBootstrapper.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: NgxsBootstrapper, factory: NgxsBootstrapper.ɵfac });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](NgxsBootstrapper, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
+    }], function () { return []; }, null); })();
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/** @type {?} */
+const INITIAL_STATE_TOKEN = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('INITIAL_STATE_TOKEN');
+class InitialState {
+    /**
+     * @param {?} state
+     * @return {?}
+     */
+    static set(state) {
+        this.value = state;
+    }
+    /**
+     * @return {?}
+     */
+    static pop() {
+        /** @type {?} */
+        const state = this.value;
+        this.value = {};
+        return state;
+    }
+}
+InitialState.value = {};
+if (false) {}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @see StateContextFactory as it's referenced by this token to be accessed by plugins internally
+ * @type {?}
+ */
+const NGXS_STATE_CONTEXT_FACTORY = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('Internals.StateContextFactory');
+/**
+ * @see StateFactory as it's referenced by this token to be accessed by plugins internally
+ * @type {?}
+ */
+const NGXS_STATE_FACTORY = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["InjectionToken"]('Internals.StateFactory');
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+
+
+//# sourceMappingURL=ngxs-store-internals.js.map
 
 /***/ }),
 
@@ -52417,14 +56951,7 @@ function innerSubscribe(result, innerSubscriber) {
     if (result instanceof _Observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]) {
         return result.subscribe(innerSubscriber);
     }
-    let subscription;
-    try {
-        subscription = Object(_util_subscribeTo__WEBPACK_IMPORTED_MODULE_2__["subscribeTo"])(result)(innerSubscriber);
-    }
-    catch (error) {
-        innerSubscriber.error(error);
-    }
-    return subscription;
+    return Object(_util_subscribeTo__WEBPACK_IMPORTED_MODULE_2__["subscribeTo"])(result)(innerSubscriber);
 }
 //# sourceMappingURL=innerSubscribe.js.map
 
